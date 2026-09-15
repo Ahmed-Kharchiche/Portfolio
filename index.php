@@ -24,6 +24,7 @@ $titre_page = "Accueil";
 
 <!-- Présentation -->
 <section class="hero">
+    <br><br>
     <h1 id="nom">Ahmed Kharchiche</h1>
     <p id="presentation">Étudiant en BUT Informatique</p>
     <div class="zone">
@@ -98,7 +99,7 @@ $titre_page = "Accueil";
             function animer() {
                 requestAnimationFrame(animer);
                 reseau.rotation.y += 0.0015 + sourisX * 0.01 + impulsionX * 0.05;
-                reseau.rotation.x += 0.0005 + sourisY * 0.002 + impulsionY * 0.05;
+                reseau.rotation.x += 0.0005 + sourisY * 0.001 + impulsionY * 0.05;
 
                 impulsionX *= 0.95;
                 impulsionY *= 0.95;

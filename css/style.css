@@ -38,6 +38,25 @@ nav .menu {
     gap: 20px;
 }
 
+.menu {
+    display: flex;
+    gap: 15px;
+    list-style: none;
+}
+
+.menu a {
+    display: block;
+    padding: 10px 20px;
+    border-radius: 8px;
+    color: white;
+    text-decoration: none;
+}
+
+.menu a:hover {
+    color: white;
+    border: solid #7C3AED;
+}
+
 nav .menu a {
     color: #FAFAFA;
 }
@@ -59,6 +78,7 @@ section h2 {
     padding: 50px 30px;
     position: relative;
     overflow: hidden;
+
 }
 .hero h1 {
     font-size: 28px;
@@ -79,11 +99,22 @@ section h2 {
     margin: 0 5px;
 }
 
+.bouton:hover {
+    background-color: #22C55E;
+}
+
 .bouton-secondaire {
-    background-color: transparent;
+    background-color: rgb(0,0,0.8);
     color: #A78BFA;
     border: 1px solid #7C3AED;
 }
+.bouton-secondaire:hover {
+    background-color: rgb(0,0,0.8);
+    color: #22C55E;
+    border: 1px solid #22C55E;
+}
+
+
 
 /* Technologies */
 .technos ul {
@@ -173,7 +204,10 @@ canvas {
 }
 
 header {
-    position: relative;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
     z-index: 1;
     background-color: #09090B;
 }
