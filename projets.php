@@ -1,4 +1,6 @@
 <?php
+
+include 'includes/header.php';
 // ---- Traitement du formulaire (si on vient de cliquer sur "Ajouter") ----
 
 $message = "";

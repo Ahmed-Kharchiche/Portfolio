@@ -39,7 +39,7 @@ $titre_page = "Accueil";
                 0.1,
                 1000
             );
-            camera.position.z = 45;
+            camera.position.z = 50;
 
             const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
@@ -98,7 +98,7 @@ $titre_page = "Accueil";
 
             function animer() {
                 requestAnimationFrame(animer);
-                reseau.rotation.y += 0.0015 + sourisX * 0.01 + impulsionX * 0.05;
+                reseau.rotation.y +=0.0010 + sourisX * 0.01 + impulsionX * 0.05;
                 reseau.rotation.x += 0.0005 + sourisY * 0.001 + impulsionY * 0.05;
 
                 impulsionX *= 0.95;

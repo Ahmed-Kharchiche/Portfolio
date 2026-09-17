@@ -221,6 +221,7 @@ header {
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     width: 95vw;
+    max-width: none;
     margin: 0 auto;
     padding: 16px 24px;
     border-radius: 12px;
