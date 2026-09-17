@@ -117,6 +117,10 @@ section h2 {
 
 
 /* Technologies */
+
+.technos{
+    margin-top: 70px;
+}
 .technos ul {
     display: flex;
     flex-wrap: wrap;
@@ -197,7 +201,7 @@ footer {
 }
 
 canvas {
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     z-index: -1;
@@ -212,19 +216,78 @@ header {
     background-color: #09090B;
 }
 
+
 .apercu-projets {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 10px;
-    background: rgba(0, 0, 0, 0.35);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     width: 95vw;
     max-width: none;
     margin: 0 auto;
     padding: 16px 24px;
-    border-radius: 12px;
+
+}
+
+.carousel-conteneur {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    perspective: 1000px;
+}
+
+.carousel-3d {
+    position: relative;
+    width: 350px;
+    height: 260px;
+    margin: 60px auto;
+    transform-style: preserve-3d;
+}
+
+.carte-3d {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 350px;
+    height: 260px;
+    background-color: #18181B;
+    border: 1px solid #7C3AED;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.5s ease, opacity 0.5s ease;
 }
 
 
+.carousel-astuce {
+    font-size: 13px;
+    color: #A1A1AA;
+}
+
+footer {
+    background-color: #09090B;
+    color: #94A3B8;
+    text-align: center;
+    padding: 30px 20px;
+    border-top: 1px solid white;
+    font-size: 14px;
+}
+
+footer p {
+    margin: 8px 0;
+}
+
+footer a {
+    color: #7C3AED;
+    text-decoration: none;
+    margin: 0 5px;
+    transition: color 0.3s ease;
+}
+
+footer a:hover {
+    color: #34D399;
+}
