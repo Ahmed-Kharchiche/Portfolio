@@ -1,1 +1,56 @@
-[]
+[
+    {
+        "id": "projet_6ac0b055721e7",
+        "titre": "SAE",
+        "description": "Juste une description",
+        "technologies": [
+            "Python"
+        ],
+        "gitlab": "",
+        "images": [
+            "images\/projets\/tsp.jpg"
+        ]
+    },
+    {
+        "id": "projet_6ac0b082d7122",
+        "titre": "test",
+        "description": "test",
+        "technologies": [
+            "Java"
+        ],
+        "gitlab": "",
+        "images": [
+            "images\/projets\/rs6.webp"
+        ]
+    },
+    {
+        "id": "projet_6ac0cf7f0abc0",
+        "titre": "Portfolio",
+        "description": "D\u00e9veloppement d\u2019une application permettant de g\u00e9rer des r\u00e9servations de chambres d\u2019h\u00f4tel. Le projet comprend la gestion des utilisateurs, des r\u00e9servations, des paiements, de l\u2019historique et des services suppl\u00e9mentaires. L\u2019application utilise Java et JavaFX avec une base de donn\u00e9es locale.",
+        "technologies": [
+            "Java",
+            "PHP",
+            "HTML",
+            "CSS",
+            "JavaScript"
+        ],
+        "gitlab": "https:\/\/github.com\/Ahmed-Kharchiche\/Portfolio",
+        "images": []
+    },
+    {
+        "id": "projet_6ac0cfaaf3a1b",
+        "titre": "Portfolio",
+        "description": "D\u00e9veloppement d\u2019une application permettant de g\u00e9rer des r\u00e9servations de chambres d\u2019h\u00f4tel. Le projet comprend la gestion des utilisateurs, des r\u00e9servations, des paiements, de l\u2019historique et des services suppl\u00e9mentaires. L\u2019application utilise Java et JavaFX avec une base de donn\u00e9es locale.",
+        "technologies": [
+            "Java",
+            "PHP",
+            "HTML",
+            "CSS",
+            "JavaScript"
+        ],
+        "gitlab": "https:\/\/github.com\/Ahmed-Kharchiche\/Portfolio",
+        "images": [
+            "images\/projets\/Snapshot_1.PNG"
+        ]
+    }
+]

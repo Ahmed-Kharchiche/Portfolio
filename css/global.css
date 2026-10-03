@@ -1,0 +1,78 @@
+:root {
+    --fond: #09090B;
+    --texte: #FAFAFA;
+    --texte-secondaire: #A1A1AA;
+    --accent: #7C3AED;
+    --accent-hover: #22C55E;
+    --carte: #18181B;
+    --technologie: #18181B;
+    --bordure: #18181B;
+    --footer-texte: #71717A;
+}
+
+[data-theme="light"] {
+    --fond: #FFFFFF;
+    --texte: #18181B;
+    --texte-secondaire: #52525B;
+    --accent: #7C3AED;
+    --accent-hover: #16A34A;
+    --carte: #FAFAFA;
+    --technologie: #F4F4F5;
+    --bordure: #E4E4E7;
+    --footer-texte: #71717A;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    color: var(--texte);
+    background-color: var(--fond);
+    line-height: 1.5;
+}
+
+a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+ul {
+    list-style: none;
+}
+
+section {
+    padding: 30px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+section h2 {
+    margin-bottom: 15px;
+}
+
+.technos li {
+    background-color: var(--technologie);
+    color: var(--texte);
+}
+
+.carte {
+    background-color: var(--carte);
+    border: 1px solid var(--bordure);
+}
+
+.carte p {
+    color: var(--texte-secondaire);
+}
+
+.bouton {
+    background-color: var(--accent);
+    color: #FFFFFF;
+}
+
+.bouton:hover {
+    background-color: var(--accent-hover);
+}

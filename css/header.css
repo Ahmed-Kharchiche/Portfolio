@@ -1,0 +1,52 @@
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1;
+    background-color: var(--fond);
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    border-bottom: 1px solid var(--bordure);
+}
+
+nav .logo {
+    font-weight: bold;
+}
+
+nav .menu {
+    display: flex;
+    gap: 20px;
+}
+
+.menu {
+    display: flex;
+    gap: 15px;
+    list-style: none;
+}
+
+.menu a {
+    display: block;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: 3px solid transparent;
+    color: var(--texte);
+    text-decoration: none;
+}
+
+.menu a:hover {
+    color: var(--texte);
+    border: 3px solid var(--accent);
+}
+
+@media (max-width: 600px) {
+    nav {
+        flex-direction: column;
+        gap: 10px;
+    }
+}

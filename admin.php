@@ -1,144 +1,178 @@
 <?php
 session_start();
 
-// ---- Protection de la page : si pas connecté, retour au login ----
+require_once 'includes/Projet.php';
+require_once 'includes/GestionnaireProjets.php';
+require_once 'includes/affichage_projets.php';
+$page_css = "projets.css";
+
+$gestionnaire = new GestionnaireProjets("projets.json");
+
+// Protection de la page : si pas connecté, retour au login
 if (!isset($_SESSION["connecte"]) || $_SESSION["connecte"] !== true) {
     header("Location: login.php");
     exit;
 }
 
-$fichierDonnees = "projets.json";
-$projets = [];
+// Liste des technologies disponibles
+$technologies_disponibles = [
+        "Python",
+        "Java",
+        "C",
+        "SQL",
+        "PHP",
+        "HTML",
+        "CSS",
+        "JavaScript"
+];
 
-if (file_exists($fichierDonnees)) {
-    $projets = json_decode(file_get_contents($fichierDonnees), true);
-}
+if ($_SERVER["REQUEST_METHOD"] === "POST" && ($_POST["action"] ?? "") === "ajouter") {
 
-$message = "";
+    // Récupérer les champs texte
+    $titre = trim($_POST["titre"]);
+    $description = trim($_POST["description"]);
+    $technologies = $_POST["technologies"] ?? [];
+    $gitlab = trim($_POST["gitlab"]);
 
-// ---- Ajout d'un projet ----
-if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["action"]) && $_POST["action"] === "ajouter") {
+    // Enregistrer les images
+    $images = [];
 
-    $titre = $_POST["titre"];
-    $description = $_POST["description"];
+    foreach ($_FILES["images"]["name"] as $i => $nomFichier) {
+        if ($_FILES["images"]["error"][$i] === 0) {
 
-    if (isset($_FILES["image"]) && $_FILES["image"]["error"] === 0) {
-        $nomFichier = basename($_FILES["image"]["name"]);
-        $cheminDestination = "images/projets/" . $nomFichier;
+            $chemin = "images/projets/" . basename($nomFichier);
 
-        if (move_uploaded_file($_FILES["image"]["tmp_name"], $cheminDestination)) {
-            $projets[] = [
-                "titre" => $titre,
-                "description" => $description,
-                "image" => $cheminDestination
-            ];
-            file_put_contents($fichierDonnees, json_encode($projets, JSON_PRETTY_PRINT));
-            $message = "Projet ajouté.";
-        } else {
-            $message = "Erreur lors de l'envoi de l'image.";
+            if (move_uploaded_file($_FILES["images"]["tmp_name"][$i], $chemin)) {
+                $images[] = $chemin;
+            }
         }
     }
+
+    // Créer le projet
+    $projet = new Projet(
+            null,
+            $titre,
+            $description,
+            $technologies,
+            $gitlab,
+            $images
+    );
+
+    // Ajouter le projet
+    $gestionnaire->ajouter($projet);
+
+    // Éviter de renvoyer le formulaire lors d'un rafraîchissement
+    header("Location: admin.php");
+    exit;
 }
 
-// ---- Suppression d'un projet ----
-if (isset($_GET["supprimer"])) {
-    $index = (int) $_GET["supprimer"];
 
-    if (isset($projets[$index])) {
-        array_splice($projets, $index, 1);
-        file_put_contents($fichierDonnees, json_encode($projets, JSON_PRETTY_PRINT));
-        $message = "Projet supprimé.";
-    }
-}
+// Configuration de la page
+$titre_page = "Administration";
+$page_css = "admin.css";
+
+include 'includes/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Espace admin</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #09090B;
-            color: #FAFAFA;
-            max-width: 600px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
-        input, textarea {
-            display: block;
-            width: 100%;
-            margin-bottom: 12px;
-            padding: 8px;
-        }
-        button {
-            padding: 10px 16px;
-            background-color: #7C3AED;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .carte {
-            border: 1px solid #18181B;
-            background-color: #18181B;
-            padding: 12px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .carte img {
-            max-width: 80px;
-            border-radius: 4px;
-        }
-        .supprimer {
-            color: #F87171;
-        }
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-    </style>
-</head>
-<body>
-<?php include 'includes/header.php'; ?>
 
-<div class="top-bar">
-    <h1>Espace admin</h1>
-    <a href="logout.php">Se déconnecter</a>
-</div>
+    <main class="admin">
 
-<?php if ($message): ?>
-    <p><?php echo $message; ?></p>
-<?php endif; ?>
-
-<h2>Ajouter un projet</h2>
-
-<form method="POST" enctype="multipart/form-data">
-    <input type="hidden" name="action" value="ajouter">
-
-    <input type="text" name="titre" placeholder="Titre du projet" required>
-    <textarea name="description" rows="3" placeholder="Description" required></textarea>
-    <input type="file" name="image" accept="image/*" required>
-
-    <button type="submit">Ajouter</button>
-</form>
-
-<h2>Projets existants</h2>
-
-<?php foreach ($projets as $index => $projet): ?>
-    <div class="carte">
-        <img src="<?php echo $projet["image"]; ?>" alt="">
-        <div style="flex: 1; padding: 0 12px;">
-            <strong><?php echo $projet["titre"]; ?></strong>
-            <p><?php echo $projet["description"]; ?></p>
+        <div class="top-bar">
+            <h1>Espace admin</h1>
+            <a class="bouton-deconnexion" href="logout.php">Se déconnecter</a>
         </div>
-        <a class="supprimer" href="admin.php?supprimer=<?php echo $index; ?>"
-           onclick="return confirm('Supprimer ce projet ?');">Supprimer</a>
-    </div>
-<?php endforeach; ?>
 
-</body>
-</html>
+        <section class="ajout-projet">
+
+            <h2>Ajouter un projet</h2>
+
+            <form class="formulaire-projet" method="POST" enctype="multipart/form-data">
+
+                <input type="hidden" name="action" value="ajouter">
+
+                <div class="champ">
+                    <label for="titre">Titre du projet</label>
+                    <input
+                            type="text"
+                            id="titre"
+                            name="titre"
+                            placeholder="Ex : Application de réservation"
+                            required
+                    >
+                </div>
+
+                <div class="champ">
+                    <label for="description">Description</label>
+                    <textarea
+                            id="description"
+                            name="description"
+                            rows="4"
+                            placeholder="Décris brièvement ton projet..."
+                            required
+                    ></textarea>
+                </div>
+
+                <div class="champ">
+                    <p class="label-technologies">Technologies utilisées</p>
+
+                    <div class="cases-technologies">
+
+                        <?php foreach ($technologies_disponibles as $techno): ?>
+
+                            <label class="case-technologie">
+                                <input
+                                        type="checkbox"
+                                        name="technologies[]"
+                                        value="<?php echo $techno; ?>"
+                                >
+
+                                <span><?php echo $techno; ?></span>
+                            </label>
+
+                        <?php endforeach; ?>
+
+                    </div>
+                </div>
+
+                <div class="champ">
+                    <label for="gitlab">Lien GitLab</label>
+                    <input
+                            type="url"
+                            id="gitlab"
+                            name="gitlab"
+                            placeholder="https://gitlab.com/..."
+                    >
+                </div>
+
+                <div class="champ">
+                    <label for="images">Images du projet</label>
+                    <input
+                            type="file"
+                            id="images"
+                            name="images[]"
+                            accept="image/*"
+                            multiple
+                            required
+                    >
+                </div>
+
+                <button class="bouton-ajouter" type="submit">
+                    Ajouter le projet
+                </button>
+
+            </form>
+
+        </section>
+
+        <div class="grille-projets">
+
+            <?php foreach ($gestionnaire->getTous() as $projet): ?>
+
+                <?php afficherCarteProjet($projet); ?>
+
+            <?php endforeach; ?>
+
+        </div>
+
+    </main>
+
+<?php include 'includes/footer.php'; ?>

@@ -4,7 +4,7 @@ session_start();
 $erreur = "";
 
 // Change ce mot de passe ! Ici c'est juste "admin123" pour l'exemple
-$mot_de_passe_admin = "admin123";
+$mot_de_passe_admin = "mouffy";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $mot_de_passe_saisi = $_POST["mot_de_passe"];
@@ -63,6 +63,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 </head>
 <body>
 <?php include 'includes/header.php'; ?>
+<script>
+    applyTheme('dark');
+    document.getElementById('theme-toggle').disabled = true;
+    document.querySelector('.switch').style.display = 'none';
+</script>
 
 <form method="POST">
     <h2>Connexion admin</h2>

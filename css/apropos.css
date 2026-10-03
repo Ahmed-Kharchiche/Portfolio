@@ -1,0 +1,80 @@
+.apropos {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 120px 20px 60px;
+}
+
+.apropos section {
+    padding: 30px;
+    margin-bottom: 25px;
+    background-color: var(--carte);
+    border: 1px solid var(--bordure);
+    border-radius: 12px;
+}
+
+.apropos h1 {
+    margin-bottom: 20px;
+    font-size: 32px;
+}
+
+.apropos h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+
+.apropos h3 {
+    margin-bottom: 6px;
+    font-size: 18px;
+}
+
+.apropos p {
+    color: var(--texte-secondaire);
+    margin-bottom: 10px;
+}
+
+.apropos strong {
+    color: var(--texte);
+}
+
+.bloc-apropos {
+    padding: 18px;
+    margin-bottom: 15px;
+    border-left: 3px solid var(--accent);
+    background-color: var(--fond);
+}
+
+.bloc-apropos:last-child {
+    margin-bottom: 0;
+}
+
+.technologies-apropos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.technologies-apropos span {
+    padding: 7px 13px;
+    border-radius: 20px;
+    background-color: var(--technologie);
+    color: var(--accent);
+    font-size: 14px;
+}
+
+.objectif p:last-child {
+    margin-bottom: 0;
+}
+
+@media (max-width: 600px) {
+    .apropos {
+        padding: 100px 15px 40px;
+    }
+
+    .apropos section {
+        padding: 20px;
+    }
+
+    .apropos h1 {
+        font-size: 28px;
+    }
+}

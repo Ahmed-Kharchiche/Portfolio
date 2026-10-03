@@ -1,0 +1,133 @@
+.liste-projets {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    width: 1000px;
+    max-width: 95vw;
+    margin-top: 40px;
+    margin-bottom: 40px;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.liste-projets .carte-projet {
+    flex: 0 1 450px;
+}
+
+.titre-page-projets {
+    text-align: center;
+    padding: 50px 20px 10px;
+}
+
+.titre-page-projets p {
+    color: var(--texte-secondaire);
+    margin-top: 8px;
+}
+
+.grille-projets {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+    max-width: 1100px;
+    margin: 30px auto;
+    padding: 0 20px;
+}
+
+.carte-projet {
+    background-color: var(--carte);
+    border: 1px solid var(--bordure);
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.carte-projet:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 30px rgba(124, 58, 237, 0.25);
+    border-color: var(--accent);
+}
+
+.image-projet {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+}
+
+.contenu-projet {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.contenu-projet h3 {
+    margin-bottom: 8px;
+    font-size: 18px;
+}
+
+.contenu-projet p {
+    color: var(--texte-secondaire);
+    font-size: 14px;
+    margin-bottom: 14px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.technologies {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 16px;
+}
+
+.technologies span {
+    background-color: var(--technologie);
+    color: var(--accent);
+    font-size: 12px;
+    padding: 3px 10px;
+    border-radius: 20px;
+}
+
+.bas-carte {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.lien-gitlab {
+    color: var(--accent);
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.lien-gitlab:hover {
+    color: var(--accent-hover);
+    text-decoration: underline;
+}
+
+.bouton-detail {
+    background-color: var(--accent);
+    color: var(--texte);
+    font-size: 14px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+}
+
+.bouton-detail:hover {
+    background-color: var(--accent-hover);
+}
+
+.message-vide {
+    text-align: center;
+    color: var(--texte-secondaire);
+    padding: 60px 20px;
+}

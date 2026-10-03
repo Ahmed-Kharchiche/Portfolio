@@ -1,45 +1,45 @@
 <?php
 $titre_page = "Projets";
+$page_css = "projets.css";
 
-// On récupère les projets enregistrés par l'admin
-$fichierDonnees = "projets.json";
-$projets = [];
+require_once 'includes/Projet.php';
+require_once 'includes/GestionnaireProjets.php';
+require_once 'includes/affichage_projets.php';
 
-if (file_exists($fichierDonnees)) {
-    $projets = json_decode(file_get_contents($fichierDonnees), true);
-}
+$gestionnaire = new GestionnaireProjets("projets.json");
+
+include 'includes/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ahmed Kharchiche - <?php echo $titre_page; ?></title>
-    <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
 
-<?php include 'includes/header.php'; ?>
+    <main class="projets">
 
-<section class="apercu-projets">
-    <h2>Mes projets</h2>
+        <div class="titre-page-projets">
+            <h1>Mes projets</h1>
+            <p>Un aperçu de mes réalisations scolaires et personnelles</p>
+        </div>
 
-    <div class="cartes">
+        <?php $projets = $gestionnaire->getTous(); ?>
+
         <?php if (empty($projets)): ?>
-            <p>Aucun projet ajouté pour l'instant.</p>
+
+            <p class="message-vide">
+                Aucun projet ajouté pour l'instant.
+            </p>
+
+        <?php else: ?>
+
+            <div class="grille-projets">
+
+                <?php foreach ($projets as $projet): ?>
+
+                    <?php afficherCarteProjet($projet); ?>
+
+                <?php endforeach; ?>
+
+            </div>
+
         <?php endif; ?>
 
-        <?php foreach ($projets as $projet): ?>
-            <div class="carte">
-                <img src="<?php echo $projet["image"]; ?>" alt="<?php echo $projet["titre"]; ?>" style="width: 100%; margin-bottom: 10px;">
-                <h3><?php echo $projet["titre"]; ?></h3>
-                <p><?php echo $projet["description"]; ?></p>
-            </div>
-        <?php endforeach; ?>
-    </div>
-</section>
+    </main>
 
 <?php include 'includes/footer.php'; ?>
-
-</body>
-</html>

@@ -1,0 +1,133 @@
+.contact {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 120px 20px 60px;
+}
+
+.contact-intro {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.contact-intro h1 {
+    font-size: 32px;
+    margin-bottom: 15px;
+}
+
+.contact-intro p {
+    color: var(--texte-secondaire);
+}
+
+.contact-contenu {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 30px;
+    align-items: start;
+}
+
+.contact-infos {
+    display: grid;
+    gap: 15px;
+}
+
+.contact-bloc {
+    padding: 20px;
+    background-color: var(--carte);
+    border: 1px solid var(--bordure);
+    border-radius: 12px;
+    transition: border-color 0.25s ease, transform 0.25s ease;
+}
+
+.contact-bloc:hover {
+    transform: translateY(-3px);
+    border-color: var(--accent);
+}
+
+.contact-bloc h2 {
+    font-size: 17px;
+    margin-bottom: 8px;
+}
+
+.contact-bloc p {
+    color: var(--texte-secondaire);
+}
+
+.contact-bloc a {
+    color: var(--accent);
+    text-decoration: none;
+    word-break: break-word;
+}
+
+.contact-bloc a:hover {
+    color: var(--accent-hover);
+    text-decoration: underline;
+}
+
+.formulaire-contact {
+    padding: 30px;
+    background-color: var(--carte);
+    border: 1px solid var(--bordure);
+    border-radius: 12px;
+}
+
+.formulaire-contact h2 {
+    margin-bottom: 25px;
+}
+
+.champ {
+    margin-bottom: 18px;
+}
+
+.champ label {
+    display: block;
+    margin-bottom: 7px;
+    font-size: 14px;
+}
+
+.champ input,
+.champ textarea {
+    width: 100%;
+    padding: 11px 13px;
+    background-color: var(--fond);
+    color: var(--texte);
+    border: 1px solid var(--bordure);
+    border-radius: 6px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    outline: none;
+}
+
+.champ textarea {
+    resize: vertical;
+}
+
+.champ input:focus,
+.champ textarea:focus {
+    border-color: var(--accent);
+}
+
+.formulaire-contact button {
+    width: 100%;
+    padding: 11px;
+    background-color: var(--accent);
+    color: var(--texte);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+}
+
+.formulaire-contact button:hover {
+    background-color: var(--accent-hover);
+}
+
+@media (max-width: 700px) {
+    .contact {
+        padding: 100px 15px 40px;
+    }
+
+    .contact-contenu {
+        grid-template-columns: 1fr;
+    }
+}
