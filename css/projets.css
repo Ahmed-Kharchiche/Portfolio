@@ -6,20 +6,39 @@
 .titre-page-projets {
     text-align: center;
     padding: 20px;
+    margin-bottom: 100px;
 }
 
-.titre-page-projets h1 {
-    color: var(--texte);
-}
 
 .titre-page-projets p {
     color: var(--texte-secondaire);
     margin-top: 8px;
 }
 
-.grille-projets-public {
+.intro-projets {
+    max-width: 850px;
+    margin: 0 auto 120px;
+    padding: 0 20px;
+}
+
+.intro-projets p {
+    color: var(--texte-secondaire);
+    font-size: 16px;
+    line-height: 1.7;
+    margin: 0 0 25px;
+}
+
+.intro-gauche {
+    text-align: left;
+}
+
+.intro-droite {
+    text-align: left;
+}
+
+.grille-projets {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
     gap: 30px;
     max-width: 1100px;
     margin: 40px auto;

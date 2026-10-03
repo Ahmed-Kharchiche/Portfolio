@@ -1,7 +1,7 @@
 .contact {
     max-width: 1000px;
     margin: 0 auto;
-    padding: 120px 20px 60px;
+    padding: 95px 20px 60px;
 }
 
 .contact-intro {
@@ -10,8 +10,7 @@
 }
 
 .contact-intro h1 {
-    font-size: 32px;
-    margin-bottom: 15px;
+    font-size: 60px;
 }
 
 .contact-intro p {

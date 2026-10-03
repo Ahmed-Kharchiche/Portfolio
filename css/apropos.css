@@ -1,7 +1,7 @@
 .apropos {
     max-width: 900px;
     margin: 0 auto;
-    padding: 120px 20px 60px;
+    padding: 125px 20px 60px;
 }
 
 .apropos section {
@@ -13,8 +13,7 @@
 }
 
 .apropos h1 {
-    margin-bottom: 20px;
-    font-size: 32px;
+    font-size: 60px;
 }
 
 .apropos h2 {

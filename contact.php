@@ -8,7 +8,8 @@ include 'includes/header.php';
     <main class="contact">
 
         <section class="contact-intro">
-            <h1>Me contacter</h1>
+            <h1>ME CONTACTER</h1>
+            <div class="ligne-titre"></div>
 
             <p>
                 Une question, une proposition de stage ou simplement envie

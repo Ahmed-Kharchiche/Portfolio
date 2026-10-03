@@ -22,8 +22,8 @@
         <label class="switch" title="Basculer le thème clair/sombre">
             <input type="checkbox" id="theme-toggle">
             <span class="slider"></span>
-            <span class="switch-text switch-text--gauche">🌙️️</span>
-            <span class="switch-text switch-text--droite">☀️️️</span>
+            <span class="switch-text switch-text--gauche">☀️️</span>
+            <span class="switch-text switch-text--droite">🌙️️️</span>
         </label>
 
         <ul class="menu">

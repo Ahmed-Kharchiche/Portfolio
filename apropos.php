@@ -7,8 +7,11 @@ include 'includes/header.php';
 
     <main class="apropos">
 
+        <h1>À PROPOS DE MOI</h1>
+        <div class="ligne-titre"></div>
+
         <section class="presentation">
-            <h1>À propos de moi</h1>
+
 
             <p>
                 Je m'appelle Ahmed Kharchiche et je suis étudiant en

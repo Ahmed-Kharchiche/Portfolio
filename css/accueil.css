@@ -6,19 +6,12 @@
     overflow: hidden;
 }
 
-.hero h1 {
-    font-size: 28px;
-    margin-bottom: 10px;
-}
-
 .hero p {
     margin-bottom: 20px;
     color: var(--texte-secondaire);
 }
 
 #nom {
-    font-size: 56px;
-    font-weight: 700;
     color: var(--texte);
     letter-spacing: -1px;
     margin-bottom: 12px;
@@ -30,6 +23,8 @@
     color: var(--accent);
     letter-spacing: 2px;
     text-transform: uppercase;
+    text-shadow: 0 0 10px var(--ombre),
+    0 0 25px var(--ombre);
 }
 
 
@@ -47,6 +42,7 @@
     background-color: var(--accent-hover);
 }
 
+
 .bouton-secondaire {
     background-color: var(--fond);
     color: var(--accent);
@@ -57,6 +53,10 @@
     background-color: var(--fond);
     color: var(--accent-hover);
     border-color: var(--accent-hover);
+}
+
+.hero-boutons {
+    opacity: 0;
 }
 
 
@@ -75,6 +75,8 @@ canvas {
 
 .technos {
     margin-top: 70px;
+    margin-bottom: 70px;
+    opacity: 0;
 }
 
 .technos ul {
@@ -92,6 +94,16 @@ canvas {
 /* =========================
    APERÇU DES PROJETS
    ========================= */
+
+.projects-title {
+    opacity: 0;
+    transform: translateY(50px);
+}
+
+.projects-title.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
 
 .apercu-projets {
     display: flex;

@@ -4,7 +4,6 @@ session_start();
 require_once 'includes/Projet.php';
 require_once 'includes/GestionnaireProjets.php';
 require_once 'includes/affichage_projets.php';
-$page_css = "projets.css";
 
 $gestionnaire = new GestionnaireProjets("projets.json");
 
