@@ -6,11 +6,11 @@
 
 // ↑ AUGMENTER = va plus loin à chaque coup de molette
 // ↓ DIMINUER = va moins loin
-const vitesseScroll = 0.35;
+const vitesseScroll = 0.5;
 
 // ↑ AUGMENTER = s'arrête plus rapidement
 // ↓ DIMINUER = continue plus longtemps
-const fluiditeScroll = 0.01;
+const fluiditeScroll = 0.035;
 
 
 let cibleScroll = window.scrollY;
