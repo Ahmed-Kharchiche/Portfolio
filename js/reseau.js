@@ -14,10 +14,14 @@ const taillePoints = 0.7;
 const distanceMax = 14;
 
 // Couleur des points
-const couleurPoints = 0xA78BFA;
+let couleurPoints = getComputedStyle(document.body)
+    .getPropertyValue('--accent')
+    .trim();
 
 // Couleur des lignes
-const couleurLignes = 0x7C3AED;
+let couleurLignes = getComputedStyle(document.body)
+    .getPropertyValue('--accent')
+    .trim();
 
 // Transparence des lignes
 const transparenceLignes = 0.22;
@@ -216,3 +220,22 @@ window.addEventListener("resize", () => {
         window.innerHeight
     );
 });
+
+
+function mettreAJourCouleurs() {
+
+    couleurPoints = getComputedStyle(document.body)
+        .getPropertyValue('--accent')
+        .trim();
+
+    couleurLignes = getComputedStyle(document.body)
+        .getPropertyValue('--accent')
+        .trim();
+
+    materielPoints.color.set(couleurPoints);
+    materielLignes.color.set(couleurLignes);
+}
+
+mettreAJourCouleurs();
+
+window.addEventListener('themeChange', mettreAJourCouleurs);

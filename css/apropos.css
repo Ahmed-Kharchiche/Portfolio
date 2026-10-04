@@ -63,17 +63,3 @@
 .objectif p:last-child {
     margin-bottom: 0;
 }
-
-@media (max-width: 600px) {
-    .apropos {
-        padding: 100px 15px 40px;
-    }
-
-    .apropos section {
-        padding: 20px;
-    }
-
-    .apropos h1 {
-        font-size: 28px;
-    }
-}

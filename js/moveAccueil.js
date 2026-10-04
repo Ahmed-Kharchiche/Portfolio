@@ -62,3 +62,4 @@ window.addEventListener('scroll', () => {
     boutons.style.opacity = progress;
     boutons.style.transform = `translate(${translateX}px, ${translateY}px)`;
 });
+

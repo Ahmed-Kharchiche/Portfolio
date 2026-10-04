@@ -15,4 +15,5 @@ toggleBtn.addEventListener('change', () => {
         document.body.removeAttribute('data-theme');
         localStorage.setItem('theme', 'dark');
     }
+    window.dispatchEvent(new Event('themeChange'));
 });

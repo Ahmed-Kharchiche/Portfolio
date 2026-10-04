@@ -1,17 +1,5 @@
 [
     {
-        "id": "projet_6ac0b055721e7",
-        "titre": "SAE",
-        "description": "Juste une description",
-        "technologies": [
-            "Python"
-        ],
-        "gitlab": "",
-        "images": [
-            "images\/projets\/tsp.jpg"
-        ]
-    },
-    {
         "id": "projet_6ac0b082d7122",
         "titre": "test",
         "description": "test",
@@ -21,7 +9,8 @@
         "gitlab": "",
         "images": [
             "images\/projets\/rs6.webp"
-        ]
+        ],
+        "dateCreation": "2026-08-07"
     },
     {
         "id": "projet_6ac0cf7f0abc0",
@@ -35,7 +24,11 @@
             "JavaScript"
         ],
         "gitlab": "https:\/\/github.com\/Ahmed-Kharchiche\/Portfolio",
-        "images": []
+        "images": [
+            "images\/projets\/t\u00e9l\u00e9chargement.jpg",
+            "images\/projets\/rs6 automne.jpg"
+        ],
+        "dateCreation": "2026-09-12"
     },
     {
         "id": "projet_6ac0cfaaf3a1b",
@@ -51,6 +44,7 @@
         "gitlab": "https:\/\/github.com\/Ahmed-Kharchiche\/Portfolio",
         "images": [
             "images\/projets\/Snapshot_1.PNG"
-        ]
+        ],
+        "dateCreation": "2026-09-26"
     }
 ]

@@ -12,6 +12,7 @@
     <?php if (isset($page_css)): ?>
         <link rel="stylesheet" href="css/<?php echo $page_css; ?>">
     <?php endif; ?>
+    <link rel="stylesheet" href="css/elements/carrousel.css">
 </head>
 <body>
 

@@ -1,4 +1,15 @@
-/* ===== Theme toggle (switch classique) ===== */
+:root {
+    --header-fond-switch: #18181B;
+    --header-switch-boule:#FFFFFF;
+}
+
+[data-theme="light"] {
+    --header-fond-switch: #FFFFFF;
+    --header-switch-boule: #18181B;
+}
+
+/* ===== Theme toggle ===== */
+
 .switch {
     position: relative;
     display: inline-block;
@@ -16,39 +27,48 @@
 .slider {
     position: absolute;
     cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #18181B;
-    border: 1px solid #7C3AED;
+    inset: 0;
+
+    background-color: var(--header-fond-switch);
+    border: 1px solid var(--accent);
     border-radius: 26px;
-    transition: background-color 0.3s ease;
+    box-shadow: 0 0 12px var(--ombre);
+    transition:
+            background-color 0.3s ease,
+            border-color 0.3s ease,
+            box-shadow 0.3s ease;
 }
 
 .slider::before {
     content: "";
     position: absolute;
-    height: 20px;
+
     width: 20px;
+    height: 20px;
     left: 2px;
     bottom: 2px;
-    background-color: #A78BFA;
+
+    background-color: var(--header-switch-boule);
     border-radius: 50%;
-    transition: transform 0.3s ease, background-color 0.3s ease;
+
+    transition:
+            transform 0.3s ease,
+            background-color 0.3s ease;
 }
 
 .switch input:checked + .slider {
-    background-color: #7C3AED;
+    background-color: var(--header-fond-switch);
+    border-color: var(--accent);
+    box-shadow: 0 0 12px var(--ombre);
 }
 
 .switch input:checked + .slider::before {
     transform: translateX(55px);
-    background-color: #FAFAFA;
+    background-color: var(--texte);
 }
 
 .switch input:focus-visible + .slider {
-    outline: 2px solid #A78BFA;
+    outline: 2px solid var(--accent);
     outline-offset: 2px;
 }
 

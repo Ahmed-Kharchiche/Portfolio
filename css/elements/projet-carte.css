@@ -47,7 +47,7 @@
 }
 
 .carte-projet:hover {
-    box-shadow: 0 12px 30px rgba(124, 58, 237, 0.25);
+    box-shadow: 0 12px 30px var(--ombre);
     border-color: var(--accent);
 }
 
@@ -56,6 +56,24 @@
     aspect-ratio: 16 / 9;
     object-fit: cover;
 }
+
+.date-projet {
+    display: inline-block;
+    width: fit-content;
+
+    margin-bottom: 12px;
+    padding: 3px 8px;
+
+    color: var(--texte-secondaire);
+    background-color: transparent;
+    border: 1px solid #52525B;
+    border-radius: 4px;
+
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+}
+
 
 .contenu-projet {
     padding: 20px;
@@ -82,16 +100,27 @@
 .technologies {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
-    margin-bottom: 16px;
+    gap: 8px;
+    margin-bottom: 18px;
 }
 
 .technologies span {
     background-color: var(--technologie);
     color: var(--accent);
+    border: 1px solid var(--bordure);
     font-size: 12px;
-    padding: 3px 10px;
+    font-weight: 500;
+    padding: 5px 11px;
     border-radius: 20px;
+    transition:
+            color 0.25s ease,
+            border-color 0.25s ease,
+            background-color 0.25s ease;
+}
+
+.technologies span:hover {
+    color: var(--accent-hover);
+    border-color: var(--accent-hover);
 }
 
 .bas-carte {
@@ -102,14 +131,40 @@
 }
 
 .lien-gitlab {
-    color: var(--accent);
-    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    width: fit-content;
+    margin: 0 auto;
+    padding: 9px 17px;
+
+    color: #27272A;
+    background-color: #E4E4E7;
+    border: 1px solid #D4D4D8;
+    border-radius: 7px;
+
+    font-size: 13px;
+    font-weight: 600;
     text-decoration: none;
+
+    transition:
+            background-color 0.2s ease,
+            color 0.2s ease,
+            border-color 0.2s ease;
+}
+
+.lien-gitlab img {
+    width: 23px;
+    height: 23px;
+    object-fit: contain;
 }
 
 .lien-gitlab:hover {
-    color: var(--accent-hover);
-    text-decoration: underline;
+    background-color: #D4D4D8;
+    color: #18181B;
+    border-color: #A1A1AA;
 }
 
 .bouton-detail {
@@ -130,4 +185,58 @@
     text-align: center;
     color: var(--texte-secondaire);
     padding: 60px 20px;
+}
+
+
+.actions-admin {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+}
+
+.bouton-modifier,
+.bouton-supprimer {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    height: 32px;
+    box-sizing: border-box;
+    padding: 0 12px;
+
+    border-radius: 6px;
+
+    font-size: 12px;
+    font-weight: 600;
+    font-family: inherit;
+    text-decoration: none;
+    cursor: pointer;
+
+    transition:
+            background-color 0.2s ease,
+            color 0.2s ease,
+            border-color 0.2s ease;
+}
+
+.bouton-modifier {
+    color: var(--texte);
+    background-color: transparent;
+    border: 1px solid #71717A;
+}
+
+.bouton-modifier:hover {
+    background-color: #71717A;
+    color: #FFFFFF;
+}
+
+.bouton-supprimer {
+    color: #EF4444;
+    background-color: transparent;
+    border: 1px solid #EF4444;
+}
+
+.bouton-supprimer:hover {
+    color: #FFFFFF;
+    background-color: #EF4444;
 }

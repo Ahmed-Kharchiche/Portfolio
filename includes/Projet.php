@@ -16,6 +16,7 @@ class Projet
     private array $technologies;
     private string $gitlab;
     private array $images;
+    private ?string $dateCreation;
 
     public function __construct(
         ?string $id,
@@ -23,7 +24,8 @@ class Projet
         string $description,
         array $technologies = [],
         string $gitlab = "",
-        array $images = []
+        array $images = [],
+        ?string $dateCreation = null
     ) {
         $this->id = $id;
         $this->titre = $titre;
@@ -31,6 +33,7 @@ class Projet
         $this->technologies = $technologies;
         $this->gitlab = $gitlab;
         $this->images = $images;
+        $this->dateCreation = $dateCreation;
     }
 
     // ---- Getters ----
@@ -65,7 +68,13 @@ class Projet
         return $this->images;
     }
 
+    public function getDateCreation(): ?string
+    {
+        return $this->dateCreation;
+    }
+
     // ---- Setters ----
+
     // Utiles pour la modification d'un projet existant : on récupère l'objet,
     // on appelle les setters pour changer ce qui a changé, puis c'est le
     // GestionnaireProjets qui se charge de réécrire le fichier JSON.
@@ -103,6 +112,11 @@ class Projet
     public function setImages(array $images): void
     {
         $this->images = $images;
+    }
+
+    public function setDateCreation(?string $dateCreation): void
+    {
+        $this->dateCreation = $dateCreation;
     }
 
     // ---- Quelques méthodes pratiques pour manipuler les images ----
@@ -155,7 +169,8 @@ class Projet
             "description" => $this->description,
             "technologies" => $this->technologies,
             "gitlab" => $this->gitlab,
-            "images" => $this->images
+            "images" => $this->images,
+            "dateCreation" => $this->dateCreation
         ];
     }
 
@@ -183,7 +198,8 @@ class Projet
             $donnees["description"] ?? "",
             $donnees["technologies"] ?? [],
             $donnees["gitlab"] ?? "",
-            $images
+            $images,
+            $donnees["dateCreation"] ?? null
         );
     }
 
@@ -193,7 +209,6 @@ class Projet
      * Permet de faire echo $projet; ou de convertir le projet en chaîne.
      * Pratique surtout pour déboguer.
      */
-
     public function __toString(): string
     {
         $technologies = empty($this->technologies)
@@ -213,7 +228,7 @@ class Projet
             . "Description : " . $this->description . "\n"
             . "Technologies : " . $technologies . "\n"
             . "GitLab : " . $gitlab . "\n"
-            . "Images : " . $images;
+            . "Images : " . $images . "\n"
+            . "Date de création : " . ($this->dateCreation ?? "aucune");
     }
-
 }
