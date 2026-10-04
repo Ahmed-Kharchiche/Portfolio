@@ -51,6 +51,11 @@ function afficherCarteProjet(Projet $projet, bool $admin = false): void
                 <?php else: ?>
                     <span></span>
                 <?php endif; ?>
+
+                <a class="lien-projet" href="detail-projet.php?id=<?php echo urlencode($projet->getId()); ?>">
+                    Voir le projet
+                </a>
+
                 <?php if ($admin): ?>
                     <div class="actions-admin">
                         <a class="bouton-modifier" href="admin.php?id=<?php echo urlencode($projet->getId()); ?>">Modifier</a>

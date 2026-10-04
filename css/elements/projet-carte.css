@@ -167,18 +167,28 @@
     border-color: #A1A1AA;
 }
 
-.bouton-detail {
-    background-color: var(--accent);
+.lien-projet {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 32px;
+    padding: 0 12px;
+
     color: var(--texte);
-    font-size: 14px;
-    padding: 8px 16px;
+    background-color: transparent;
+    border: 1px solid var(--accent);
     border-radius: 6px;
+
+    font-size: 12px;
+    font-weight: 600;
     text-decoration: none;
-    transition: background-color 0.2s ease;
+
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.bouton-detail:hover {
-    background-color: var(--accent-hover);
+.lien-projet:hover {
+    color: #FFFFFF;
+    background-color: var(--accent);
 }
 
 .message-vide {

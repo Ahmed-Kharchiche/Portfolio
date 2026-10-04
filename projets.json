@@ -46,5 +46,31 @@
             "images\/projets\/Snapshot_1.PNG"
         ],
         "dateCreation": "2026-09-26"
+    },
+    {
+        "id": "projet_6ac2733002b81",
+        "titre": "test",
+        "description": "test",
+        "technologies": [
+            "Java"
+        ],
+        "gitlab": "",
+        "images": [
+            "images\/projets\/AUDI.jpg"
+        ],
+        "dateCreation": "2026-10-04"
+    },
+    {
+        "id": "projet_6ac2735605887",
+        "titre": "test",
+        "description": "test",
+        "technologies": [
+            "Java"
+        ],
+        "gitlab": "",
+        "images": [
+            "images\/projets\/rs6 automne.jpg"
+        ],
+        "dateCreation": "2026-10-04"
     }
 ]
