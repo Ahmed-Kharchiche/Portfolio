@@ -5,7 +5,7 @@
 
 // ↑ AUGMENTER = va plus loin à chaque coup de molette
 // ↓ DIMINUER = va moins loin
-const vitesseScroll = 0.5;
+const vitesseScroll = 0.55;
 
 // ↑ AUGMENTER = s'arrête plus rapidement
 // ↓ DIMINUER = continue plus longtemps
