@@ -19,8 +19,11 @@ const zones = [...document.querySelectorAll(".zone")];
 const mobile = innerWidth < 700;
 
 /* une ambiance par zone : 2 couleurs, intensité du flux, distance de connexion */
-const PAL = [[0x4fd1ff, 0x8a6bff], [0xff4f9a, 0xffb347], [0x6bffb0, 0x1fc8d6], [0xffd36b, 0xfff4d6]].map((p) => p.map((h) => new THREE.Color(h)));
-const ZP = [{ flow: 1, link: 6 }, { flow: 1.6, link: 4.5 }, { flow: .7, link: 8 }, { flow: 2, link: 5 }];
+const PAL = [[0x7C3AED, 0xA78BFA], [0x60a5fa, 0xA78BFA], [0x7C3AED, 0x22d3ee], [0xA78BFA, 0xFAFAFA]].map((p) => p.map((h) => new THREE.Color(h)));
+// identité propre à chaque projet : teinte secondaire dérivée du titre
+const th = [...window.projetData.titre].reduce((a, c) => a + c.charCodeAt(0), 0) % 360;
+PAL[1][0].setHSL(th / 360, .55, .6); PAL[2][1].setHSL(((th + 40) % 360) / 360, .6, .58);
+const ZP = [{ flow: 1, link: 6 }, { flow: 1.3, link: 5 }, { flow: .9, link: 7 }, { flow: .4, link: 8 }];
 const palA = new THREE.Color(), palB = new THREE.Color(), fond = new THREE.Color();
 
 /* ---------- rendu ---------- */
@@ -33,7 +36,7 @@ const camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, .1, 300
 camera.position.set(0, 0, 3.5);
 const composer = new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene, camera));
-const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), .9, .7, 0);
+const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), .35, .6, .85);
 composer.addPass(bloom);
 composer.addPass(new OutputPass());
 
@@ -61,7 +64,7 @@ const points = new THREE.Points(pg, new THREE.ShaderMaterial({
 void main(){ vec4 mv = modelViewMatrix * vec4(position, 1.); float tw = .6 + .4 * sin(uT * 2. + aPh * 40.);
 vA = uAlpha * tw; vP = aPh; gl_PointSize = min(uPx * aSz * 14. * (.6 + tw) / max(.3, -mv.z), 90.); gl_Position = projectionMatrix * mv; }`,
     fragmentShader: `uniform vec3 uA, uB; varying float vA, vP;
-void main(){ float a = smoothstep(.5, 0., length(gl_PointCoord - .5)); gl_FragColor = vec4(mix(uA, uB, vP) * 2.2, a * a * vA); }`
+void main(){ float a = smoothstep(.5, 0., length(gl_PointCoord - .5)); gl_FragColor = vec4(mix(uA, uB, vP) * 1.2, a * a * vA); }`
 }));
 const lp = new Float32Array(MAXL * 6), lc = new Float32Array(MAXL * 6), lg = new THREE.BufferGeometry();
 lg.setAttribute("position", new THREE.BufferAttribute(lp, 3).setUsage(THREE.DynamicDrawUsage));
@@ -77,7 +80,7 @@ const texHalo = (() => {
     d.addColorStop(0, "rgba(255,255,255,1)"); d.addColorStop(.3, "rgba(255,255,255,.25)"); d.addColorStop(1, "rgba(255,255,255,0)");
     g.fillStyle = d; g.fillRect(0, 0, 64, 64); return new THREE.CanvasTexture(c);
 })();
-const hero = new THREE.Group(), noyau = new THREE.Mesh(new THREE.SphereGeometry(.12, 16, 16), new THREE.MeshBasicMaterial({ color: new THREE.Color(4, 4, 4) }));
+const hero = new THREE.Group(), noyau = new THREE.Mesh(new THREE.SphereGeometry(.12, 16, 16), new THREE.MeshBasicMaterial({ color: new THREE.Color(2, 2, 2) }));
 const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: texHalo, blending: THREE.AdditiveBlending, transparent: true, depthWrite: false }));
 const NO = 12, orbPos = new Float32Array(NO * 3), orbG = new THREE.BufferGeometry();
 orbG.setAttribute("position", new THREE.BufferAttribute(orbPos, 3));
@@ -106,7 +109,7 @@ let ac, master, osc, filt, gOsc, nzF, nzG, sonOn = true;
 function son() {
     if (!ac) {
         ac = new AudioContext();
-        master = ac.createGain(); master.gain.value = sonOn ? .7 : 0; master.connect(ac.destination);
+        master = ac.createGain(); master.gain.value = sonOn ? .45 : 0; master.connect(ac.destination);
         osc = ac.createOscillator(); osc.type = "sawtooth"; osc.frequency.value = 55;
         filt = ac.createBiquadFilter(); filt.type = "lowpass"; filt.frequency.value = 200;
         gOsc = ac.createGain(); gOsc.gain.value = 0; osc.connect(filt).connect(gOsc).connect(master); osc.start();
@@ -118,12 +121,12 @@ function son() {
     }
     if (ac.state === "suspended") ac.resume();
 }
-function sonSync(v) { // v : 0 (calme) → 1 (vitesse max)
+function sonSync(v, tc = .1) { // v : 0 (calme) → 1 (vitesse max)
     if (!ac || !Number.isFinite(v)) return;
     const t = ac.currentTime;
-    osc.frequency.setTargetAtTime(55 + v * 90, t, .1); filt.frequency.setTargetAtTime(180 + v * 2600, t, .1);
-    gOsc.gain.setTargetAtTime(.03 + v * .09, t, .1);
-    nzF.frequency.setTargetAtTime(300 + v * 3500, t, .1); nzG.gain.setTargetAtTime(v * v * .25, t, .1);
+    osc.frequency.setTargetAtTime(55 + v * 90, t, tc); filt.frequency.setTargetAtTime(180 + v * 2600, t, tc);
+    gOsc.gain.setTargetAtTime(.03 + v * .09, t, tc);
+    nzF.frequency.setTargetAtTime(300 + v * 3500, t, tc); nzG.gain.setTargetAtTime(v * v * .25, t, tc);
 }
 function note(type, f0, f1, dur, vol) {
     if (!ac) return;
@@ -137,7 +140,7 @@ const blip = () => note("sine", rnd(1200, 2400), rnd(1200, 2400), .12, .02);
 for (const ev of ["pointerdown", "keydown"]) addEventListener(ev, son, { once: true });
 $("#son").onclick = (e) => {
     sonOn = !sonOn; e.currentTarget.textContent = sonOn ? "🔊" : "🔇"; e.currentTarget.classList.toggle("coupe", !sonOn); son();
-    master.gain.setTargetAtTime(sonOn ? .7 : 0, ac.currentTime, .1);
+    master.gain.setTargetAtTime(sonOn ? .45 : 0, ac.currentTime, .1);
 };
 
 /* ---------- état & voyage ---------- */
@@ -147,6 +150,7 @@ const v3 = new THREE.Vector3(), prev = new THREE.Vector3(), hv = new THREE.Vecto
 
 function afficher(z) {
     vis = z;
+    document.querySelectorAll("#actes [data-act]").forEach((b, i) => b.classList.toggle("on", i === z));
     zones.forEach((el, i) => el.classList.toggle("active", i === z));
     btn.textContent = z === zones.length - 1 ? "Recommencer" : "Suivre la lumière";
 }
@@ -210,7 +214,7 @@ function holo(z, txt, px, s, font) {
 void main(){ float s = .0015 * sin(uT * .7 + vUv.x * 6.);
 float a = texture2D(map, vUv + vec2(s, 0.)).a, b = texture2D(map, vUv).a, c = texture2D(map, vUv - vec2(s, 0.)).a;
 float band = smoothstep(.06, 0., abs(vUv.x - (fract(uT * .09) * 1.6 - .3)));
-gl_FragColor = vec4(uC * (vec3(a, b, c) + band * .9 * b) * 1.8, max(max(a, b), c) * uA); }`
+gl_FragColor = vec4(mix(uC, vec3(1.), .6) * (vec3(a, b, c) + band * .5 * b), max(max(a, b), c) * uA); }`
     });
     reg(z, m, 1);
     return new THREE.Mesh(new THREE.PlaneGeometry(c.width * s, c.height * s), m);
@@ -238,9 +242,9 @@ const per = (u, w, h) => {
 function panneau(z, w, h, x, y, zz, contenu, id, grid) {
     const g = new THREE.Group(); g.position.set(x, y, zz); zg[z].add(g);
     const p = { g, z, w, h, y0: y, z0: zz, id, sel: 0, rec: 0, wave: 0, s: Math.random(), ph: rnd(0, 6.28) };
-    p.glass = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: 0x060b16, transparent: true, opacity: .4, depthWrite: false }));
-    p.glass.userData.id = id; reg(z, p.glass.material, .4, 0, p); g.add(p.glass);
-    if (contenu) { contenu.position.z = .04; g.add(contenu); }
+    p.glass = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: 0x060b16, transparent: true, opacity: .6, depthWrite: false }));
+    p.glass.userData.id = id; reg(z, p.glass.material, .6, 0, p); g.add(p.glass);
+    if (contenu) { contenu.position.z = .04; contenu.renderOrder = 3; g.add(contenu); } // contenu dessiné après les particules : toujours lisible
     const R = [[-1, -1], [1, -1], [1, 1], [-1, 1]].map(([a, b]) => new THREE.Vector3(a * w * .525, b * h * .525, -.25));
     p.back = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(R), lineMat(z, .3, 2)); g.add(p.back);
     const cs = [], br = (cx, cy, sx, sy, l) => cs.push(cx, cy, .03, cx + sx * l, cy, .03, cx, cy, .03, cx, cy + sy * l, .03);
@@ -265,6 +269,8 @@ function panneau(z, w, h, x, y, zz, contenu, id, grid) {
 /* ---------- zone 0 : titre géant, loin derrière le réseau ---------- */
 const titre = holo(0, D.titre, 200, .012, '700 200px Fraunces, serif'); titre.position.set(0, 2, -14); zg[0].add(titre);
 const hud0 = holo(0, "PROJECT_01 // SYSTEM_ONLINE", 30, .008, '500 30px "Hanken Grotesk", sans-serif'); hud0.position.set(-7, -3.8, -13); zg[0].add(hud0);
+const phrase = (D.description || "").split(/[.!?]/)[0].slice(0, 90).trim();
+if (phrase) { const sub = holo(0, phrase, 44, .008, '400 44px "Hanken Grotesk", sans-serif'); sub.position.set(0, -.8, -13.5); zg[0].add(sub); }
 
 /* ---------- zone 1 : panneau de description + noyau IA ---------- */
 const txt = bloc(1, D.description || "", 8.6), txtH = txt.geometry.parameters.height;
@@ -285,7 +291,16 @@ const iaPts = new THREE.Points(iaPg, new THREE.PointsMaterial({ size: .07, ...AD
 const iaLg = new THREE.BufferGeometry(); iaLg.setAttribute("position", new THREE.BufferAttribute(iaL, 3));
 const iaLn = new THREE.LineSegments(iaLg, lineMat(1, .6, 1)); iaLn.frustumCulled = false; ia.add(iaLn);
 const iaPulse = new THREE.Mesh(new THREE.TorusGeometry(1, .01, 6, 64), new THREE.MeshBasicMaterial({ ...ADD, opacity: 0 })); ia.add(iaPulse);
-const hudIA = holo(1, "AI_CORE // ACTIVITY", 30, .008, '500 30px "Hanken Grotesk", sans-serif'); hudIA.position.set(8, -3, -9); zg[1].add(hudIA);
+const hudIA = holo(1, "PROCESSING", 30, .008, '500 30px "Hanken Grotesk", sans-serif'); hudIA.position.set(8, -3, -9); zg[1].add(hudIA);
+// INPUT → PROCESSING → OUTPUT : l'information circule réellement
+const nodeIO = (x, y, zz, nom) => {
+    const m = new THREE.Mesh(new THREE.OctahedronGeometry(.4, 0), new THREE.MeshBasicMaterial({ wireframe: true, ...ADD })); reg(1, m.material, .9, 1);
+    m.position.set(x, y, zz); zg[1].add(m);
+    const l = holo(1, nom, 30, .008, '500 30px "Hanken Grotesk", sans-serif'); l.position.set(x, y - 1, zz); zg[1].add(l); return m;
+};
+const ioIn = nodeIO(2.5, -2.2, -8, "INPUT"), ioOut = nodeIO(13, 2.6, -10, "OUTPUT");
+zg[1].add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([ioIn.position, ia.position, ioOut.position]), lineMat(1, .3, 2)));
+const flux = new THREE.Mesh(new THREE.SphereGeometry(.07, 8, 8), new THREE.MeshBasicMaterial({ color: new THREE.Color(1.6, 1.4, 2), ...ADD })); reg(1, flux.material, 1); zg[1].add(flux);
 
 /* ---------- zone 2 : une structure par technologie, son langage d'animation, son HUD ---------- */
 function techObj(n) {
@@ -308,7 +323,8 @@ function techObj(n) {
     } else { const m = W(new THREE.TorusKnotGeometry(.5, .15, 60, 8)); o.up = () => { m.rotation.y = T * .25; m.rotation.x = Math.sin(T * .2) * .4; }; }
     return o;
 }
-const t2 = holo(2, "Technologies", 90, .012, 'italic 300 90px Fraunces, serif'); t2.position.set(0, 4.8, -9); zg[2].add(t2);
+const t2 = holo(2, "Experience", 90, .012, 'italic 300 90px Fraunces, serif'); t2.position.set(0, 4.8, -9); zg[2].add(t2);
+const h2 = holo(2, "CLIQUE UNE STRUCTURE", 30, .008, '500 30px "Hanken Grotesk", sans-serif'); h2.position.set(0, 3.9, -9); zg[2].add(h2);
 D.technologies.slice(0, 6).forEach((n, i, arr) => {
     const x = (i - (arr.length - 1) / 2) * 3.2, y = Math.sin(i * 1.7) * 1.2 - .3, zz = -7 - Math.abs(i - (arr.length - 1) / 2) * .8;
     const o = techObj(n); o.g.position.set(x, y, zz); zg[2].add(o.g);
@@ -334,6 +350,13 @@ imgs.forEach((src, i) => {
     const l2 = holo(3, `X ${rnd(10, 99).toFixed(1)} Y ${rnd(10, 99).toFixed(1)}`, 30, .007, '500 30px "Hanken Grotesk", sans-serif'); l2.position.set(IW / 2 - .9, IH / 2 + .25, 0); p.g.add(l2);
 });
 $("#scene-3d").addEventListener("click", () => { // sélection d'un projet
+    if (vis === 2) { // acte EXPERIENCE : on déclenche une structure
+        ray.setFromCamera(mouse, camera);
+        const hit = ray.intersectObjects(techs.map((o) => o.g), true)[0];
+        const o = hit && techs.find((t) => { for (let n = hit.object; n; n = n.parent) if (n === t.g) return true; return false; });
+        if (o) { o.react = 1; o.g.getWorldPosition(tv); waves.push({ c: tv.clone(), t: 0 }); blip(); }
+        return;
+    }
     if (vis !== 3) return;
     ray.setFromCamera(mouse, camera);
     const hit = ray.intersectObjects(panels.filter((p) => p.id >= 0).map((p) => p.glass))[0];
@@ -353,7 +376,7 @@ function monde3d(dt) {
         for (const o of mats[z]) {
             const m = o.m;
             if (m.uniforms) m.uniforms.uA.value = r * o.k;
-            else { m.opacity = r * o.k * (o.p ? 1 - o.p.rec * .65 : 1); if (o.t) m.color.copy(o.t === 1 ? palA : palB).multiplyScalar(1.8 * (o.p ? 1 + o.p.sel * 1.5 : 1)); }
+            else { m.opacity = r * o.k * (o.p ? 1 - o.p.rec * .65 : 1); if (o.t) m.color.copy(o.t === 1 ? palA : palB).multiplyScalar(1 * (o.p ? 1 + o.p.sel * 1.5 : 1)); }
         }
     }
     for (const p of panels) {
@@ -371,7 +394,7 @@ function monde3d(dt) {
         const kick = Math.pow(Math.max(0, Math.sin(T * .8 + p.ph * 5)), 20) * 12 + p.sel * 8; // accélérations brusques
         p.s += dt * (.04 + .05 * kick);
         for (let q = 0; q < 2; q++) for (let i = 0; i < 13; i++) {
-            const a = per(p.s + q * .5 - i * .004, p.w, p.h), b = per(p.s + q * .5 - (i + 1) * .004, p.w, p.h), o = (q * 13 + i) * 6, f = Math.pow(1 - i / 14, 1.5) * (1.6 + p.sel * 1.5);
+            const a = per(p.s + q * .5 - i * .004, p.w, p.h), b = per(p.s + q * .5 - (i + 1) * .004, p.w, p.h), o = (q * 13 + i) * 6, f = Math.pow(1 - i / 14, 1.5) * (1 + p.sel);
             p.rp.set([a[0], a[1], .03, b[0], b[1], .03], o); p.rc.set([palA.r * f, palA.g * f, palA.b * f, palA.r * f * .7, palA.g * f * .7, palA.b * f * .7], o);
         }
         p.rg.attributes.position.needsUpdate = p.rg.attributes.color.needsUpdate = true;
@@ -393,7 +416,10 @@ function monde3d(dt) {
         iaLg.setDrawRange(0, n * 2); iaPg.attributes.position.needsUpdate = iaLg.attributes.position.needsUpdate = true;
         const u = (T * .25) % 1; // impulsion périodique à travers le réseau
         iaPulse.scale.setScalar(.3 + u * 3.5); iaPulse.material.opacity = zr[1] * (1 - u) * .8; iaPulse.material.color.copy(palA).multiplyScalar(2);
-        iaC.scale.setScalar(1 + .3 * Math.max(0, 1 - u * 6));
+        const fu = (T * .22) % 1;
+        if (fu < .5) flux.position.lerpVectors(ioIn.position, ia.position, fu * 2); else flux.position.lerpVectors(ia.position, ioOut.position, (fu - .5) * 2);
+        iaC.scale.setScalar(1 + .3 * Math.max(0, 1 - u * 6) + .4 * Math.max(0, 1 - Math.abs(fu - .5) * 10));
+        ioOut.scale.setScalar(1 + .5 * Math.max(0, 1 - fu * 8)); ioIn.rotation.y += dt; ioOut.rotation.y += dt * .6;
     }
     if (zr[2] > .01) techs.forEach((o) => { // impulsions HUD → objet : l'objet réagit à l'arrivée
         o.up(); const u = (T * .3 + o.ph) % 1; if (u < o.u) o.react = 1; o.u = u; o.react *= Math.exp(-dt * 3);
@@ -401,10 +427,30 @@ function monde3d(dt) {
     });
 }
 
+/* ---------- navigation, molette, version simple ---------- */
+document.querySelectorAll("#actes [data-act]").forEach((b, i) => (b.onclick = () => { if (i !== zone) voyager(i, i > zone ? 1 : -1); }));
+let wheelAcc = 0, wheelT = 0;
+addEventListener("wheel", (e) => { // la molette exprime une intention, elle ne déplace pas directement
+    if (simple) return;
+    const n = performance.now(); if (n - wheelT > 300) wheelAcc = 0; wheelT = n; wheelAcc += e.deltaY;
+    if (Math.abs(wheelAcc) > 140) { wheelAcc > 0 ? avancer() : voyager(zone - 1, -1); wheelAcc = 0; }
+}, { passive: true });
+let simple = matchMedia("(prefers-reduced-motion: reduce)").matches;
+function setSimple(v) {
+    simple = v; main.classList.toggle("simple", v);
+    $("#skip").textContent = v ? "Version immersive" : "Version simple";
+    if (ac) master.gain.setTargetAtTime(v || !sonOn ? 0 : .45, ac.currentTime, .05);
+    if (v) zones.forEach((el) => el.classList.add("active"));
+    else afficher(Math.max(zone, 0));
+}
+$("#skip").onclick = () => setSimple(!simple);
+if (simple) setSimple(true);
+
 /* ---------- boucle ---------- */
 const clock = new THREE.Clock();
 function frame() {
     requestAnimationFrame(frame);
+    if (simple) { clock.getDelta(); return; }
     const dt = Math.max(Math.min(clock.getDelta(), .05), 1e-4); T += dt; // jamais 0 : évite la division par zéro (NaN)
     const reveal = E.out(clamp((T - 2.5) / 5.5)), ex = E.smooth(reveal);
     boost *= Math.exp(-dt * .6);
@@ -414,8 +460,8 @@ function frame() {
     /* palette (progressive pendant le voyage, jamais instantanée) */
     const a = PAL[zone], b = PAL[trav ? trav.to : zone], w = trav ? E.inOut(clamp((trav.p - .15) / .8)) : 0;
     palA.copy(a[0]).lerp(b[0], w); palB.copy(a[1]).lerp(b[1], w);
-    fond.copy(palA).multiplyScalar(.035); renderer.setClearColor(fond); scene.fog.color.copy(fond);
-    main.style.setProperty("--acc", "#" + palA.getHexString());
+    fond.copy(palA).multiplyScalar(.02); renderer.setClearColor(fond); scene.fog.color.copy(fond);
+    main.style.setProperty("--acc", "#" + palB.getHexString());
 
     /* point guide */
     prev.copy(hero.position);
@@ -442,14 +488,14 @@ function frame() {
     if (tele) { hv.set(0, 0, 0); tele = false; }
     vit += (clamp(hv.length() / 45, 0, 1.4) - vit) * (1 - Math.exp(-dt * 6));
     const pulse = 1 + .12 * Math.sin(T * 2.2);
-    noyau.scale.setScalar(pulse); halo.scale.setScalar(2.4 * pulse + vit * 4); halo.material.color.copy(palA).multiplyScalar(1.6);
+    noyau.scale.setScalar(pulse); halo.scale.setScalar(2.4 * pulse + vit * 4); halo.material.color.copy(palA).multiplyScalar(.9);
     for (let i = 0; i < NO; i++) {
         const an = T * (.6 + i * .15) + i * 2, r = .5 + (i % 4) * .3;
         orbPos.set([Math.cos(an) * r, Math.sin(an * 1.3) * r * .6, Math.sin(an) * r], i * 3);
     }
     orbG.attributes.position.needsUpdate = true;
     tp.copyWithin(3, 0, tp.length - 3); tp.set([hero.position.x, hero.position.y, hero.position.z], 0);
-    for (let i = 0; i < NT; i++) { const f = Math.pow(1 - i / NT, 2) * 2.5; tc.set([palA.r * f, palA.g * f, palA.b * f], i * 3); }
+    for (let i = 0; i < NT; i++) { const f = Math.pow(1 - i / NT, 2) * 1.3; tc.set([palA.r * f, palA.g * f, palA.b * f], i * 3); }
     tg.attributes.position.needsUpdate = tg.attributes.color.needsUpdate = true;
 
     /* caméra : inertie, retard puis rattrapage pendant le voyage, traversée du réseau au repos */
@@ -473,7 +519,7 @@ function frame() {
         portail.scale.setScalar(E.out(clamp(trav.p * 5)) + .001);
         anneaux.forEach((m) => {
             m.rotation.z += m.userData.v * dt * (1 + 4 * trav.p);
-            m.children[0].material.color.copy(palB).multiplyScalar(1.6); m.children[1].material.color.copy(palA).multiplyScalar(2.5);
+            m.children[0].material.color.copy(palB).multiplyScalar(1); m.children[1].material.color.copy(palA).multiplyScalar(1.4);
         });
     }
 
@@ -528,7 +574,7 @@ function frame() {
         for (let j = i + 1; j < N && nl < MAXL; j++) {
             const dx = pos[i * 3] - pos[j * 3], dy = pos[i * 3 + 1] - pos[j * 3 + 1], dz = pos[i * 3 + 2] - pos[j * 3 + 2], d2 = dx * dx + dy * dy + dz * dz;
             if (d2 > L2) continue;
-            const o = nl * 6, al = (1 - d2 / L2) * reveal * 1.4, c = i % 2 ? palA : palB;
+            const o = nl * 6, al = (1 - d2 / L2) * reveal * .7, c = i % 2 ? palA : palB;
             lp.set([pos[i * 3], pos[i * 3 + 1], pos[i * 3 + 2], pos[j * 3], pos[j * 3 + 1], pos[j * 3 + 2]], o);
             lc.set([c.r * al, c.g * al, c.b * al, c.r * al, c.g * al, c.b * al], o); nl++;
         }
@@ -538,10 +584,11 @@ function frame() {
     if (nl - avgL > 10 && T - lastTick > .18) { blip(); lastTick = T; }
 
     /* son synchronisé + lueur + flash */
-    sonSync(clamp(Math.max(vit, S / 3.2)));
-    bloom.strength = .8 + vit * 1.2 + flash * 1.5;
+    const coupe = trav && !trav.sw && trav.p > .92; // vitesse max : le son se coupe une fraction de seconde
+    sonSync(coupe ? 0 : clamp(Math.max(vit, S / 3.2)), coupe ? .015 : .1);
+    bloom.strength = .3 + vit * .5 + flash * .6;
     scene.fog.density = .02 - clamp(vit) * .008;
-    flashEl.style.opacity = flash;
+    flashEl.style.opacity = flash * .45;
     monde3d(dt);
     composer.render();
 }

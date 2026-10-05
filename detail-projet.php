@@ -27,7 +27,7 @@ include 'includes/header.php';
         <div class="flash" id="flash" aria-hidden="true"></div>
 
         <section class="zone" data-zone="0">
-            <p class="label">Projet</p>
+            <p class="label">01 — Discover</p>
             <h1><?= htmlspecialchars($projet->getTitre()) ?></h1>
             <?php if ($projet->getDateCreation()): ?>
                 <span class="date">Créé le <?= date("d/m/Y", strtotime($projet->getDateCreation())) ?></span>
@@ -35,13 +35,13 @@ include 'includes/header.php';
         </section>
 
         <section class="zone" data-zone="1">
-            <p class="label">Contexte</p>
+            <p class="label">02 — Understand</p>
             <h2>Le projet</h2>
             <p class="texte"><?= nl2br(htmlspecialchars($projet->getDescription())) ?></p>
         </section>
 
         <section class="zone" data-zone="2">
-            <p class="label">Outils</p>
+            <p class="label">03 — Experience</p>
             <h2>Technologies</h2>
             <div class="techs">
                 <?php foreach ($technologies as $t): ?><span><?= htmlspecialchars($t) ?></span><?php endforeach; ?>
@@ -49,7 +49,7 @@ include 'includes/header.php';
         </section>
 
         <section class="zone" data-zone="3">
-            <p class="label">Résultat</p>
+            <p class="label">04 — Result</p>
             <?php if ($images): ?>
                 <div class="galerie">
                     <?php foreach ($images as $i => $img): ?>
@@ -65,6 +65,11 @@ include 'includes/header.php';
             </div>
         </section>
 
+        <nav class="actes" id="actes" aria-label="Actes du projet">
+            <a href="projets.php">← CORE</a>
+            <button data-act="0" class="on">DISCOVER</button><button data-act="1">UNDERSTAND</button><button data-act="2">EXPERIENCE</button><button data-act="3">RESULT</button>
+        </nav>
+        <button class="son skip" id="skip">Version simple</button>
         <button class="bouton guide" id="suiv">Suivre la lumière</button>
         <p class="astuce" id="astuce">Espace : avancer · Échap : revenir · clic : onde · double-clic : accélérer</p>
         <button class="son" id="son" aria-label="Couper ou activer le son">🔊</button>

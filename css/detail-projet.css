@@ -1,15 +1,15 @@
 @import url("https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;1,300&family=Hanken+Grotesk:wght@400;500&display=swap");
 
 .detail-projet {
-    --acc: #4fd1ff; /* couleur d'accent, mise à jour par le JS selon la zone */
+    --acc: #A78BFA; /* couleur d'accent, mise à jour par le JS selon la zone */
     --serif: "Fraunces", Georgia, serif; --sans: "Hanken Grotesk", system-ui, sans-serif;
     position: relative; height: 100dvh; overflow: hidden;
-    background: #000; color: #eef0f7; font-family: var(--sans);
+    background: #09090B; color: #FAFAFA; font-family: var(--sans);
 }
 html:has(.detail-projet) { overflow: hidden; }
 #scene-3d { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; }
 .voile { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 50%, transparent 45%, rgba(0, 0, 0, .7)); }
-.flash { position: absolute; inset: 0; z-index: 30; background: #fff; opacity: 0; pointer-events: none; }
+.flash { position: absolute; inset: 0; z-index: 30; background: #e9e3ff; opacity: 0; pointer-events: none; }
 
 /* texte de chaque zone : apparition floue, comme une mise au point */
 .zone {
@@ -51,3 +51,18 @@ h2 { font-size: clamp(32px, 4.5vw, 56px); font-style: italic; font-weight: 300; 
 
 /* le texte HTML reste lisible par les lecteurs d'écran, mais l'affichage est fait en 3D ; seuls les boutons restent visibles */
 .zone > :not(.actions) { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* HUD des actes : discret, dans un coin */
+.actes { position: absolute; z-index: 10; left: 24px; bottom: 24px; display: flex; gap: 16px; align-items: center; font: 500 12px var(--sans); letter-spacing: .08em; }
+.actes a, .actes button { color: #FAFAFA; background: none; border: 0; padding: 4px 0; cursor: pointer; opacity: .45; text-decoration: none; font: inherit; transition: opacity .4s, color .4s; }
+.actes a:hover, .actes button:hover, .actes .on { opacity: 1; }
+.actes .on { color: var(--acc); }
+.skip { right: 76px; width: auto; border-radius: 999px; padding: 0 16px; font: 500 12px var(--sans); }
+
+/* version simple (SKIP / reduced motion) : tout le contenu, sans animation */
+html:has(.detail-projet.simple) { overflow: auto; }
+.detail-projet.simple { height: auto; min-height: 100dvh; overflow: visible; }
+.simple #scene-3d, .simple .voile, .simple .flash, .simple .guide, .simple .astuce { display: none; }
+.simple .zone { position: relative; left: auto; bottom: auto; width: min(720px, 88vw); margin: 8vh auto; opacity: 1; filter: none; transform: none; pointer-events: auto; transition: none; }
+.simple .zone > :not(.actions) { position: static !important; width: auto; height: auto; overflow: visible; clip-path: none; white-space: normal; }
+@media (max-width: 700px) { .actes button { display: none; } }
