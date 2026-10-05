@@ -72,5 +72,20 @@
             "images\/projets\/rs6 automne.jpg"
         ],
         "dateCreation": "2026-10-04"
+    },
+    {
+        "id": "projet_6ac39608edc4c",
+        "titre": "test",
+        "description": "juste untest",
+        "technologies": [
+            "Python",
+            "HTML",
+            "JavaScript"
+        ],
+        "gitlab": "",
+        "images": [
+            "images\/projets\/chambresimplee.jpg"
+        ],
+        "dateCreation": "2026-10-05"
     }
 ]
