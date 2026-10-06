@@ -3,6 +3,7 @@ import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
+import { creerUnivers } from "./univers.js";
 
 await Promise.race([document.fonts.load('700 100px Fraunces'), document.fonts.load('400 20px "Hanken Grotesk"'), new Promise((r) => setTimeout(r, 1500))]).catch(() => {});
 const $ = (s) => document.querySelector(s);
@@ -154,8 +155,15 @@ function afficher(z) {
     zones.forEach((el, i) => el.classList.toggle("active", i === z));
     btn.textContent = z === zones.length - 1 ? "Recommencer" : "Suivre la lumière";
 }
-function voyager(vers, sens) {
-    if (trav || T < 8 || vers < 0 || vers >= zones.length) return;
+let attente = null, ambT = 2;
+function voyager(vers, sens) { // ESPACE : on déclenche quelque chose dans le monde (silence, particules freinées, onde), puis le voyage
+    if (trav || attente || sortie || T < 8 || vers < 0 || vers >= zones.length) return;
+    attente = { vers, sens, t: .45 };
+    zones.forEach((el) => el.classList.remove("active")); btn.classList.remove("visible"); vis = -1;
+    waves.push({ c: new THREE.Vector3(0, 0, 0), t: 0 });
+}
+function demarrer(vers, sens) {
+    if (trav || vers < 0 || vers >= zones.length) return;
     const dir = new THREE.Vector3(sens * .25, .08, -sens).normalize();
     trav = { to: vers, p: 0, q: 0, sw: false, txt: false, dir, start: hero.position.clone() };
     portail.visible = true; portail.position.copy(dir).multiplyScalar(55).add(trav.start); portail.lookAt(trav.start);
@@ -164,7 +172,7 @@ function voyager(vers, sens) {
 }
 const avancer = () => voyager((zone + 1) % zones.length, 1);
 function permuter() { // sous le flash blanc : nouveau monde, nouvelle identité
-    zone = trav.to; semer(); off.fill(0); portail.visible = false; impact();
+    zone = trav.to; if (osc) osc.type = ["sine", "triangle", "sawtooth", "sine"][zone]; semer(); off.fill(0); portail.visible = false; impact();
     hero.position.copy(trav.dir).multiplyScalar(-18);
     camera.position.copy(hero.position).addScaledVector(trav.dir, -7); camera.position.y += 1.3;
     for (let i = 0; i < NT; i++) tp.set([hero.position.x, hero.position.y, hero.position.z], i * 3);
@@ -181,7 +189,7 @@ $("#scene-3d").addEventListener("dblclick", () => (boost = 1));
 btn.onclick = avancer;
 addEventListener("keydown", (e) => {
     if (e.code === "Space") { if (e.target.closest?.("button, a")) return; e.preventDefault(); avancer(); }
-    else if (e.key === "Escape") voyager(zone - 1, -1);
+    else if (e.key === "Escape") { if (zone === 0 && !trav && !attente) quitter(); else voyager(zone - 1, -1); }
 });
 addEventListener("resize", () => {
     camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
@@ -427,6 +435,56 @@ function monde3d(dt) {
     });
 }
 
+/* ======== UNIVERS DU PROJET + DÉSASSEMBLAGE PHYSIQUE VERS LE CORE ======== */
+const typeUnivers = (() => { const k = (D.technologies.join(" ") + " " + D.titre).toLowerCase(); return /python|scikit|machine|neur|\bia\b|\bai\b/.test(k) ? "ia" : /java/.test(k) ? "java" : /\bc\b|algo|graphe/.test(k) ? "c" : "web"; })();
+const univ = creerUnivers(typeUnivers, { a: new THREE.Color(0xC4B5FD), b: new THREE.Color(0xA78BFA) }); // null pour "web" : sortie classique
+const CORE = new THREE.Vector3(0, .5, -46); // le Core, au loin derrière le projet : c'est vers lui que repart l'énergie
+let sortie = null, pres = 0, coreE = 0, lastArr = 0;
+const coreMesh = new THREE.Mesh(new THREE.SphereGeometry(.35, 16, 16), new THREE.MeshBasicMaterial({ color: 0xFAFAFA, transparent: true, opacity: 0, fog: false, depthWrite: false }));
+const coreHalo = new THREE.Sprite(new THREE.SpriteMaterial({ map: texHalo, color: 0xA78BFA, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, fog: false, opacity: 0 }));
+coreMesh.position.copy(CORE); coreHalo.position.copy(CORE); coreMesh.visible = coreHalo.visible = false; scene.add(coreMesh, coreHalo);
+if (univ) { univ.g.position.set(0, .5, -9); univ.g.scale.setScalar(1.5); univ.g.visible = false; scene.add(univ.g); }
+const arrivee = () => { // le Core réagit à chaque arrivée : énergie, puis pulse sonore (limité en cadence)
+    coreE = Math.min(1.8, coreE + .03);
+    if (T - lastArr > .07) { lastArr = T; const f = 380 + coreE * 520 + rnd(0, 60); note("sine", f, f, .22, .012 + .02 * Math.min(1, coreE)); }
+};
+function quitter() { // ← CORE / Échap (acte 1) : le projet se désassemble, puis la caméra reprend sa trajectoire vers le Core
+    if (!univ || sortie || trav || attente || simple || T < 3) return false;
+    zones.forEach((el) => el.classList.remove("active")); btn.classList.remove("visible"); astuce.classList.remove("visible"); vis = -1;
+    univ.g.updateMatrixWorld(true); univ.demonter(univ.g.worldToLocal(CORE.clone()), arrivee);
+    sortie = { t: 0, phase: "demontage", v: 0, fovT: 60, lk: CORE.clone(), fondu: undefined, bg: false, imp: false };
+    return true;
+}
+function sortieMaj(dt) {
+    if (univ) { // le monde du projet : discret dans les actes, plein lors de la sortie
+        pres += ((sortie ? 1 : Math.max(zr[2] * .55, .2)) - pres) * (1 - Math.exp(-dt * (sortie ? 1.2 : 2)));
+        univ.g.visible = pres > .01;
+        if (univ.g.visible) { for (const [m, k] of univ.mats) { const v = pres * k; if (m.uniforms && m.uniforms.uA) m.uniforms.uA.value = v; else m.opacity = v; } univ.update(dt); }
+    }
+    coreE *= Math.exp(-dt * .9);
+    const cv = sortie ? E.smooth(clamp(sortie.t / 1.6)) : 0; coreMesh.visible = coreHalo.visible = cv > .01;
+    if (cv > .01) {
+        coreMesh.material.opacity = cv; coreMesh.scale.setScalar(1 + .12 * Math.sin(T * 1.6) + coreE * 1.1);
+        coreHalo.material.opacity = cv * (.3 + Math.min(.5, coreE * .4)); coreHalo.scale.setScalar(5 + coreE * 9 + Math.sin(T * 1.6 + 1));
+    }
+    const X = sortie; if (!X) return;
+    X.t += dt;
+    if (X.phase === "demontage" && X.t > 3 && univ.retour > .8) { // la majorité de l'énergie est revenue : la caméra repart
+        X.phase = "vol"; X.v = 0; X.p0 = camera.position.clone(); X.p2 = CORE.clone().add(new THREE.Vector3(0, .4, 4.5));
+        X.p1 = X.p0.clone().lerp(X.p2, .5).add(new THREE.Vector3(7, 3, 0)); note("sine", 180, 900, .8, .22);
+    } else if (X.phase === "vol") {
+        X.v = Math.min(1, X.v + dt / 3);
+        X.fondu = E.smooth(clamp((X.v - .72) / .26)); if (X.v > .6 && !X.bg) { X.bg = true; flashEl.style.background = "#09090B"; } if (X.v > .8 && !X.imp) { X.imp = true; impact(); }
+        if (X.v >= 1) { X.phase = "fin"; location.href = "core.php"; }
+    }
+}
+function volCamera() { // trajectoire courbe : anticipation, accélération, léger dépassement, ralentissement
+    const X = sortie, p = X.v, e = E.inOut(p) + .035 * Math.sin(Math.PI * clamp((p - .85) / .15)) - .04 * Math.sin(Math.PI * clamp(p / .15)), q = 1 - e;
+    camera.position.set(0, 0, 0).addScaledVector(X.p0, q * q).addScaledVector(X.p1, 2 * q * e).addScaledVector(X.p2, e * e); X.fovT = 60 + 22 * Math.sin(e * Math.PI);
+}
+$("#retour").addEventListener("click", (e) => { if (quitter()) e.preventDefault(); });
+$("#scene-3d").addEventListener("click", () => { if (vis === 2 && univ && !sortie) { ray.setFromCamera(mouse, camera); univ.clic(ray, false); } }); // les lois de l'univers restent interactives
+
 /* ---------- navigation, molette, version simple ---------- */
 document.querySelectorAll("#actes [data-act]").forEach((b, i) => (b.onclick = () => { if (i !== zone) voyager(i, i > zone ? 1 : -1); }));
 let wheelAcc = 0, wheelT = 0;
@@ -452,10 +510,11 @@ function frame() {
     requestAnimationFrame(frame);
     if (simple) { clock.getDelta(); return; }
     const dt = Math.max(Math.min(clock.getDelta(), .05), 1e-4); T += dt; // jamais 0 : évite la division par zéro (NaN)
+    if (attente) { attente.t -= dt; if (attente.t <= 0) { const a = attente; attente = null; demarrer(a.vers, a.sens); note("sine", 180, 900, .8, .22); } } // impulsion → montée
     const reveal = E.out(clamp((T - 2.5) / 5.5)), ex = E.smooth(reveal);
-    boost *= Math.exp(-dt * .6);
+    boost *= Math.exp(-dt * .6); sortieMaj(dt);
     // flux global : quelques accélérations brutales synchronisées, puis presque l'arrêt
-    S = (.15 + 2.2 * Math.pow(Math.max(0, Math.sin(T * .45 + Math.sin(T * .17) * 2)), 8) + boost * 3) * ZP[zone].flow * reveal;
+    S = (.15 + 2.2 * Math.pow(Math.max(0, Math.sin(T * .45 + Math.sin(T * .17) * 2)), 8) + boost * 3) * ZP[zone].flow * reveal * (attente || sortie ? .05 : 1); // les particules ralentissent
 
     /* palette (progressive pendant le voyage, jamais instantanée) */
     const a = PAL[zone], b = PAL[trav ? trav.to : zone], w = trav ? E.inOut(clamp((trav.p - .15) / .8)) : 0;
@@ -474,7 +533,7 @@ function frame() {
         trav.q = Math.min(1, trav.q + dt / 2.2);
         hero.position.copy(trav.dir).multiplyScalar(-18 * (1 - E.out(trav.q))); // ralentit naturellement
         flash *= Math.exp(-dt * 2.2);
-        if (trav.q > .55 && !trav.txt) { trav.txt = true; afficher(zone); btn.classList.add("visible"); }
+        if (trav.q > .55 && !trav.txt) { trav.txt = true; note("sine", 330, 330, .9, .1); setTimeout(() => note("sine", 495, 495, 1.1, .08), 180); afficher(zone); btn.classList.add("visible"); }
         if (trav.q >= 1) trav = null;
     } else if (T < 8) {
         spiral += dt * (.4 + 7 * E.in4(clamp((T - 1.5) / 4.5)));
@@ -510,9 +569,10 @@ function frame() {
         const zi = T < 8 ? 3.5 + (zc - 3.5) * E.inOut(clamp(T / 8)) : zc;
         camT.set(Math.sin(T * .06) * zi * .4 + mouseS.x * 3, 1.5 + mouseS.y * 2.2 + Math.sin(T * .09) * 2, zi);
     }
-    camera.position.lerp(camT, 1 - Math.exp(-dt * k));
-    look.lerp(hero.position, 1 - Math.exp(-dt * (trav ? 6 : 3))); camera.lookAt(look);
-    camera.fov += (fovT - camera.fov) * (1 - Math.exp(-dt * 3)); camera.updateProjectionMatrix(); camera.updateMatrixWorld();
+    if (sortie && sortie.phase === "demontage") camT.set(mouseS.x * 2.5, 1.2 + mouseS.y * 1.6, 15); // vantage calme pour voir le système se défaire
+    if (sortie && sortie.phase === "vol") volCamera(); else camera.position.lerp(camT, 1 - Math.exp(-dt * k));
+    look.lerp(sortie ? (sortie.phase === "vol" ? sortie.lk : univ.g.position) : hero.position, 1 - Math.exp(-dt * (trav ? 6 : sortie ? 2.5 : 3))); camera.lookAt(look);
+    camera.fov += ((sortie && sortie.phase === "vol" ? sortie.fovT : fovT) - camera.fov) * (1 - Math.exp(-dt * 3)); camera.updateProjectionMatrix(); camera.updateMatrixWorld();
 
     /* portail : anneaux contre-rotatifs, de plus en plus vite */
     if (portail.visible && trav) {
@@ -584,11 +644,13 @@ function frame() {
     if (nl - avgL > 10 && T - lastTick > .18) { blip(); lastTick = T; }
 
     /* son synchronisé + lueur + flash */
-    const coupe = trav && !trav.sw && trav.p > .92; // vitesse max : le son se coupe une fraction de seconde
+    ambT -= dt; // identité sonore de chaque univers
+    if (ambT < 0) { ambT = rnd(1.6, 4.2); if (ac) [() => note("sine", rnd(1400, 2200), rnd(1400, 2200), .7, .012), () => note("sine", 330, 330, .35, .02), () => note("square", 1800, 1800, .03, .01), null][zone]?.(); }
+    const coupe = attente || (trav && !trav.sw && trav.p > .92); // vitesse max : le son se coupe une fraction de seconde
     sonSync(coupe ? 0 : clamp(Math.max(vit, S / 3.2)), coupe ? .015 : .1);
     bloom.strength = .3 + vit * .5 + flash * .6;
     scene.fog.density = .02 - clamp(vit) * .008;
-    flashEl.style.opacity = flash * .45;
+    flashEl.style.opacity = sortie && sortie.fondu !== undefined ? sortie.fondu : flash * .45;
     monde3d(dt);
     composer.render();
 }
