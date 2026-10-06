@@ -66,7 +66,7 @@ include 'includes/header.php';
         </section>
 
         <nav class="actes" id="actes" aria-label="Actes du projet">
-            <a href="core.php" id="retour">← CORE</a>
+            <a href="projets.php">← CORE</a>
             <button data-act="0" class="on">DISCOVER</button><button data-act="1">UNDERSTAND</button><button data-act="2">EXPERIENCE</button><button data-act="3">RESULT</button>
         </nav>
         <button class="son skip" id="skip">Version simple</button>
