@@ -42,13 +42,16 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    transition: transform 0.05s linear, opacity 0.05s linear,
-    box-shadow 0.25s ease, border-color 0.25s ease;
+    transition:
+            transform 0.2s ease,
+            box-shadow 0.25s ease,
+            border-color 0.25s ease;
 }
 
 .carte-projet:hover {
     box-shadow: 0 12px 30px var(--ombre);
     border-color: var(--accent);
+    transform: translateY(-2px);
 }
 
 .image-projet {
@@ -60,7 +63,6 @@
 .date-projet {
     display: inline-block;
     width: fit-content;
-
     margin-bottom: 12px;
     padding: 3px 8px;
 
@@ -73,7 +75,6 @@
     font-weight: 500;
     letter-spacing: 0.3px;
 }
-
 
 .contenu-projet {
     padding: 20px;
@@ -89,12 +90,56 @@
 
 .contenu-projet p {
     color: var(--texte-secondaire);
-    font-size: 14px;
+    font-size: 15px;
+    line-height: 1.5;
+    margin-bottom: 8px;
+}
+
+.description-projet .description-courte {
+    display: inline;
+}
+
+.description-projet .description-complete {
+    display: none;
+}
+
+.description-projet.ouverte .description-courte {
+    display: none;
+}
+
+.description-projet.ouverte .description-complete {
+    display: inline;
+}
+
+.bouton-voir-plus {
+    align-self: flex-start;
     margin-bottom: 14px;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+    padding: 2px 0;
+
+    color: var(--accent);
+    background: none;
+    border: none;
+
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.bouton-voir-plus:hover {
+    color: var(--accent-hover);
+    text-decoration: underline;
+}
+
+.bouton-voir-plus:focus-visible,
+.lien-projet:focus-visible,
+.lien-gitlab:focus-visible,
+.bouton-modifier:focus-visible,
+.bouton-supprimer:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
 }
 
 .technologies {
@@ -112,6 +157,7 @@
     font-weight: 500;
     padding: 5px 11px;
     border-radius: 20px;
+
     transition:
             color 0.25s ease,
             border-color 0.25s ease,
@@ -183,7 +229,9 @@
     font-weight: 600;
     text-decoration: none;
 
-    transition: background-color 0.2s ease, color 0.2s ease;
+    transition:
+            background-color 0.2s ease,
+            color 0.2s ease;
 }
 
 .lien-projet:hover {
@@ -197,11 +245,10 @@
     padding: 60px 20px;
 }
 
-
 .actions-admin {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     margin-left: auto;
 }
 
@@ -211,13 +258,13 @@
     align-items: center;
     justify-content: center;
 
+    width: 32px;
     height: 32px;
-    box-sizing: border-box;
-    padding: 0 12px;
+    padding: 0;
 
     border-radius: 6px;
 
-    font-size: 12px;
+    font-size: 16px;
     font-weight: 600;
     font-family: inherit;
     text-decoration: none;
@@ -226,18 +273,20 @@
     transition:
             background-color 0.2s ease,
             color 0.2s ease,
-            border-color 0.2s ease;
+            border-color 0.2s ease,
+            transform 0.15s ease;
 }
 
 .bouton-modifier {
-    color: var(--texte);
-    background-color: transparent;
-    border: 1px solid #71717A;
+    color: #FFFFFF;
+    background-color: #3B82F6;
+    border: 1px solid #3B82F6;
 }
 
 .bouton-modifier:hover {
-    background-color: #71717A;
+    background-color: #2563EB;
     color: #FFFFFF;
+    transform: translateY(-1px);
 }
 
 .bouton-supprimer {
@@ -249,4 +298,53 @@
 .bouton-supprimer:hover {
     color: #FFFFFF;
     background-color: #EF4444;
+    transform: translateY(-1px);
+}
+
+
+
+@media (max-width: 600px) {
+    .liste-projets {
+        width: 100%;
+        max-width: 95vw;
+        gap: 16px;
+    }
+
+    .liste-projets .carte-projet {
+        flex: 1 1 100%;
+    }
+
+    .contenu-projet {
+        padding: 18px;
+    }
+
+    .bas-carte {
+        gap: 8px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .carte-projet,
+    .bouton-voir-plus,
+    .lien-gitlab,
+    .lien-projet,
+    .bouton-modifier,
+    .bouton-supprimer,
+    .technologies span {
+        transition: none;
+    }
+
+    .carte-projet:hover,
+    .bouton-modifier:hover,
+    .bouton-supprimer:hover {
+        transform: none;
+    }
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
 }

@@ -3,7 +3,7 @@
 require_once 'includes/Projet.php';
 require_once 'includes/GestionnaireProjets.php';
 
-$gestionnaire = new GestionnaireProjets("projets.json");
+$gestionnaire = new GestionnaireProjets("data/projets.json");
 $projet = $gestionnaire->trouverParId($_GET["id"] ?? "");
 
 if ($projet === null) {

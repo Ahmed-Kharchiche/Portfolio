@@ -1,4 +1,4 @@
-document.querySelectorAll(".tri-projets select").forEach(select => {
+document.querySelectorAll(".liste-perso").forEach(select => {
     const options = [...select.options];
     const label = document.querySelector(`label[for="${select.id}"]`);
     let actif = select.selectedIndex;

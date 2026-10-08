@@ -34,7 +34,37 @@ function afficherCarteProjet(Projet $projet, bool $admin = false): void
                     Créé le <?php echo date("d/m/Y", strtotime($dateCreation)); ?>
                 </span>
             <?php endif; ?>
-            <p><?php echo htmlspecialchars($projet->getDescription()); ?></p>
+            <?php
+            $description = $projet->getDescription();
+            $limiteDescription = 180;
+            $descriptionLongue = mb_strlen($description) > $limiteDescription;
+            ?>
+
+            <div class="description-container">
+                <?php if ($descriptionLongue): ?>
+
+                    <p class="description-projet">
+            <span class="description-courte">
+                <?php echo htmlspecialchars(mb_substr($description, 0, $limiteDescription)); ?>...
+            </span>
+
+                        <span class="description-complete">
+                <?php echo htmlspecialchars($description); ?>
+            </span>
+                    </p>
+
+                    <button type="button" class="bouton-voir-plus">
+                        Voir plus
+                    </button>
+
+                <?php else: ?>
+
+                    <p class="description-projet">
+                        <?php echo htmlspecialchars($description); ?>
+                    </p>
+
+                <?php endif; ?>
+            </div>
             <?php if (!empty($technologies)): ?>
                 <div class="technologies">
                     <?php foreach ($technologies as $techno): ?>
@@ -58,16 +88,13 @@ function afficherCarteProjet(Projet $projet, bool $admin = false): void
 
                 <?php if ($admin): ?>
                     <div class="actions-admin">
-                        <a class="bouton-modifier" href="admin.php?id=<?php echo urlencode($projet->getId()); ?>">Modifier</a>
-                        <form method="POST" action="admin.php" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce projet ?');">
-                            <input type="hidden" name="action" value="supprimer">
-                            <input type="hidden" name="id" value="<?php echo htmlspecialchars($projet->getId()); ?>">
-                            <button type="submit" class="bouton-supprimer">Supprimer</button>
-                        </form>
+                        <a class="bouton-modifier" href="admin.php?id=<?php echo urlencode($projet->getId()); ?>" title="Modifier le projet" aria-label="Modifier le projet">✎</a>
+                        <button type="button" class="bouton-supprimer" title="Supprimer le projet" aria-label="Supprimer le projet" onclick="ouvrirConfirmation('supprimer', '<?php echo htmlspecialchars($projet->getId()); ?>', 'Supprimer ce projet ?', 'Cette action est définitive.', true)">×</button>
                     </div>
                 <?php endif; ?>
             </div>
         </div>
     </div>
+    <script src="js/voirPlus.js"></script>
     <?php
 }

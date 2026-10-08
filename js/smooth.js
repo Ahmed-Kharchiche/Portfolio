@@ -77,5 +77,35 @@ if (!estMobile) {
         requestAnimationFrame(animationScroll);
     }
 
+    // ==============================
+//       LIENS D'ANCRE
+// ==============================
+
+    document.querySelectorAll('a[href^="#"]').forEach(lien => {
+        lien.addEventListener('click', (e) => {
+            const id = lien.getAttribute('href');
+            const cible = document.querySelector(id);
+
+            if (!cible) return;
+
+            e.preventDefault();
+
+            if (estMobile) {
+                cible.scrollIntoView({
+                    behavior: "smooth"
+                });
+                return;
+            }
+
+            cibleScroll = cible.offsetTop;
+        });
+    });
+
     animationScroll();
 }
+else {
+    cible.scrollIntoView({
+        behavior: "smooth"
+    });
+}
+

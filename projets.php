@@ -6,7 +6,7 @@ require_once 'includes/Projet.php';
 require_once 'includes/GestionnaireProjets.php';
 require_once 'includes/affichage_projets.php';
 
-$gestionnaire = new GestionnaireProjets("projets.json");
+$gestionnaire = new GestionnaireProjets("data/projets.json");
 
 $technologies_disponibles = [
         "Python",
@@ -41,7 +41,7 @@ include 'includes/header.php';
         <?php else: ?>
             <div class="tri-projets">
                 <label for="tri-projets">Trier par</label>
-                <select id="tri-projets">
+                <select id="tri-projets" class="liste-perso">
                     <option value="original">Ordre d'origine</option>
                     <option value="az">Nom A → Z</option>
                     <option value="za">Nom Z → A</option>

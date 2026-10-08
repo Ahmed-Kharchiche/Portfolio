@@ -64,111 +64,6 @@
     font-size: 14px;
 }
 
-/* Select d'origine : caché mais conservé pour le JS de tri */
-.select-cache {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    opacity: 0;
-    pointer-events: none;
-}
-
-/* ==================== LISTE DÉROULANTE ==================== */
-
-.liste-custom {
-    position: relative;
-    min-width: 200px;
-}
-
-.liste-bouton {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    width: 100%;
-    padding: 9px 14px;
-    color: var(--texte);
-    background-color: var(--carte);
-    border: 1px solid var(--bordure);
-    border-radius: 8px;
-    font-size: 14px;
-    font-family: inherit;
-    cursor: pointer;
-    outline: none;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.liste-bouton:hover,
-.liste-bouton:focus-visible,
-.liste-custom.ouvert .liste-bouton {
-    border-color: var(--accent);
-}
-
-.liste-bouton:focus-visible {
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent);
-}
-
-.liste-fleche {
-    flex-shrink: 0;
-    color: var(--texte-secondaire);
-    transition: transform 0.25s ease;
-}
-
-.liste-custom.ouvert .liste-fleche {
-    transform: rotate(180deg);
-}
-
-.liste-menu {
-    position: absolute;
-    top: calc(100% + 6px);
-    right: 0;
-    left: 0;
-    z-index: 20;
-    margin: 0;
-    padding: 6px;
-    list-style: none;
-    background-color: var(--carte);
-    border: 1px solid var(--bordure);
-    border-radius: 10px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-6px);
-    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
-}
-
-.liste-custom.ouvert .liste-menu {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-}
-
-.liste-option {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 9px 10px;
-    color: var(--texte);
-    border-radius: 6px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.15s ease;
-}
-
-.liste-option.actif {
-    background-color: color-mix(in srgb, var(--accent) 14%, transparent);
-}
-
-.liste-option.selectionne {
-    color: var(--accent);
-    font-weight: 600;
-}
-
-.liste-option.selectionne::after {
-    content: "✓";
-    font-size: 13px;
-}
-
 /* ==================== FILTRES TECHNOLOGIES ==================== */
 
 .filtre-technologies {
@@ -210,9 +105,10 @@
     border-radius: 6px;
     font-size: 12px;
     cursor: pointer;
-    transition: border-color 0.2s ease,
-    background-color 0.2s ease,
-    color 0.2s ease;
+    transition:
+            border-color 0.2s ease,
+            background-color 0.2s ease,
+            color 0.2s ease;
 }
 
 .filtre-technologie:has(input:checked) span {
@@ -267,8 +163,8 @@
     overflow: hidden;
 }
 
-
 /* Boutons en haut à droite */
+
 .dino-barre {
     position: absolute;
     top: 10px;
@@ -302,6 +198,7 @@
 }
 
 /* Boutons tactiles : uniquement sur écran tactile */
+
 .dino-tactile {
     display: none;
 }
@@ -333,6 +230,7 @@
     .dino {
         aspect-ratio: 16 / 10;
     }
+
     .dino.agrandi {
         width: 92vw;
         height: 75vh;

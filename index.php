@@ -6,7 +6,7 @@ require_once 'includes/GestionnaireProjets.php';
 
 include 'includes/header.php';
 
-$gestionnaire = new GestionnaireProjets("projets.json");
+$gestionnaire = new GestionnaireProjets("data/projets.json");
 
 $favoris = ["Portfolio", "test"];
 

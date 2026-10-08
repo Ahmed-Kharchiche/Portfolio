@@ -1,0 +1,26 @@
+[
+    {
+        "id": "avis_6ac7a0c9ab4d8",
+        "nom": "Ahmed",
+        "note": 4,
+        "message": "Tres cool",
+        "date": "2026-10-08",
+        "publie": true
+    },
+    {
+        "id": "avis_9611c9151391",
+        "nom": "Mouffy",
+        "note": 5,
+        "message": "Juste pour tester",
+        "date": "2026-10-08",
+        "publie": true
+    },
+    {
+        "id": "avis_e21facf6fe82",
+        "nom": "Stage",
+        "note": 5,
+        "message": "J’ai vraiment apprécié découvrir ce portfolio. Le design est moderne, propre et cohérent, avec une identité visuelle qui correspond bien au domaine de l’informatique et de l’intelligence artificielle. La navigation est agréable et les différentes animations apportent un vrai plus sans rendre le site difficile à utiliser. J’ai également trouvé intéressant de pouvoir découvrir plusieurs projets avec leurs technologies et leurs objectifs. Cela permet de mieux comprendre les compétences développées au cours de la formation et de voir concrètement le travail réalisé. Le portfolio donne une impression sérieuse et professionnelle tout en restant personnel. Le mode sombre est particulièrement réussi et les différents éléments de l’interface sont bien intégrés. On sent qu’il y a eu beaucoup de réflexion derrière la conception du site et pas seulement sur le développement. Dans l’ensemble, c’est un portfolio très réussi, agréable à parcourir et qui met bien en valeur les projets présentés. Il constitue une excellente vitrine pour suivre l’évolution des compétences et du parcours informatique.",
+        "date": "2026-10-08",
+        "publie": true
+    }
+]

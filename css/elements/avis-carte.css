@@ -1,0 +1,177 @@
+.carte-avis {
+    background-color: var(--carte);
+    border: 1px solid var(--bordure);
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.entete-avis {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.date-avis {
+    color: var(--texte-secondaire);
+    font-size: 14px;
+}
+
+.message-avis {
+    margin-top: 15px;
+    color: var(--texte-secondaire);
+}
+
+/* ==========================================
+   ACTIONS ADMIN
+   ========================================== */
+
+.actions-avis {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.bouton-valider-avis,
+.bouton-refuser-avis {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 6px;
+    color: #FFFFFF;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.bouton-valider-avis {
+    background-color: #15803D;
+}
+
+.bouton-valider-avis:hover {
+    background-color: #166534;
+}
+
+.bouton-refuser-avis {
+    background-color: #DC2626;
+}
+
+.bouton-refuser-avis:hover {
+    background-color: #B91C1C;
+}
+
+.bouton-valider-avis:focus-visible,
+.bouton-refuser-avis:focus-visible {
+    outline: 2px solid var(--accent-hover);
+    outline-offset: 2px;
+}
+
+/* ==========================================
+   PETITS AVIS
+   ========================================== */
+
+.petit-avis {
+    padding: 15px;
+    background-color: var(--carte);
+    border: 1px solid var(--bordure);
+    border-radius: 10px;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.petit-avis:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent);
+}
+
+.petit-avis-entete {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+.petit-avis h3 {
+    margin: 0;
+    font-size: 14px;
+    color: var(--texte);
+}
+
+.petit-avis-date {
+    color: var(--texte-secondaire);
+    font-size: 11px;
+}
+
+.petit-avis-note {
+    white-space: nowrap;
+    font-size: 13px;
+}
+
+.petit-avis-etoile {
+    color: var(--texte-secondaire);
+}
+
+.petit-avis-etoile.active {
+    color: var(--accent);
+}
+
+.petit-avis-message {
+    margin: 10px 0 0;
+    color: var(--texte-secondaire);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+/* ==========================================
+   BOUTON SUPPRIMER
+   ========================================== */
+
+.bouton-supprimer-avis {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    background: transparent;
+    color: var(--texte-secondaire);
+    border: 1.5px solid var(--texte-secondaire);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.bouton-supprimer-avis svg {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.bouton-supprimer-avis:hover {
+    color: #EF4444;
+    border-color: #EF4444;
+    transform: translateY(-1px);
+}
+
+/* ==========================================
+   NOTE (ÉTOILES)
+   ========================================== */
+
+.note-avis {
+    display: flex;
+    gap: 4px;
+}
+
+.etoile {
+    color: transparent;
+    -webkit-text-stroke: 0.5px var(--texte);
+    font-size: 25px;
+}
+
+.etoile.active {
+    color: var(--accent);
+    -webkit-text-stroke: 1px var(--accent);
+}

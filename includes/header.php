@@ -9,10 +9,13 @@
     <link rel="stylesheet" href="css/elements/theme-toggle.css">
     <link rel="stylesheet" href="css/footer.css">
     <link rel="stylesheet" href="css/elements/projet-carte.css">
+    <link rel="stylesheet" href="css/elements/carrousel.css">
+    <link rel="stylesheet" href="css/elements/avis-carte.css">
+    <link rel="stylesheet" href="includes/confirm/confirmation.css">
     <?php if (isset($page_css)): ?>
         <link rel="stylesheet" href="css/<?php echo $page_css; ?>">
     <?php endif; ?>
-    <link rel="stylesheet" href="css/elements/carrousel.css">
+
 </head>
 <body>
 

@@ -120,3 +120,18 @@
 .formulaire-contact button:hover {
     background-color: var(--accent-hover);
 }
+
+@media (max-width: 700px) {
+    .contact-contenu {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .contact-infos {
+        width: 100%;
+    }
+
+    .formulaire-contact {
+        width: 100%;
+    }
+}

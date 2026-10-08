@@ -1,0 +1,395 @@
+/* ==========================================
+   PAGE AVIS
+   ========================================== */
+
+.avis {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 95px 20px 60px;
+}
+
+/* ==========================================
+   INTRODUCTION
+   ========================================== */
+
+.avis-intro {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.avis-intro p {
+    margin-bottom: 25px;
+    color: var(--texte-secondaire);
+}
+
+.avis-intro .bouton {
+    display: inline-block;
+    padding: 11px 20px;
+    border-radius: 6px;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.avis-intro .bouton:hover {
+    transform: translateY(-2px);
+}
+
+/* ==========================================
+   MOYENNE DES AVIS
+   ========================================== */
+
+.moyenne-avis {
+    position: relative;
+    margin: 30px 0 40px;
+    padding: 26px 30px;
+    background: var(--carte);
+    border: 1px solid var(--bordure);
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.moyenne-avis::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+}
+
+.moyenne-avis h2 {
+    margin: 0 0 18px;
+    color: var(--texte);
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+}
+
+.moyenne-note {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.etoiles-moyenne {
+    display: flex;
+    gap: 5px;
+}
+
+.etoiles-moyenne span {
+    font-size: 28px;
+    line-height: 1;
+    color: var(--accent);
+    -webkit-text-stroke: 1px var(--accent);
+    background: linear-gradient(
+            90deg,
+            var(--accent) var(--remplissage),
+            transparent var(--remplissage)
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+
+
+.moyenne-valeur {
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+    color: var(--texte);
+    font-size: 25px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+}
+
+.moyenne-valeur::after {
+    content: "sur 5";
+    color: var(--texte-secondaire);
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: normal;
+}
+
+/* ==========================================
+   TRI
+   ========================================== */
+
+.tri-avis {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    max-width: 1100px;
+    margin: 0 auto 20px;
+    padding: 0 20px;
+}
+
+.tri-avis label {
+    color: var(--texte-secondaire);
+    font-size: 14px;
+}
+
+/* ==========================================
+   LISTE DES AVIS
+   ========================================== */
+
+.liste-avis {
+    margin-bottom: 40px;
+}
+
+.carte-avis {
+    margin-bottom: 15px;
+    padding: 20px;
+    background-color: var(--carte);
+    border: 1px solid var(--bordure);
+    border-radius: 12px;
+    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.carte-avis:hover {
+    transform: translateY(-3px);
+    border-color: var(--accent);
+    box-shadow: 0 8px 25px var(--ombre);
+}
+
+/* ==========================================
+   EN-TÊTE D'UN AVIS
+   ========================================== */
+
+.entete-avis {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    margin-bottom: 12px;
+}
+
+.entete-avis h3 {
+    margin-bottom: 3px;
+    color: var(--texte);
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.date-avis {
+    color: var(--texte-secondaire);
+    font-size: 13px;
+}
+
+.note-avis {
+    color: var(--accent);
+    white-space: nowrap;
+    font-size: 18px;
+    letter-spacing: 1px;
+}
+
+.message-avis {
+    color: var(--texte-secondaire);
+    line-height: 1.6;
+}
+
+.aucun-avis {
+    color: var(--texte-secondaire);
+    text-align: center;
+}
+
+/* ==========================================
+   AJOUTER UN AVIS
+   ========================================== */
+
+.avis-ajouter-bas {
+    margin-top: 100px;
+    text-align: center;
+}
+
+#laisser-avis {
+    margin-bottom: 30px;
+    font-size: 50px;
+    color: var(--texte-secondaire);
+}
+
+.avis-ajouter-bas .bouton {
+    display: inline-block;
+    padding: 11px 20px;
+    background-color: var(--accent);
+    color: var(--texte);
+    border-radius: 6px;
+    text-decoration: none;
+    transition: 0.2s ease;
+}
+
+.avis-ajouter-bas .bouton:hover {
+    background-color: var(--accent-hover);
+    transform: translateY(-2px);
+}
+
+.bouton-haut {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    margin: 35px auto 0;
+    background-color: var(--carte);
+    color: var(--texte);
+    border: 1px solid var(--bordure);
+    border-radius: 50%;
+    text-decoration: none;
+    font-size: 18px;
+    transition: 0.2s ease;
+}
+
+.bouton-haut:hover {
+    background-color: var(--accent);
+    border-color: var(--accent);
+    transform: translateY(-2px);
+}
+
+/* ==========================================
+   FORMULAIRE
+   ========================================== */
+
+.formulaire-avis {
+    max-width: 650px;
+    margin: 0 auto;
+    padding: 30px;
+    background-color: var(--carte);
+    border: 1px solid var(--bordure);
+    border-radius: 12px;
+}
+
+.formulaire-avis h2 {
+    margin-bottom: 25px;
+}
+
+.formulaire-avis .champ {
+    margin-bottom: 18px;
+}
+
+.formulaire-avis label {
+    display: block;
+    margin-bottom: 7px;
+    color: var(--texte);
+    font-size: 14px;
+}
+
+.formulaire-avis input,
+.formulaire-avis select,
+.formulaire-avis textarea {
+    width: 100%;
+    padding: 11px 13px;
+    background-color: var(--fond);
+    color: var(--texte);
+    border: 1px solid var(--bordure);
+    border-radius: 6px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.formulaire-avis select {
+    cursor: pointer;
+}
+
+.formulaire-avis textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.formulaire-avis input:focus,
+.formulaire-avis select:focus,
+.formulaire-avis textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px var(--ombre);
+}
+
+.formulaire-avis button {
+    width: 100%;
+    padding: 11px;
+    background-color: var(--accent);
+    color: var(--texte);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.formulaire-avis button:hover {
+    background-color: var(--accent-hover);
+    transform: translateY(-1px);
+}
+
+.textarea-container {
+    position: relative;
+}
+
+.compteur {
+    position: absolute;
+    right: 10px;
+    bottom: 8px;
+    color: var(--texte-secondaire);
+    font-size: 11px;
+    pointer-events: none;
+}
+
+/* ==========================================
+   MESSAGES
+   ========================================== */
+
+.message-confirmation,
+.message-erreur {
+    margin-bottom: 20px;
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.message-confirmation {
+    color: #16A34A;
+    background-color: rgba(22, 163, 74, 0.1);
+    border: 1px solid #16A34A;
+}
+
+.message-erreur {
+    color: #EF4444;
+    background-color: rgba(239, 68, 68, 0.1);
+    border: 1px solid #EF4444;
+}
+
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
+
+@media (max-width: 700px) {
+    .avis {
+        padding: 80px 15px 50px;
+    }
+
+    .entete-avis {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .moyenne-avis {
+        padding: 22px;
+    }
+
+    .moyenne-note {
+        gap: 14px;
+    }
+
+    .etoiles-moyenne span {
+        font-size: 24px;
+    }
+
+    .moyenne-valeur {
+        font-size: 21px;
+    }
+
+    .formulaire-avis {
+        padding: 20px;
+    }
+}
