@@ -1,11 +1,14 @@
 /* Rendu des univers : chaque monde applique ses propres lois (voir univers-logique.js). */
+// #region IMPORTS ET CONSTANTES
 import * as THREE from "three";
 import { Neuronal, Immeuble, Machine, Desassemblage, piecesNeuronal, piecesImmeuble, piecesMachine } from "./univers-logique.js";
 
 const rnd = (a, b) => a + Math.random() * (b - a);
 const tmp = new THREE.Vector3();
+// #endregion
 
-/* briques communes : points à énergie (shader), lignes à intensité par segment, sélection par rayon */
+// #region BRIQUES COMMUNES
+// points à énergie (shader), lignes à intensité par segment, sélection par rayon
 const noeudMat = (C) => new THREE.ShaderMaterial({
     transparent: true, depthWrite: false, uniforms: { uA: { value: 0 }, uC: { value: C }, uPx: { value: Math.min(devicePixelRatio, 2) } },
     vertexShader: `attribute float aE; uniform float uPx; varying float vE; void main(){ vE = aE; vec4 mv = modelViewMatrix * vec4(position, 1.); gl_PointSize = clamp(uPx * (5. + aE * 9.) * 60. / -mv.z, 2., 36.); gl_Position = projectionMatrix * mv; }`,
@@ -28,8 +31,10 @@ function choisir(ray, g, pos, seuil = 1.1) {
     pos.forEach((p, i) => { const d = ray.ray.distanceSqToPoint(g.localToWorld(tmp.copy(p))); if (d < bd) { bd = d; best = i; } });
     return best;
 }
+// #endregion
 
-/* ===== IA : les particules sont attirées par les nœuds actifs, l'énergie se propage en chaîne ===== */
+// #region IA
+// les particules sont attirées par les nœuds actifs, l'énergie se propage en chaîne
 function ia(C) {
     const M = [], g = new THREE.Group(), N = [], tailles = [6, 9, 9, 4], xs = [-4.5, -1.6, 1.4, 4.5];
     tailles.forEach((c, l) => { for (let k = 0; k < c; k++) N.push({ x: xs[l] + rnd(-.3, .3), y: (k - (c - 1) / 2) * (4.4 / (c - 1)) + rnd(-.2, .2), z: rnd(-1.5, 1.5), couche: l }); });
@@ -68,8 +73,10 @@ function ia(C) {
         }
     };
 }
+// #endregion
 
-/* ===== JAVA : système architectural, composants activés dans l'ordre des dépendances, circulation sur réseau orthogonal ===== */
+// #region JAVA
+// système architectural, composants activés dans l'ordre des dépendances, circulation sur réseau orthogonal
 function java(C) {
     const M = [], g = new THREE.Group(), Y = (e) => e * 1.15 - 2.3;
     const noms = [["chambres", "CHAMBRES", 0, []], ["utilisateurs", "UTILISATEURS", 1, []], ["reservations", "RÉSERVATIONS", 2, ["chambres", "utilisateurs"]], ["paiements", "PAIEMENTS", 3, ["reservations"]], ["historique", "HISTORIQUE", 4, ["paiements"]]];
@@ -111,8 +118,10 @@ function java(C) {
         }
     };
 }
+// #endregion
 
-/* ===== C : machine algorithmique, Dijkstra visible ; les perdantes s'éteignent, le chemin retenu domine ===== */
+// #region C
+// machine algorithmique, Dijkstra visible ; les perdantes s'éteignent, le chemin retenu domine
 function machine(C) {
     const M = [], g = new THREE.Group(), W = 7, H = 5, n = W * H, pos = Array.from({ length: n }, (_, i) => new THREE.Vector3(((i % W) - 3) * 1.5, (2 - ((i / W) | 0)) * 1.15, 0));
     let s = 14, e = 20;
@@ -148,8 +157,10 @@ function machine(C) {
         }
     };
 }
+// #endregion
 
-/* ===== désassemblage : rendu des pièces (la logique est dans univers-logique.js) ===== */
+// #region DÉSASSEMBLAGE
+// rendu des pièces (la logique est dans univers-logique.js)
 function rendreDebris(g, M, C, D) {
     const P = D.p, ns = P.filter((p) => p.seg).length, lp = new Float32Array(ns * 6), lc = new Float32Array(ns * 6), lg = new THREE.BufferGeometry();
     lg.setAttribute("position", new THREE.BufferAttribute(lp, 3)); lg.setAttribute("color", new THREE.BufferAttribute(lc, 3));
@@ -172,7 +183,9 @@ function rendreDebris(g, M, C, D) {
 }
 const lisse = (t) => t * t * (3 - 2 * t), borne = (x) => Math.min(1, Math.max(0, x));
 const tmpLerp = (a, b, t) => [a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t, a.z + (b.z - a.z) * t];
+// #endregion
 
+// #region CRÉATION DES UNIVERS
 export function creerUnivers(type, C) {
     const u = { ia, java, c: machine }[type]?.(C); if (!u) return null;
     const vivant = u.update; let t = 0, ds = null, dessiner = null, core = null;
@@ -196,3 +209,4 @@ export function creerUnivers(type, C) {
         }
     });
 }
+// #endregion

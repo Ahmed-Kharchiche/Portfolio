@@ -1,7 +1,11 @@
+// #region ÉLÉMENTS
 const triAvis = document.getElementById('tri-avis');
 const listeAvis = document.querySelector('.liste-avis');
+// #endregion
 
+// #region TRI DES AVIS
 if (triAvis && listeAvis) {
+    // #region TRI DES CARTES
     const cartesOriginales = [
         ...listeAvis.querySelectorAll('.carte-avis')
     ];
@@ -41,7 +45,9 @@ if (triAvis && listeAvis) {
             return 0;
         });
     }
+    // #endregion
 
+    // #region MISE À JOUR DE L'AFFICHAGE
     function mettreAJourAvis() {
         const cartesTriees = trierCartes(cartesOriginales);
         const zoneAjouterAvis = listeAvis.querySelector('.avis-ajouter-bas');
@@ -52,4 +58,6 @@ if (triAvis && listeAvis) {
     }
 
     triAvis.addEventListener('change', mettreAJourAvis);
+    // #endregion
 }
+// #endregion

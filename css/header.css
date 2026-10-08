@@ -1,3 +1,4 @@
+/* #region EN-TÊTE */
 header {
     position: fixed;
     top: 0;
@@ -6,7 +7,9 @@ header {
     z-index: 1;
     background-color: var(--fond);
 }
+/* #endregion */
 
+/* #region NAVIGATION */
 nav {
     display: flex;
     justify-content: space-between;
@@ -18,8 +21,10 @@ nav {
 nav .logo {
     font-weight: bold;
 }
+/* #endregion */
 
 
+/* #region MENU */
 .menu {
     display: flex;
     gap: 15px;
@@ -39,7 +44,9 @@ nav .logo {
     color: var(--texte);
     border: 2px solid var(--accent);
 }
+/* #endregion */
 
+/* #region RESPONSIVE */
 @media (max-width: 700px) {
 
     header nav {
@@ -81,3 +88,4 @@ nav .logo {
         margin: 0;
     }
 }
+/* #endregion */

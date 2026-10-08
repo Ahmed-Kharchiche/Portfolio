@@ -1,16 +1,15 @@
+// #region IMPORTS
 import * as THREE from "three";
 import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
+// #endregion
 
 
-/* ============================================================
-   PARAMÈTRES MODIFIABLES
-   ============================================================
-   Tu peux modifier principalement cette partie du fichier.
-   Le reste du code utilise automatiquement ces valeurs.
-   ============================================================ */
+// #region PARAMÈTRES MODIFIABLES
+// Tu peux modifier principalement cette partie du fichier.
+// Le reste du code utilise automatiquement ces valeurs.
 
 const CONFIG = {
 
@@ -197,11 +196,10 @@ const CONFIG = {
         tailleParticule: 0.07
     }
 };
+// #endregion
 
 
-/* ============================================================
-   INITIALISATION
-   ============================================================ */
+// #region INITIALISATION
 
 await Promise.race([
     document.fonts.load('700 100px Fraunces'),
@@ -219,7 +217,7 @@ const clamp = (x, a = 0, b = 1) =>
     Math.min(b, Math.max(a, x));
 
 
-/* ---------- courbes d'easing ---------- */
+// #region COURBES D'EASING
 
 const E = {
 
@@ -237,9 +235,10 @@ const E = {
     smooth: (t) =>
         t * t * (3 - 2 * t)
 };
+// #endregion
 
 
-/* ---------- éléments HTML ---------- */
+// #region ÉLÉMENTS HTML
 
 const main = $(".detail-projet");
 const flashEl = $("#flash");
@@ -252,11 +251,11 @@ const zones = [
 
 const mobile =
     innerWidth < CONFIG.performances.largeurMobile;
+// #endregion
+// #endregion
 
 
-/* ============================================================
-   PALETTES
-   ============================================================ */
+// #region PALETTES
 
 /* une ambiance par zone : 2 couleurs */
 const PAL = CONFIG.couleurs.zones.map(
@@ -301,11 +300,10 @@ const ZP = CONFIG.particules.vitesseZone.map(
 const palA = new THREE.Color();
 const palB = new THREE.Color();
 const fond = new THREE.Color();
+// #endregion
 
 
-/* ============================================================
-   RENDU
-   ============================================================ */
+// #region RENDU
 
 const renderer = new THREE.WebGLRenderer({
     canvas: $("#scene-3d"),
@@ -369,11 +367,10 @@ const bloom = new UnrealBloomPass(
 
 composer.addPass(bloom);
 composer.addPass(new OutputPass());
+// #endregion
 
 
-/* ============================================================
-   RÉSEAU : PARTICULES + CONNEXIONS
-   ============================================================ */
+// #region RÉSEAU : PARTICULES + CONNEXIONS
 
 const N = mobile
     ? CONFIG.particules.mobile
@@ -391,7 +388,7 @@ const ph = new Float32Array(N);
 const sz = new Float32Array(N);
 
 
-/* ---------- génération des particules ---------- */
+// #region GÉNÉRATION DES PARTICULES
 
 function semer() {
 
@@ -463,9 +460,10 @@ function semer() {
 
 
 semer();
+// #endregion
 
 
-/* ---------- shader des particules ---------- */
+// #region SHADER DES PARTICULES
 
 const U = {
 
@@ -619,9 +617,10 @@ const points =
             `
         })
     );
+// #endregion
 
 
-/* ---------- connexions ---------- */
+// #region CONNEXIONS
 
 const lp =
     new Float32Array(MAXL * 6);
@@ -680,11 +679,11 @@ scene.add(
     points,
     lines
 );
+// #endregion
+// #endregion
 
 
-/* ============================================================
-   POINT GUIDE
-   ============================================================ */
+// #region POINT GUIDE
 
 const texHalo = (() => {
 
@@ -841,7 +840,7 @@ hero.add(
 scene.add(hero);
 
 
-/* ---------- traînée ---------- */
+// #region TRAÎNÉE
 
 const NT =
     CONFIG.guide.longueurTrace;
@@ -899,11 +898,11 @@ trail.frustumCulled =
 
 
 scene.add(trail);
+// #endregion
+// #endregion
 
 
-/* ============================================================
-   PORTAIL
-   ============================================================ */
+// #region PORTAIL
 
 const portail =
     new THREE.Group();
@@ -1032,11 +1031,10 @@ const anneaux =
             return m;
         }
     );
+// #endregion
 
 
-/* ============================================================
-   SON
-   ============================================================ */
+// #region SON
 
 let ac,
     master,
@@ -1380,11 +1378,10 @@ $("#son").onclick =
             .1
         );
     };
+// #endregion
 
 
-/* ============================================================
-   ÉTAT & VOYAGE
-   ============================================================ */
+// #region ÉTAT & VOYAGE
 
 let zone = 0,
     trav = null,
@@ -1675,11 +1672,10 @@ function permuter() {
 
     trav.sw = true;
 }
+// #endregion
 
 
-/* ============================================================
-   INTERACTIONS
-   ============================================================ */
+// #region INTERACTIONS
 
 addEventListener(
     "pointermove",
@@ -1824,11 +1820,10 @@ setTimeout(
     },
     CONFIG.intro.delaiBouton
 );
+// #endregion
 
 
-/* ============================================================
-   OBJETS 3D
-   ============================================================ */
+// #region OBJETS 3D
 
 const D =
     window.projetData;
@@ -1919,11 +1914,10 @@ const lineMat = (
         t,
         p
     );
+// #endregion
 
 
-/* ============================================================
-   TEXTE HOLOGRAPHIQUE
-   ============================================================ */
+// #region TEXTE HOLOGRAPHIQUE
 
 function holo(
     z,
@@ -2147,11 +2141,10 @@ function holo(
         m
     );
 }
+// #endregion
 
 
-/* ============================================================
-   BLOC DE TEXTE
-   ============================================================ */
+// #region BLOC DE TEXTE
 
 function bloc(
     z,
@@ -2282,11 +2275,10 @@ function bloc(
 
     return m;
 }
+// #endregion
 
 
-/* ============================================================
-   PANNEAUX HOLOGRAPHIQUES
-   ============================================================ */
+// #region PANNEAUX HOLOGRAPHIQUES
 
 const per = (
     u,
@@ -2814,11 +2806,10 @@ function panneau(
 
     return p;
 }
+// #endregion
 
 
-/* ============================================================
-   ZONE 0 : TITRE
-   ============================================================ */
+// #region ZONE 0 : TITRE
 
 const titre =
     holo(
@@ -2894,11 +2885,10 @@ if (phrase) {
         sub
     );
 }
+// #endregion
 
 
-/* ============================================================
-   ZONE 1 : DESCRIPTION + IA
-   ============================================================ */
+// #region ZONE 1 : DESCRIPTION + IA
 
 const txt =
     bloc(
@@ -2947,7 +2937,7 @@ zg[1].add(
 );
 
 
-/* ---------- noyau IA ---------- */
+// #region NOYAU IA
 
 const ia =
     new THREE.Group();
@@ -3066,9 +3056,10 @@ reg(
 ia.add(
     iaC
 );
+// #endregion
 
 
-/* ---------- particules IA ---------- */
+// #region PARTICULES IA
 
 const IN =
     CONFIG
@@ -3172,9 +3163,10 @@ reg(
 ia.add(
     iaPts
 );
+// #endregion
 
 
-/* ---------- lignes IA ---------- */
+// #region LIGNES IA
 
 const iaLg =
     new THREE.BufferGeometry();
@@ -3207,9 +3199,10 @@ iaLn.frustumCulled =
 ia.add(
     iaLn
 );
+// #endregion
 
 
-/* ---------- pulse IA ---------- */
+// #region PULSE IA
 
 const iaPulse =
     new THREE.Mesh(
@@ -3253,9 +3246,10 @@ hudIA.position.set(
 zg[1].add(
     hudIA
 );
+// #endregion
 
 
-/* ---------- INPUT → PROCESSING → OUTPUT ---------- */
+// #region INPUT → PROCESSING → OUTPUT
 
 const nodeIO =
     (
@@ -3393,11 +3387,11 @@ reg(
 zg[1].add(
     flux
 );
+// #endregion
+// #endregion
 
 
-/* ============================================================
-   ZONE 2 : TECHNOLOGIES
-   ============================================================ */
+// #region ZONE 2 : TECHNOLOGIES
 
 function techObj(n) {
 
@@ -3765,7 +3759,7 @@ function techObj(n) {
 }
 
 
-/* ---------- titre ---------- */
+// #region TITRE
 
 const t2 =
     holo(
@@ -3805,9 +3799,10 @@ h2.position.set(
 
 
 zg[2].add(h2);
+// #endregion
 
 
-/* ---------- technologies ---------- */
+// #region TECHNOLOGIES
 
 D.technologies
     .slice(0, 6)
@@ -3951,11 +3946,11 @@ D.technologies
             techs.push(o);
         }
     );
+// #endregion
+// #endregion
 
 
-/* ============================================================
-   ZONE 3 : IMAGES
-   ============================================================ */
+// #region ZONE 3 : IMAGES
 
 const t3 =
     holo(
@@ -4144,11 +4139,10 @@ imgs.forEach(
         );
     }
 );
+// #endregion
 
 
-/* ============================================================
-   CLIC : TECHNOLOGIES + IMAGES
-   ============================================================ */
+// #region CLIC : TECHNOLOGIES + IMAGES
 
 $("#scene-3d")
     .addEventListener(
@@ -4270,11 +4264,10 @@ $("#scene-3d")
             }
         }
     );
+// #endregion
 
 
-/* ============================================================
-   MISE À JOUR DES OBJETS 3D
-   ============================================================ */
+// #region MISE À JOUR DES OBJETS 3D
 
 function monde3d(dt) {
 
@@ -5116,11 +5109,10 @@ function monde3d(dt) {
         );
     }
 }
+// #endregion
 
 
-/* ============================================================
-   NAVIGATION
-   ============================================================ */
+// #region NAVIGATION
 
 document
     .querySelectorAll(
@@ -5207,11 +5199,10 @@ addEventListener(
         passive: true
     }
 );
+// #endregion
 
 
-/* ============================================================
-   VERSION SIMPLE
-   ============================================================ */
+// #region VERSION SIMPLE
 
 let simple =
     matchMedia(
@@ -5284,11 +5275,10 @@ $("#skip").onclick =
 if (simple) {
     setSimple(true);
 }
+// #endregion
 
 
-/* ============================================================
-   BOUCLE PRINCIPALE
-   ============================================================ */
+// #region BOUCLE PRINCIPALE
 
 const clock =
     new THREE.Clock();
@@ -6943,10 +6933,10 @@ function frame() {
 
     composer.render();
 }
+// #endregion
 
 
-/* ============================================================
-   LANCEMENT
-   ============================================================ */
+// #region LANCEMENT
 
 frame();
+// #endregion

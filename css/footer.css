@@ -1,3 +1,4 @@
+/* #region PIED DE PAGE */
 footer {
     background-color: var(--fond);
     color: var(--footer-texte);
@@ -21,3 +22,4 @@ footer a {
 footer a:hover {
     color: var(--accent-hover);
 }
+/* #endregion */

@@ -1,3 +1,4 @@
+/* #region PAGE ET INTRODUCTION */
 .contact {
     max-width: 1000px;
     margin: 0 auto;
@@ -16,7 +17,9 @@
 .contact-intro p {
     color: var(--texte-secondaire);
 }
+/* #endregion */
 
+/* #region COORDONNÉES */
 .contact-contenu {
     display: grid;
     grid-template-columns: 1fr 1.5fr;
@@ -61,7 +64,9 @@
     color: var(--accent-hover);
     text-decoration: underline;
 }
+/* #endregion */
 
+/* #region FORMULAIRE */
 .formulaire-contact {
     padding: 30px;
     background-color: var(--carte);
@@ -120,7 +125,9 @@
 .formulaire-contact button:hover {
     background-color: var(--accent-hover);
 }
+/* #endregion */
 
+/* #region RESPONSIVE */
 @media (max-width: 700px) {
     .contact-contenu {
         grid-template-columns: 1fr;
@@ -135,3 +142,4 @@
         width: 100%;
     }
 }
+/* #endregion */

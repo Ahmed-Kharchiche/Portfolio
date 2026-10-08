@@ -1,3 +1,4 @@
+// #region THÈME ENREGISTRÉ
 const toggleBtn = document.getElementById('theme-toggle');
 
 const savedTheme = localStorage.getItem('theme') || 'dark';
@@ -6,7 +7,9 @@ if (savedTheme === 'light') {
     document.body.setAttribute('data-theme', 'light');
     toggleBtn.checked = true;
 }
+// #endregion
 
+// #region CHANGEMENT DE THÈME
 toggleBtn.addEventListener('change', () => {
     if (toggleBtn.checked) {
         document.body.setAttribute('data-theme', 'light');
@@ -17,3 +20,4 @@ toggleBtn.addEventListener('change', () => {
     }
     window.dispatchEvent(new Event('themeChange'));
 });
+// #endregion

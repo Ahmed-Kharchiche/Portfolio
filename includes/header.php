@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ahmed Kharchiche<?php echo isset($titre_page) ? " - $titre_page" : ""; ?></title>
+    <!-- #region FEUILLES DE STYLE -->
+    <meta name="description"
+          content="Portfolio d'Ahmed Kharchiche, étudiant en BUT Informatique. Projets en développement logiciel, Python et intelligence artificielle.">
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/header.css">
     <link rel="stylesheet" href="css/elements/theme-toggle.css">
@@ -15,10 +18,12 @@
     <?php if (isset($page_css)): ?>
         <link rel="stylesheet" href="css/<?php echo $page_css; ?>">
     <?php endif; ?>
+    <!-- #endregion -->
 
 </head>
 <body>
 
+<!-- #region EN-TÊTE DU SITE -->
 <header>
     <nav>
         <div class="logo">Ahmed Kharchiche</div>
@@ -38,6 +43,8 @@
         </ul>
     </nav>
 </header>
+<!-- #endregion -->
 
+<!-- #region SCRIPT -->
 <script src="js/theme.js"></script>
-</body>
+<!-- #endregion -->

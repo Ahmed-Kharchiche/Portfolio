@@ -1,5 +1,6 @@
 <?php
 
+// #region MODALE DE CONFIRMATION
 function afficherConfirmation(): void
 {
     ?>
@@ -32,3 +33,4 @@ function afficherConfirmation(): void
     </div>
     <?php
 }
+// #endregion

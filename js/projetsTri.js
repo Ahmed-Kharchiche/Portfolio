@@ -1,11 +1,15 @@
+// #region ÉLÉMENTS
 const triProjets = document.getElementById('tri-projets');
 const grilleProjets = document.querySelector('.grille-projets');
 const filtresTechnologies = document.querySelectorAll(
     '.filtre-technologie input'
 );
+// #endregion
 
+// #region TRI ET FILTRES DES PROJETS
 if (triProjets && grilleProjets) {
 
+    // #region FILTRES PAR TECHNOLOGIE
     const cartesOriginales = [...grilleProjets.children];
 
     function obtenirTechnologies(carte) {
@@ -30,8 +34,10 @@ if (triProjets && grilleProjets) {
             technologiesProjet.includes(technologie)
         );
     }
+    // #endregion
 
 
+    // #region TRI DES CARTES
     function trierCartes(cartes) {
 
         const typeTri = triProjets.value;
@@ -93,8 +99,10 @@ if (triProjets && grilleProjets) {
             return 0;
         });
     }
+    // #endregion
 
 
+    // #region MISE À JOUR DE L'AFFICHAGE
     function mettreAJourProjets() {
 
         const technologiesSelectionnees = [
@@ -129,8 +137,10 @@ if (triProjets && grilleProjets) {
             grilleProjets.appendChild(carte);
         });
     }
+    // #endregion
 
 
+    // #region ÉVÉNEMENTS
     // Tri
     triProjets.addEventListener('change', mettreAJourProjets);
 
@@ -139,4 +149,6 @@ if (triProjets && grilleProjets) {
     filtresTechnologies.forEach(input => {
         input.addEventListener('change', mettreAJourProjets);
     });
+    // #endregion
 }
+// #endregion

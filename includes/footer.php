@@ -1,3 +1,4 @@
+<!-- #region PIED DE PAGE -->
 <footer>
     <p>Ahmed Kharchiche - Étudiant en BUT Informatique</p>
     <p>
@@ -7,7 +8,10 @@
     </p>
     <p>&copy; 2026</p>
 </footer>
+<!-- #endregion -->
+<!-- #region SCRIPT -->
 <script src="js/smooth.js"></script>
+<!-- #endregion -->
 
 </body>
 </html>

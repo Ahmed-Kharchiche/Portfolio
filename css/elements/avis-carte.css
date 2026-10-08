@@ -1,3 +1,4 @@
+/* #region CARTE D'UN AVIS */
 .carte-avis {
     background-color: var(--carte);
     border: 1px solid var(--bordure);
@@ -20,10 +21,9 @@
     margin-top: 15px;
     color: var(--texte-secondaire);
 }
+/* #endregion */
 
-/* ==========================================
-   ACTIONS ADMIN
-   ========================================== */
+/* #region ACTIONS ADMIN */
 
 .actions-avis {
     display: flex;
@@ -63,10 +63,9 @@
     outline: 2px solid var(--accent-hover);
     outline-offset: 2px;
 }
+/* #endregion */
 
-/* ==========================================
-   PETITS AVIS
-   ========================================== */
+/* #region PETITS AVIS */
 
 .petit-avis {
     padding: 15px;
@@ -118,10 +117,9 @@
     font-size: 13px;
     line-height: 1.5;
 }
+/* #endregion */
 
-/* ==========================================
-   BOUTON SUPPRIMER
-   ========================================== */
+/* #region BOUTON SUPPRIMER */
 
 .bouton-supprimer-avis {
     display: flex;
@@ -155,10 +153,9 @@
     border-color: #EF4444;
     transform: translateY(-1px);
 }
+/* #endregion */
 
-/* ==========================================
-   NOTE (ÉTOILES)
-   ========================================== */
+/* #region NOTE (ÉTOILES) */
 
 .note-avis {
     display: flex;
@@ -175,3 +172,4 @@
     color: var(--accent);
     -webkit-text-stroke: 1px var(--accent);
 }
+/* #endregion */

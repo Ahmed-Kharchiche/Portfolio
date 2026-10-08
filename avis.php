@@ -1,18 +1,23 @@
 <?php
+// #region CONFIGURATION DE LA PAGE
 $titre_page = "Avis";
 $page_css = "avis.css";
 
 require_once 'includes/Avis.php';
 require_once 'includes/GestionnaireAvis.php';
 require_once 'includes/affichage_avis.php';
+// #endregion
 
 include 'includes/header.php';
 
+// #region INITIALISATION
 $gestionnaireAvis = new GestionnaireAvis("data/avis.json");
 
 $messageConfirmation = '';
 $erreur = '';
+// #endregion
 
+// #region TRAITEMENT DU FORMULAIRE
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nom = trim($_POST['nom'] ?? '');
     $note = (int) ($_POST['note'] ?? 0);
@@ -36,7 +41,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $messageConfirmation = 'Merci pour votre avis ! Il sera publié après validation.';
     }
 }
+// #endregion
 
+// #region AVIS PUBLIÉS ET MOYENNE
 $avisPublies = [];
 $totalNotes = 0;
 
@@ -50,10 +57,13 @@ foreach ($gestionnaireAvis->getTous() as $avis) {
 $moyenneAvis = count($avisPublies) > 0
         ? $totalNotes / count($avisPublies)
         : 0;
+// #endregion
 ?>
 
+<!-- #region PAGE AVIS -->
 <main class="avis" id="haut">
 
+    <!-- #region INTRODUCTION -->
     <section class="avis-intro">
         <h1>AVIS</h1>
         <div class="ligne-titre"></div>
@@ -65,7 +75,9 @@ $moyenneAvis = count($avisPublies) > 0
             Ajouter un avis
         </a>
     </section>
+    <!-- #endregion -->
 
+    <!-- #region MOYENNE DES AVIS -->
     <div class="moyenne-avis">
         <h2>Moyenne des avis</h2>
 
@@ -84,7 +96,9 @@ $moyenneAvis = count($avisPublies) > 0
             </div>
         </div>
     </div>
+    <!-- #endregion -->
 
+    <!-- #region LISTE DES AVIS -->
     <section class="liste-avis" id="avis">
 
         <h2>Avis publiés : </h2>
@@ -120,7 +134,9 @@ $moyenneAvis = count($avisPublies) > 0
         </div>
 
     </section>
+    <!-- #endregion -->
 
+    <!-- #region FORMULAIRE D'AVIS -->
     <section class="formulaire-avis" id="ajouter-avis">
 
         <h2>Laisser un avis</h2>
@@ -195,10 +211,16 @@ $moyenneAvis = count($avisPublies) > 0
         </form>
 
     </section>
+    <!-- #endregion -->
+    <!-- #region RETOUR EN HAUT -->
     <a href="#haut" class="bouton-haut">↑</a>
+    <!-- #endregion -->
 </main>
+<!-- #endregion -->
 
+<!-- #region SCRIPTS -->
 <script src="js/avisTri.js"></script>
 <script src="js/listeDeroulante.js"></script>
+<!-- #endregion -->
 
 <?php include 'includes/footer.php'; ?>

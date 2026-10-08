@@ -1,7 +1,10 @@
+// #region ÉLÉMENTS
 const inputImages = document.getElementById("images");
 const aperçuImages = document.getElementById("aperçu-images");
 let fichiers = [];
+// #endregion
 
+// #region APERÇU DES NOUVELLES IMAGES
 inputImages.addEventListener("change", () => {
     fichiers.push(...inputImages.files);
     majAperçus();
@@ -41,7 +44,9 @@ function majAperçus() {
         aperçuImages.appendChild(conteneur);
     });
 }
+// #endregion
 
+// #region SUPPRESSION D'UNE IMAGE EXISTANTE
 aperçuImages.addEventListener("click", e => {
     const bouton = e.target.closest(".image-existante .supprimer-image");
     if (!bouton) return;
@@ -55,3 +60,4 @@ aperçuImages.addEventListener("click", e => {
 
     bouton.closest(".aperçu-image").remove();
 });
+// #endregion

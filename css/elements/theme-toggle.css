@@ -1,3 +1,4 @@
+/* #region VARIABLES DU THÈME */
 :root {
     --header-fond-switch: #18181B;
     --header-switch-boule:#FFFFFF;
@@ -7,8 +8,9 @@
     --header-fond-switch: #FFFFFF;
     --header-switch-boule: #18181B;
 }
+/* #endregion */
 
-/* ===== Theme toggle ===== */
+/* #region INTERRUPTEUR DE THÈME */
 
 .switch {
     position: relative;
@@ -99,3 +101,4 @@
 .switch input:checked ~ .switch-text--droite {
     opacity: 0;
 }
+/* #endregion */

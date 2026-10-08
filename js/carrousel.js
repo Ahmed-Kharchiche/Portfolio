@@ -1,3 +1,4 @@
+// #region NAVIGATION DU CARROUSEL
 document.addEventListener("click", e => {
     const fleche = e.target.closest(".fleche");
     if (!fleche) return;
@@ -10,3 +11,4 @@ document.addEventListener("click", e => {
     images[actuelle].classList.remove("active");
     images[suivante].classList.add("active");
 });
+// #endregion

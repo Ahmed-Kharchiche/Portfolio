@@ -6,9 +6,12 @@ declare(strict_types=1);
  */
 final class Avis
 {
+    // #region CONSTANTES
     public const NOTE_MIN = 1;
     public const NOTE_MAX = 5;
+    // #endregion
 
+    // #region CONSTRUCTEUR
     public function __construct(
         private string $id,
         private string $nom,
@@ -20,7 +23,9 @@ final class Avis
         // La note reste toujours entre 1 et 5, même si le JSON a été modifié à la main
         $this->note = max(self::NOTE_MIN, min(self::NOTE_MAX, $note));
     }
+    // #endregion
 
+    // #region GETTERS
     public function getId(): string
     {
         return $this->id;
@@ -50,7 +55,9 @@ final class Avis
     {
         return $this->publie;
     }
+    // #endregion
 
+    // #region SETTERS
     /** L'id est attribué par le gestionnaire au moment de l'ajout. */
     public function setId(string $id): void
     {
@@ -61,7 +68,9 @@ final class Avis
     {
         $this->publie = $publie;
     }
+    // #endregion
 
+    // #region CONVERSION VERS ET DEPUIS UN TABLEAU
     /**
      * @return array{id: string, nom: string, note: int, message: string, date: string, publie: bool}
      */
@@ -92,4 +101,5 @@ final class Avis
             (bool) ($donnees['publie'] ?? false),
         );
     }
+    // #endregion
 }

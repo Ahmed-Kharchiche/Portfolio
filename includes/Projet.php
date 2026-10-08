@@ -10,6 +10,7 @@
  */
 class Projet
 {
+    // #region PROPRIÉTÉS ET CONSTRUCTEUR
     private ?string $id;
     private string $titre;
     private string $description;
@@ -35,8 +36,9 @@ class Projet
         $this->images = $images;
         $this->dateCreation = $dateCreation;
     }
+    // #endregion
 
-    // ---- Getters ----
+    // #region GETTERS
 
     public function getId(): ?string
     {
@@ -72,8 +74,9 @@ class Projet
     {
         return $this->dateCreation;
     }
+    // #endregion
 
-    // ---- Setters ----
+    // #region SETTERS
 
     // Utiles pour la modification d'un projet existant : on récupère l'objet,
     // on appelle les setters pour changer ce qui a changé, puis c'est le
@@ -118,8 +121,9 @@ class Projet
     {
         $this->dateCreation = $dateCreation;
     }
+    // #endregion
 
-    // ---- Quelques méthodes pratiques pour manipuler les images ----
+    // #region MANIPULATION DES IMAGES
 
     public function ajouterImage(string $cheminImage): void
     {
@@ -132,8 +136,9 @@ class Projet
         // array_values réindexe le tableau proprement ensuite (0, 1, 2...)
         $this->images = array_values(array_diff($this->images, [$cheminImage]));
     }
+    // #endregion
 
-    // ---- Informations pratiques ----
+    // #region INFORMATIONS PRATIQUES
 
     public function getPremiereImage(): string
     {
@@ -154,8 +159,10 @@ class Projet
     {
         return !empty($this->gitlab);
     }
+    // #endregion
 
-    // ---- Conversion vers/depuis un tableau (pour lire/écrire dans projets.json) ----
+    // #region CONVERSION VERS ET DEPUIS UN TABLEAU
+    // pour lire/écrire dans projets.json
 
     /**
      * Transforme le projet en tableau simple, prêt pour json_encode().
@@ -202,8 +209,9 @@ class Projet
             $donnees["dateCreation"] ?? null
         );
     }
+    // #endregion
 
-    // ---- Affichage texte du projet ----
+    // #region AFFICHAGE TEXTE DU PROJET
 
     /**
      * Permet de faire echo $projet; ou de convertir le projet en chaîne.
@@ -231,4 +239,5 @@ class Projet
             . "Images : " . $images . "\n"
             . "Date de création : " . ($this->dateCreation ?? "aucune");
     }
+    // #endregion
 }

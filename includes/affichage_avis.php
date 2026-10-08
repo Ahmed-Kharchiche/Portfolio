@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/Avis.php';
 
+// #region ARGUMENTS JAVASCRIPT
 if (!function_exists('avisArgumentsJs')) {
     /**
      * Prépare des arguments PHP pour les mettre dans un attribut onclick="".
@@ -22,7 +23,9 @@ if (!function_exists('avisArgumentsJs')) {
         return htmlspecialchars(implode(', ', $encodes), ENT_QUOTES);
     }
 }
+// #endregion
 
+// #region CARTE D'UN AVIS
 /**
  * Affiche la carte d'un avis.
  *
@@ -85,7 +88,9 @@ function afficherCarteAvis(Avis $avis, bool $admin = false): void
     </article>
     <?php
 }
+// #endregion
 
+// #region PETIT AVIS
 function afficherPetitAvis(Avis $avis, bool $admin = false): void
 {
     $note = $avis->getNote();
@@ -141,3 +146,4 @@ function afficherPetitAvis(Avis $avis, bool $admin = false): void
     </article>
     <?php
 }
+// #endregion

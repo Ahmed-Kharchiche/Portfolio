@@ -1,3 +1,4 @@
+/* #region PAGE ET BARRE DU HAUT */
 .admin {
     max-width: 900px;
     margin: 0 auto;
@@ -28,7 +29,9 @@
     color: var(--texte);
     border-color: var(--accent);
 }
+/* #endregion */
 
+/* #region FORMULAIRE DE PROJET */
 .ajout-projet {
     background-color: var(--carte);
     border: 1px solid var(--bordure);
@@ -115,9 +118,11 @@
     outline: none;
     border-color: var(--accent);
 }
+/* #endregion */
 
 
 
+/* #region ZONE D'ENVOI D'IMAGES */
 .zone-fichier {
     display: flex;
     flex-direction: column;
@@ -152,7 +157,9 @@
 .zone-fichier input[type="file"] {
     display: none;
 }
+/* #endregion */
 
+/* #region APERÇU DES IMAGES */
 .aperçu-images {
     display: flex;
     flex-wrap: wrap;
@@ -207,7 +214,9 @@
     line-height: 1;
     cursor: pointer;
 }
+/* #endregion */
 
+/* #region CASES DES TECHNOLOGIES */
 .cases-technologies {
     display: flex;
     flex-wrap: wrap;
@@ -240,7 +249,9 @@
 .case-technologie:has(input:checked) {
     border: 2px solid var(--accent);
 }
+/* #endregion */
 
+/* #region BOUTON D'AJOUT */
 .bouton-ajouter {
     align-self: flex-start;
     padding: 10px 20px;
@@ -254,14 +265,18 @@
 .bouton-ajouter:hover {
     background-color: var(--accent-hover);
 }
+/* #endregion */
 
+/* #region LISTE DES AVIS */
 .liste-petits-avis {
     display: flex;
     flex-direction: column;
     gap: 15px;
 }
+/* #endregion */
 
 
+/* #region RESPONSIVE */
 @media (max-width: 600px) {
 
     .admin {
@@ -326,3 +341,4 @@
         font-size: 15px;
     }
 }
+/* #endregion */

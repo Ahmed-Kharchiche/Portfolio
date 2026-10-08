@@ -2,6 +2,7 @@
 
 require_once 'Projet.php';
 
+// #region CARTE D'UN PROJET
 /**
  * Affiche la carte d'un projet.
  *
@@ -98,3 +99,4 @@ function afficherCarteProjet(Projet $projet, bool $admin = false): void
     <script src="js/voirPlus.js"></script>
     <?php
 }
+// #endregion

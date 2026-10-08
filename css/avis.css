@@ -1,16 +1,13 @@
-/* ==========================================
-   PAGE AVIS
-   ========================================== */
+/* #region PAGE AVIS */
 
 .avis {
     max-width: 1000px;
     margin: 0 auto;
     padding: 95px 20px 60px;
 }
+/* #endregion */
 
-/* ==========================================
-   INTRODUCTION
-   ========================================== */
+/* #region INTRODUCTION */
 
 .avis-intro {
     text-align: center;
@@ -32,10 +29,9 @@
 .avis-intro .bouton:hover {
     transform: translateY(-2px);
 }
+/* #endregion */
 
-/* ==========================================
-   MOYENNE DES AVIS
-   ========================================== */
+/* #region MOYENNE DES AVIS */
 
 .moyenne-avis {
     position: relative;
@@ -110,10 +106,9 @@
     font-weight: 400;
     letter-spacing: normal;
 }
+/* #endregion */
 
-/* ==========================================
-   TRI
-   ========================================== */
+/* #region TRI */
 
 .tri-avis {
     display: flex;
@@ -129,10 +124,9 @@
     color: var(--texte-secondaire);
     font-size: 14px;
 }
+/* #endregion */
 
-/* ==========================================
-   LISTE DES AVIS
-   ========================================== */
+/* #region LISTE DES AVIS */
 
 .liste-avis {
     margin-bottom: 40px;
@@ -152,10 +146,9 @@
     border-color: var(--accent);
     box-shadow: 0 8px 25px var(--ombre);
 }
+/* #endregion */
 
-/* ==========================================
-   EN-TÊTE D'UN AVIS
-   ========================================== */
+/* #region EN-TÊTE D'UN AVIS */
 
 .entete-avis {
     display: flex;
@@ -193,10 +186,9 @@
     color: var(--texte-secondaire);
     text-align: center;
 }
+/* #endregion */
 
-/* ==========================================
-   AJOUTER UN AVIS
-   ========================================== */
+/* #region AJOUTER UN AVIS */
 
 .avis-ajouter-bas {
     margin-top: 100px;
@@ -245,10 +237,9 @@
     border-color: var(--accent);
     transform: translateY(-2px);
 }
+/* #endregion */
 
-/* ==========================================
-   FORMULAIRE
-   ========================================== */
+/* #region FORMULAIRE */
 
 .formulaire-avis {
     max-width: 650px;
@@ -334,10 +325,9 @@
     font-size: 11px;
     pointer-events: none;
 }
+/* #endregion */
 
-/* ==========================================
-   MESSAGES
-   ========================================== */
+/* #region MESSAGES */
 
 .message-confirmation,
 .message-erreur {
@@ -358,10 +348,9 @@
     background-color: rgba(239, 68, 68, 0.1);
     border: 1px solid #EF4444;
 }
+/* #endregion */
 
-/* ==========================================
-   RESPONSIVE
-   ========================================== */
+/* #region RESPONSIVE */
 
 @media (max-width: 700px) {
     .avis {
@@ -393,3 +382,4 @@
         padding: 20px;
     }
 }
+/* #endregion */

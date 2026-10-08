@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-/* ================= utilitaires ================= */
+// #region UTILITAIRES ET CONSTANTES
 const $ = (s) => document.querySelector(s);
 const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
 const rnd = (a, b) => a + Math.random() * (b - a);
@@ -16,8 +16,10 @@ await Promise.race([document.fonts.load("700 100px Fraunces"), new Promise((r) =
 const PROJETS = window.projets || [];
 const VIOLET = new THREE.Color(0x7C3AED), LAV = new THREE.Color(0xA78BFA), BLANC = new THREE.Color(0xFAFAFA);
 const mobile = innerWidth < 700;
+// #endregion
 
-/* ================= rendu (aucun bloom : lisibilité d'abord) ================= */
+// #region RENDU
+// aucun bloom : lisibilité d'abord
 const renderer = new THREE.WebGLRenderer({ canvas: $("#scene"), antialias: true, powerPreference: "high-performance" });
 let pr = Math.min(devicePixelRatio, 2);
 renderer.setPixelRatio(pr); renderer.setSize(innerWidth, innerHeight);
@@ -32,8 +34,10 @@ const texHalo = (() => {
     d.addColorStop(0, "rgba(255,255,255,.9)"); d.addColorStop(.35, "rgba(255,255,255,.18)"); d.addColorStop(1, "rgba(255,255,255,0)");
     g.fillStyle = d; g.fillRect(0, 0, 64, 64); return new THREE.CanvasTexture(c);
 })();
+// #endregion
 
-/* ================= champ de particules : animé sur GPU ================= */
+// #region CHAMP DE PARTICULES
+// animé sur GPU
 const NP = mobile ? 700 : 1600, fp = new Float32Array(NP * 3), fa = new Float32Array(NP * 2);
 for (let i = 0; i < NP; i++) {
     const r = 8 + Math.pow(Math.random(), .6) * 110, th = rnd(0, 6.283), ph = Math.acos(rnd(-1, 1));
@@ -58,8 +62,10 @@ gl_PointSize = clamp(uPx * aD.x * 90. / -mv.z, 1.5, 26.); gl_Position = projecti
 gl_FragColor = vec4(mix(vec3(.486, .227, .929), vec3(.655, .545, .98), vP), a * a * vA); }`
 }));
 champ.frustumCulled = false; scene.add(champ);
+// #endregion
 
-/* ================= naissance du Core : particule, micro-particules, réseau ================= */
+// #region NAISSANCE DU CORE
+// particule, micro-particules, réseau
 const noyau = new THREE.Mesh(new THREE.SphereGeometry(.1, 16, 16), new THREE.MeshBasicMaterial({ color: BLANC }));
 const noyauHalo = new THREE.Sprite(new THREE.SpriteMaterial({ map: texHalo, color: LAV, transparent: true, depthWrite: false, opacity: .45 }));
 const NM = 14, mp = new Float32Array(NM * 3), mg = new THREE.BufferGeometry();
@@ -84,8 +90,10 @@ const titre = (() => {
     const m = new THREE.Mesh(new THREE.PlaneGeometry(40, 12.5), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(c), transparent: true, alphaTest: .5, depthWrite: true, color: 0x000000 }));
     m.position.set(0, 3, -42); scene.add(m); return m;
 })();
+// #endregion
 
-/* ================= artefacts : un univers visuel par type de projet ================= */
+// #region ARTEFACTS
+// un univers visuel par type de projet
 const seg = (pts, color, op) => { const g = new THREE.BufferGeometry(); g.setAttribute("position", new THREE.Float32BufferAttribute(pts, 3)); return new THREE.LineSegments(g, new THREE.LineBasicMaterial({ color, transparent: true, opacity: op })); };
 const FABRIQUES = {
     ia(o, a) { // noyau neuronal
@@ -135,8 +143,10 @@ const arts = PROJETS.map((p, i) => {
     a.update = FABRIQUES[typeDe(p)](a.obj, a);
     scene.add(a.g); return a;
 });
+// #endregion
 
-/* ================= physique commune : nœuds, liens, impulsions, essaim ================= */
+// #region PHYSIQUE COMMUNE
+// nœuds, liens, impulsions, essaim
 const tw = new THREE.Vector3();
 const noeudCore = { i: -1, core: true, pos: new THREE.Vector3(), energie: 0 };
 const liens = [], impulsions = [];
@@ -216,8 +226,10 @@ function evenementRare() { // rare et imprévisible : une impulsion traverse plu
     recevoir(ordre[0], .6); lancer([...ordre, noeudCore], .9);
 }
 let proch = 20 + Math.random() * 20;
+// #endregion
 
-/* ================= AudioManager : soundscape piloté par la physique, spatialisé en 3D ================= */
+// #region AUDIO MANAGER
+// soundscape piloté par la physique, spatialisé en 3D
 const Son = {
     ac: null, on: true, crist: 4, nv: 0, cur: null, foc: 0,
     init() {
@@ -308,8 +320,9 @@ function declencher() { // ESPACE : silence → les particules s'arrêtent → o
 }
 for (const ev of ["pointerdown", "keydown"]) addEventListener(ev, () => Son.init(), { once: true });
 $("#son").onclick = () => { $("#son").textContent = Son.bascule() ? "SOUND ON" : "SOUND OFF"; };
+// #endregion
 
-/* ================= interactions ================= */
+// #region INTERACTIONS
 const mouse = new THREE.Vector2(), mouseS = new THREE.Vector2(), tv = new THREE.Vector3(), ray = new THREE.Vector3();
 let yaw = 0, yawT = 0, yv = 0, drag = null, moved = 0, actif = null, plongee = null, T = 0, inspect = null, foc = 0, zv = 0;
 const info = $("#info"), fondu = $("#fondu"), astuce = $("#astuce"), look = new THREE.Vector3();
@@ -360,8 +373,10 @@ function entrer(a) {
     info.classList.remove("on");
 }
 addEventListener("resize", () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
+// #endregion
 
-/* ================= MODE INSPECT : un nouvel état (CORE → PROJECT_INSPECT) sur la même scène et les mêmes objets ================= */
+// #region MODE INSPECT
+// un nouvel état (CORE → PROJECT_INSPECT) sur la même scène et les mêmes objets
 const main = $(".core"), ins = $("#inspect"), insBtn = $("#insBtn"), ZMIN = 5.2, ZMAX = 16;
 const CAT = { ia: "Machine Learning", java: "Architecture logicielle", c: "Algorithmique", web: "Web" };
 const LIBS = [["objectif", "Objectif"], ["fonctionnalites", "Fonctionnalités"], ["difficultes", "Difficultés"], ["resultat", "Résultat"], ["apprentissages", "Apprentissages"]];
@@ -447,8 +462,9 @@ function cameraInspect(dt) { // trajectoire courbe (Bézier) orbite → pose d'o
     camera.position.set(0, 0, 0).addScaledVector(orbit, q * q).addScaledVector(via, 2 * q * e).addScaledVector(cp, e * e);
     look.set(0, 0, 0).lerp(lk, ease.out(clamp(I.p * 1.5))); camera.lookAt(look);
 }
+// #endregion
 
-/* ================= boucle ================= */
+// #region BOUCLE
 let last = performance.now(), frames = 0, tFps = 0, niveau = 0;
 function frame(now) {
     requestAnimationFrame(frame);
@@ -519,3 +535,4 @@ function frame(now) {
     renderer.render(scene, camera);
 }
 requestAnimationFrame(frame);
+// #endregion

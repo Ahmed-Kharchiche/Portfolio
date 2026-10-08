@@ -1,3 +1,5 @@
+/* #region VARIABLES ET THÈMES */
+/* couleurs du thème sombre (défaut) et du thème clair */
 :root {
     --fond: #09090B;
     --texte: #FAFAFA;
@@ -24,7 +26,9 @@
     --footer-texte: #71717A;
     --ombre: rgba(22, 163, 74, 0.35);
 }
+/* #endregion */
 
+/* #region BASE DE LA PAGE */
 html {
     scroll-behavior: auto;
 }
@@ -60,7 +64,9 @@ section {
 section h2 {
     margin-bottom: 15px;
 }
+/* #endregion */
 
+/* #region ÉLÉMENTS COMMUNS */
 .technos li {
     background-color: var(--technologie);
     color: var(--texte);
@@ -83,7 +89,9 @@ section h2 {
 .bouton:hover {
     background-color: var(--accent-hover);
 }
+/* #endregion */
 
+/* #region TITRES */
 h1 {
     text-align: center;
     font-size: 70px;
@@ -101,9 +109,11 @@ h1 {
     background: var(--accent);
     box-shadow: 0 0 18px rgba(124, 58, 237, 0.5);
 }
+/* #endregion */
 
 
 
+/* #region LISTE DÉROULANTE PERSONNALISÉE */
 .select-cache {
     position: absolute;
     width: 1px;
@@ -206,7 +216,9 @@ h1 {
     content: "✓";
     font-size: 13px;
 }
+/* #endregion */
 
+/* #region RESPONSIVE */
 @media (max-width: 600px) {
 
     h1 {
@@ -215,3 +227,4 @@ h1 {
         letter-spacing: 1px;
     }
 }
+/* #endregion */

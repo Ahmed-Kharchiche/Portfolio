@@ -1,9 +1,12 @@
+// #region ÉLÉMENTS
 const title = document.querySelector('.projects-title');
 const carousel = document.querySelector('#carousel');
 const technos = document.querySelector('.technos');
 const boutons = document.querySelector('.hero-boutons');
+// #endregion
 
 
+// #region ANIMATION DU TITRE
 window.addEventListener('scroll', () => {
     const rect = title.getBoundingClientRect();
     const windowHeight = window.innerHeight;
@@ -20,7 +23,9 @@ window.addEventListener('scroll', () => {
     title.style.opacity = progress;
     title.style.transform = `translateY(${translateY}px)`;
 });
+// #endregion
 
+// #region ANIMATION DU CARROUSEL
 window.addEventListener('scroll', () => {
     const rect = carousel.getBoundingClientRect();
     const windowHeight = window.innerHeight;
@@ -32,8 +37,10 @@ window.addEventListener('scroll', () => {
 
     carousel.style.marginTop = `${translateY}px`;
 });
+// #endregion
 
 
+// #region ANIMATION DES TECHNOLOGIES
 window.addEventListener('scroll', () => {
     const rect = technos.getBoundingClientRect();
     const windowHeight = window.innerHeight;
@@ -47,8 +54,10 @@ window.addEventListener('scroll', () => {
     technos.style.opacity = progress;
     technos.style.transform = `translateX(${translateX}px)`;
 });
+// #endregion
 
 
+// #region ANIMATION DES BOUTONS
 window.addEventListener('scroll', () => {
     const rect = boutons.getBoundingClientRect();
     const windowHeight = window.innerHeight;
@@ -62,4 +71,5 @@ window.addEventListener('scroll', () => {
     boutons.style.opacity = progress;
     boutons.style.transform = `translate(${translateX}px, ${translateY}px)`;
 });
+// #endregion
 

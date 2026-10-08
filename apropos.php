@@ -1,15 +1,21 @@
 <?php
+// #region CONFIGURATION DE LA PAGE
 $titre_page = "À propos";
 $page_css = "apropos.css";
 
 include 'includes/header.php';
+// #endregion
 ?>
 
+    <!-- #region PAGE À PROPOS -->
     <main class="apropos">
 
+        <!-- #region TITRE -->
         <h1>À PROPOS DE MOI</h1>
         <div class="ligne-titre"></div>
+        <!-- #endregion -->
 
+        <!-- #region PRÉSENTATION -->
         <section class="presentation">
 
 
@@ -23,7 +29,9 @@ include 'includes/header.php';
                 à l'intelligence artificielle et au développement d'applications.
             </p>
         </section>
+        <!-- #endregion -->
 
+        <!-- #region FORMATION -->
         <section class="formation">
             <h2>Ma formation</h2>
 
@@ -40,7 +48,9 @@ include 'includes/header.php';
                 <p>Spécialités Mathématiques et NSI</p>
             </div>
         </section>
+        <!-- #endregion -->
 
+        <!-- #region COMPÉTENCES -->
         <section class="competences">
             <h2>Mes compétences</h2>
 
@@ -56,7 +66,9 @@ include 'includes/header.php';
                 <span>Git</span>
             </div>
         </section>
+        <!-- #endregion -->
 
+        <!-- #region OBJECTIF -->
         <section class="objectif">
             <h2>Mon objectif</h2>
 
@@ -72,7 +84,9 @@ include 'includes/header.php';
                 déploiement.
             </p>
         </section>
+        <!-- #endregion -->
 
     </main>
 
 <?php include 'includes/footer.php'; ?>
+    <!-- #endregion -->

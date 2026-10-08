@@ -1,11 +1,14 @@
 <?php
 // Page d'accueil du portfolio
+// #region CONFIGURATION DE LA PAGE
 $titre_page = "Accueil";
 $page_css = "accueil.css";
 require_once 'includes/GestionnaireProjets.php';
 
 include 'includes/header.php';
+// #endregion
 
+// #region PROJETS FAVORIS
 $gestionnaire = new GestionnaireProjets("data/projets.json");
 
 $favoris = ["Portfolio", "test"];
@@ -22,9 +25,10 @@ foreach ($gestionnaire->getTous() as $projet) {
         }
     }
 }
+// #endregion
 ?>
 
-    <!-- Présentation -->
+    <!-- #region PRÉSENTATION -->
     <section class="hero">
         <br><br>
         <h1 id="nom">AHMED KHARCHICHE</h1>
@@ -41,8 +45,9 @@ foreach ($gestionnaire->getTous() as $projet) {
             <a href="cv/CV_Ahmed_Kharchiche.pdf" class="bouton bouton-secondaire" download>Télécharger mon CV</a>
         </div>
     </section>
+    <!-- #endregion -->
 
-    <!-- Technologies -->
+    <!-- #region TECHNOLOGIES -->
     <section class="technos">
         <h2>Quelques technologies</h2>
         <ul>
@@ -54,8 +59,9 @@ foreach ($gestionnaire->getTous() as $projet) {
             <li>HTML / CSS</li>
         </ul>
     </section>
+    <!-- #endregion -->
 
-    <!-- Aperçu de projets -->
+    <!-- #region APERÇU DES PROJETS -->
     <section class="apercu-projets">
         <h2 class="projects-title">Quelques projets</h2>
 
@@ -85,8 +91,11 @@ foreach ($gestionnaire->getTous() as $projet) {
             <p class="carousel-astuce">Selectionne la carte avec un clic et choisis la avec un double clic</p>
         </div>
     </section>
+    <!-- #endregion -->
+    <!-- #region SCRIPTS -->
     <script src="js/moveAccueil.js"></script>
     <script src="js/projetsListe.js"></script>
+    <!-- #endregion -->
 
 
 <?php include 'includes/footer.php'; ?>

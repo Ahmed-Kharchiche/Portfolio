@@ -7,6 +7,8 @@
       <excludeFolder url="file://$MODULE_DIR$/js/core.js" />
       <excludeFolder url="file://$MODULE_DIR$/js/univers-logique.js" />
       <excludeFolder url="file://$MODULE_DIR$/js/univers.js" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/composer" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/phpmailer/phpmailer" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

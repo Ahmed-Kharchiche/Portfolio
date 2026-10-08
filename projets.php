@@ -1,11 +1,14 @@
 <?php
+// #region CONFIGURATION DE LA PAGE
 $titre_page = "Projets";
 $page_css = "projets.css";
 
 require_once 'includes/Projet.php';
 require_once 'includes/GestionnaireProjets.php';
 require_once 'includes/affichage_projets.php';
+// #endregion
 
+// #region DONNÉES DES PROJETS
 $gestionnaire = new GestionnaireProjets("data/projets.json");
 
 $technologies_disponibles = [
@@ -18,15 +21,20 @@ $technologies_disponibles = [
         "CSS",
         "JavaScript"
 ];
+// #endregion
 
 include 'includes/header.php';
 ?>
+    <!-- #region PAGE PROJETS -->
     <main class="projets">
+        <!-- #region TITRE DE LA PAGE -->
         <div class="titre-page-projets">
             <h1>MES PROJETS</h1>
             <div class="ligne-titre"></div>
             <p>Un aperçu de mes réalisations scolaires et personnelles</p>
         </div>
+        <!-- #endregion -->
+        <!-- #region INTRODUCTION -->
         <div class="intro-projets">
             <p class="intro-gauche">
                 Ces projets représentent une partie de mon parcours en informatique et de ma progression au fil de ma formation. Ils me permettent de mettre en pratique mes compétences en développement, en algorithmique, en gestion de données et progressivement en intelligence artificielle.
@@ -35,10 +43,13 @@ include 'includes/header.php';
                 Chaque projet m'a permis de travailler sur des problématiques différentes, tout en développant ma capacité à concevoir, structurer et réaliser des applications fonctionnelles.
             </p>
         </div>
+        <!-- #endregion -->
+        <!-- #region LISTE DES PROJETS -->
         <?php $projets = $gestionnaire->getTous(); ?>
         <?php if (empty($projets)): ?>
             <p class="message-vide">Aucun projet ajouté pour l'instant.</p>
         <?php else: ?>
+            <!-- #region TRI -->
             <div class="tri-projets">
                 <label for="tri-projets">Trier par</label>
                 <select id="tri-projets" class="liste-perso">
@@ -49,6 +60,8 @@ include 'includes/header.php';
                     <option value="ancien">Plus ancien</option>
                 </select>
             </div>
+            <!-- #endregion -->
+            <!-- #region FILTRES PAR TECHNOLOGIE -->
             <div class="filtre-technologies">
                 <span class="filtre-titre">Technologies</span>
                 <div class="technologies-filtres">
@@ -60,12 +73,17 @@ include 'includes/header.php';
                     <?php endforeach; ?>
                 </div>
             </div>
+            <!-- #endregion -->
+            <!-- #region GRILLE DES PROJETS -->
             <div class="grille-projets">
                 <?php foreach ($projets as $projet): ?>
                     <?php afficherCarteProjet($projet); ?>
                 <?php endforeach; ?>
             </div>
+            <!-- #endregion -->
         <?php endif; ?>
+        <!-- #endregion -->
+        <!-- #region MINI-JEU -->
         <section class="zone-jeu">
             <div class="zone-jeu-entete">
                 <h2>Petite pause</h2>
@@ -75,10 +93,14 @@ include 'includes/header.php';
                 <p class="zone-jeu-vide">Bientôt un jeu ici 🎮</p>
             </div>
         </section>
+        <!-- #endregion -->
     </main>
+    <!-- #endregion -->
+    <!-- #region SCRIPTS -->
     <script src="js/moveProjets.js"></script>
     <script src="js/projetsTri.js"></script>
     <script src="js/carrousel.js"></script>
     <script src="js/listeDeroulante.js"></script>
     <script src="js/dinoBugs.js"></script>
+    <!-- #endregion -->
 <?php include 'includes/footer.php'; ?>

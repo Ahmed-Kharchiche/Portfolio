@@ -1,5 +1,6 @@
 <?php
 
+// #region CHARGEMENT DU PROJET
 require_once 'includes/Projet.php';
 require_once 'includes/GestionnaireProjets.php';
 
@@ -10,22 +11,29 @@ if ($projet === null) {
     http_response_code(404);
     exit("Projet introuvable");
 }
+// #endregion
 
+// #region CONFIGURATION DE LA PAGE
 $titre_page = $projet->getTitre();
 $page_css = "detail-projet.css";
 
 $technologies = $projet->getTechnologies() ?: [];
 $image = $projet->getPremiereImage();
 $images = method_exists($projet, 'getImages') ? ($projet->getImages() ?: []) : ($image ? [$image] : []);
+// #endregion
 
 include 'includes/header.php';
 ?>
 
+    <!-- #region PAGE PROJET -->
     <main class="detail-projet">
+        <!-- #region DÉCOR 3D -->
         <canvas id="scene-3d" aria-hidden="true"></canvas>
         <div class="voile" aria-hidden="true"></div>
         <div class="flash" id="flash" aria-hidden="true"></div>
+        <!-- #endregion -->
 
+        <!-- #region ZONE 0 : DISCOVER -->
         <section class="zone" data-zone="0">
             <p class="label">01 — Discover</p>
             <h1><?= htmlspecialchars($projet->getTitre()) ?></h1>
@@ -33,13 +41,17 @@ include 'includes/header.php';
                 <span class="date">Créé le <?= date("d/m/Y", strtotime($projet->getDateCreation())) ?></span>
             <?php endif; ?>
         </section>
+        <!-- #endregion -->
 
+        <!-- #region ZONE 1 : UNDERSTAND -->
         <section class="zone" data-zone="1">
             <p class="label">02 — Understand</p>
             <h2>Le projet</h2>
             <p class="texte"><?= nl2br(htmlspecialchars($projet->getDescription())) ?></p>
         </section>
+        <!-- #endregion -->
 
+        <!-- #region ZONE 2 : EXPERIENCE -->
         <section class="zone" data-zone="2">
             <p class="label">03 — Experience</p>
             <h2>Technologies</h2>
@@ -47,7 +59,9 @@ include 'includes/header.php';
                 <?php foreach ($technologies as $t): ?><span><?= htmlspecialchars($t) ?></span><?php endforeach; ?>
             </div>
         </section>
+        <!-- #endregion -->
 
+        <!-- #region ZONE 3 : RESULT -->
         <section class="zone" data-zone="3">
             <p class="label">04 — Result</p>
             <?php if ($images): ?>
@@ -64,7 +78,9 @@ include 'includes/header.php';
                 <a class="bouton" href="projets.php">Retour aux projets</a>
             </div>
         </section>
+        <!-- #endregion -->
 
+        <!-- #region COMMANDES -->
         <nav class="actes" id="actes" aria-label="Actes du projet">
             <a href="projets.php">← CORE</a>
             <button data-act="0" class="on">DISCOVER</button><button data-act="1">UNDERSTAND</button><button data-act="2">EXPERIENCE</button><button data-act="3">RESULT</button>
@@ -73,8 +89,11 @@ include 'includes/header.php';
         <button class="bouton guide" id="suiv">Suivre la lumière</button>
         <p class="astuce" id="astuce">Espace : avancer · Échap : revenir · clic : onde · double-clic : accélérer</p>
         <button class="son" id="son" aria-label="Couper ou activer le son">🔊</button>
+        <!-- #endregion -->
     </main>
+    <!-- #endregion -->
 
+    <!-- #region SCRIPTS -->
     <script>
         window.projetData = <?= json_encode([
                 "titre" => $projet->getTitre(),
@@ -90,5 +109,6 @@ include 'includes/header.php';
         } }
     </script>
     <script type="module" src="js/detail-projet.js"></script>
+    <!-- #endregion -->
 
 <?php include 'includes/footer.php'; ?>

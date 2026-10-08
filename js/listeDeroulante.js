@@ -1,4 +1,6 @@
+// #region LISTES DÉROULANTES PERSONNALISÉES
 document.querySelectorAll(".liste-perso").forEach(select => {
+    // #region CONSTRUCTION
     const options = [...select.options];
     const label = document.querySelector(`label[for="${select.id}"]`);
     let actif = select.selectedIndex;
@@ -37,7 +39,9 @@ document.querySelectorAll(".liste-perso").forEach(select => {
     select.setAttribute("aria-hidden", "true");
     select.after(liste);
     if (label) label.addEventListener("click", () => bouton.focus());
+    // #endregion
 
+    // #region ÉTAT ET ACTIONS
     function estOuvert() {
         return liste.classList.contains("ouvert");
     }
@@ -75,7 +79,9 @@ document.querySelectorAll(".liste-perso").forEach(select => {
         liste.classList.remove("ouvert");
         bouton.setAttribute("aria-expanded", "false");
     }
+    // #endregion
 
+    // #region ÉVÉNEMENTS
     bouton.addEventListener("click", () => (estOuvert() ? fermer() : ouvrir()));
 
     // Clavier : flèches, Entrée, Espace, Échap, Début, Fin
@@ -107,6 +113,8 @@ document.querySelectorAll(".liste-perso").forEach(select => {
     bouton.addEventListener("blur", () => setTimeout(() => {
         if (!liste.contains(document.activeElement)) fermer();
     }, 100));
+    // #endregion
 
     afficherSelection();
 });
+// #endregion

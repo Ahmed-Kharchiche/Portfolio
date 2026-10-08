@@ -1,12 +1,16 @@
 <?php
+// #region CONFIGURATION DE LA PAGE
 $titre_page = "Contact";
 $page_css = "contact.css";
 
 include 'includes/header.php';
+// #endregion
 ?>
 
+    <!-- #region PAGE CONTACT -->
     <main class="contact">
 
+        <!-- #region INTRODUCTION -->
         <section class="contact-intro">
             <h1>ME CONTACTER</h1>
             <div class="ligne-titre"></div>
@@ -16,9 +20,12 @@ include 'includes/header.php';
                 d'échanger ? N'hésitez pas à me contacter.
             </p>
         </section>
+        <!-- #endregion -->
 
+        <!-- #region COORDONNÉES ET FORMULAIRE -->
         <section class="contact-contenu">
 
+            <!-- #region COORDONNÉES -->
             <div class="contact-infos">
 
                 <div class="contact-bloc">
@@ -48,7 +55,9 @@ include 'includes/header.php';
                 </div>
 
             </div>
+            <!-- #endregion -->
 
+            <!-- #region FORMULAIRE -->
             <div class="formulaire-contact">
 
                 <h2>Envoyer un message</h2>
@@ -104,9 +113,12 @@ include 'includes/header.php';
                 </form>
 
             </div>
+            <!-- #endregion -->
 
         </section>
+        <!-- #endregion -->
 
     </main>
 
 <?php include 'includes/footer.php'; ?>
+    <!-- #endregion -->

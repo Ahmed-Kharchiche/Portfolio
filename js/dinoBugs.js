@@ -1,8 +1,9 @@
+// #region MINI-JEU DINO DES BUGS
 (() => {
     const zone = document.getElementById("zone-jeu-contenu");
     if (!zone) return;
 
-    // ---------- Réglages ----------
+    // #region RÉGLAGES
     const BASE_W = 900, BASE_H = 300;
     const GRAVITE = 2600, SAUT = 860;
     const V_MIN = 380, V_MAX = 920;
@@ -11,12 +12,14 @@
     const POLICE = "ui-monospace, Menlo, Consolas, monospace";
     const BUG = "#e5484d", BUG_FONCE = "#8f2429";
     const GLYPHES = ["0", "1", "</>", "{ }", ";", "=>", "01", "[ ]", "#"];
+    // #endregion
 
-    // ---------- Stockage ----------
+    // #region STOCKAGE
     const lire = (k, d) => { try { return localStorage.getItem(k) ?? d; } catch { return d; } };
     const ecrire = (k, v) => { try { localStorage.setItem(k, v); } catch {} };
+    // #endregion
 
-    // ---------- Interface ----------
+    // #region INTERFACE
     zone.replaceChildren();
     zone.classList.add("avec-jeu");
 
@@ -43,8 +46,9 @@
     const ctx = canvas.getContext("2d");
     const btnSon = jeu.querySelector('[data-act="son"]');
     const btnPause = jeu.querySelector('[data-act="pause"]');
+    // #endregion
 
-    // ---------- État ----------
+    // #region ÉTAT
     let etat = "pret"; // pret | jeu | pause | fin
     let W = BASE_W, H = BASE_H, s = 1, dpr = 1, sol = BASE_H - SOL;
     let vitesse = V_MIN, distance = 0, score = 0, palier = 0, flash = 0;
@@ -61,8 +65,9 @@
         fy: Math.random(),
         f: 0.05 + Math.random() * 0.2
     }));
+    // #endregion
 
-    // ---------- Son ----------
+    // #region SON
     function initAudio() {
         if (!audio) {
             try { audio = new (window.AudioContext || window.webkitAudioContext)(); } catch {}
@@ -84,8 +89,9 @@
         o.start(t);
         o.stop(t + duree);
     }
+    // #endregion
 
-    // ---------- Utilitaires ----------
+    // #region UTILITAIRES
     const pad = n => String(n).padStart(5, "0");
     const dims = () => (baisse && auSol ? { l: 46, h: 26 } : { l: 40, h: 44 });
 
@@ -111,8 +117,10 @@
         btnPause.textContent = etat === "pause" ? "▶" : "⏸";
         btnPause.setAttribute("aria-label", etat === "pause" ? "Reprendre" : "Pause");
     }
+    // #endregion
 
-    // ---------- Taille (adapté à tout écran, plein écran compris) ----------
+    // #region TAILLE
+    // adapté à tout écran, plein écran compris
     function redimensionner() {
         const cw = jeu.clientWidth, ch = jeu.clientHeight;
         if (!cw || !ch) return;
@@ -124,8 +132,9 @@
         H = ch / s;
         sol = H - SOL;
     }
+    // #endregion
 
-    // ---------- Partie ----------
+    // #region PARTIE
     function reinitialiser() {
         vitesse = V_MIN; distance = 0; score = 0; palier = 0; flash = 0;
         z = 0; vz = 0; auSol = true;
@@ -220,8 +229,9 @@
         }
         majBoutons();
     }
+    // #endregion
 
-    // ---------- Mise à jour ----------
+    // #region MISE À JOUR
     function maj(dt) {
         if (etat !== "pause") tAnim += dt;
 
@@ -281,8 +291,9 @@
             }
         }
     }
+    // #endregion
 
-    // ---------- Dessin ----------
+    // #region DESSIN
     function dessinerBugSol(x, y, k, t) {
         ctx.save();
         ctx.translate(x, y);
@@ -469,8 +480,9 @@
             }
         }
     }
+    // #endregion
 
-    // ---------- Boucle ----------
+    // #region BOUCLE
     let dernier = performance.now();
     function boucle(t) {
         const dt = Math.min((t - dernier) / 1000, 0.033);
@@ -479,8 +491,9 @@
         dessiner();
         requestAnimationFrame(boucle);
     }
+    // #endregion
 
-    // ---------- Contrôles ----------
+    // #region CONTRÔLES
     const TOUCHES_SAUT = ["Space", "ArrowUp", "KeyW"];
     const TOUCHES_BAS = ["ArrowDown", "KeyS"];
 
@@ -547,10 +560,13 @@
     document.addEventListener("pointerdown", e => {
         if (jeu.classList.contains("agrandi") && !jeu.contains(e.target)) basculerPlein();
     });
+    // #endregion
 
-    // ---------- Lancement ----------
+    // #region LANCEMENT
     redimensionner();
     lireCouleurs();
     majBoutons();
     requestAnimationFrame(boucle);
+    // #endregion
 })();
+// #endregion

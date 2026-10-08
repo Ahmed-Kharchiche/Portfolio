@@ -1,6 +1,7 @@
 /* Lois physiques propres à chaque univers : logique pure (sans Three.js), donc testable en Node. */
 
-/* IA — l'énergie se propage de nœud en nœud avec retard et réaction en chaîne */
+// #region IA
+// l'énergie se propage de nœud en nœud avec retard et réaction en chaîne
 export class Neuronal {
     constructor(noeuds, paires) {
         this.n = noeuds.map((p) => ({ ...p, energie: 0, charge: 0, refr: 0 }));
@@ -25,8 +26,10 @@ export class Neuronal {
         }
     }
 }
+// #endregion
 
-/* JAVA — composants dépendants, activés l'un après l'autre par une cabine à profil de vitesse trapézoïdal */
+// #region JAVA
+// composants dépendants, activés l'un après l'autre par une cabine à profil de vitesse trapézoïdal
 export class Immeuble {
     constructor(comps) { this.c = comps.map((c) => ({ ...c, etat: "attente", t: 0 })); this.cab = { y: 0, v: 0, cible: 0, porte: 0, phase: "repos", cur: -1 }; }
     dependants(id) { // l'élément et tout ce qui en dépend
@@ -48,8 +51,10 @@ export class Immeuble {
         else if (k.phase === "ferme") { k.porte = Math.max(0, k.porte - dt / .35); if (k.porte <= 0) k.phase = "repos"; }
     }
 }
+// #endregion
 
-/* C — recherche du plus court chemin (Dijkstra) : plusieurs branches explorées en parallèle, les perdantes s'éteignent, le chemin retenu domine */
+// #region C
+// recherche du plus court chemin (Dijkstra) : plusieurs branches explorées en parallèle, les perdantes s'éteignent, le chemin retenu domine
 export class Machine {
     constructor(w, h, murs, s, e) { this.w = w; this.h = h; this.reconstruire(murs, s, e); }
     cout(a, b) { return 1 + ((a * 7 + b * 13) % 3) * .5; }
@@ -84,11 +89,13 @@ export class Machine {
         for (const a of this.aretes) a.etat = on.has(a.a + ">" + a.b) ? "dominant" : "eteint";
     }
 }
+// #endregion
 
-/* ===== DÉSASSEMBLAGE — un système qui quitte la scène perd sa structure, pièce par pièce, puis retourne au Core =====
-   Logique pure (sans Three.js). Chaque pièce (segment ou point) traverse : 0 fixe (s'éteint, attend son tour) → 1 détachée (impulsion + rotation, damping)
-   → 2 fragmentée (le segment se réduit en point) → 3 particule attirée par le Core (accélération progressive, damping, trajectoire courbe) → 4 arrivée.
-   L'ordre de détachement (td : extinction, t0 : séparation) vient des lois de chaque univers : propagation des couches, dépendances, distance au départ. */
+// #region DÉSASSEMBLAGE
+// un système qui quitte la scène perd sa structure, pièce par pièce, puis retourne au Core
+// Logique pure (sans Three.js). Chaque pièce (segment ou point) traverse : 0 fixe (s'éteint, attend son tour) → 1 détachée (impulsion + rotation, damping)
+// → 2 fragmentée (le segment se réduit en point) → 3 particule attirée par le Core (accélération progressive, damping, trajectoire courbe) → 4 arrivée.
+// L'ordre de détachement (td : extinction, t0 : séparation) vient des lois de chaque univers : propagation des couches, dépendances, distance au départ.
 const hyp = (a) => Math.hypot(a[0], a[1], a[2]);
 const lerp3 = (A, B, u) => [A[0] + (B[0] - A[0]) * u, A[1] + (B[1] - A[1]) * u, A[2] + (B[2] - A[2]) * u];
 const unite = (r) => { let v; do v = [r() * 2 - 1, r() * 2 - 1, r() * 2 - 1]; while (hyp(v) > 1 || hyp(v) < .1); const d = hyp(v); return v.map((x) => x / d); };
@@ -178,3 +185,4 @@ export function piecesMachine({ W, pos, rails, val, murs, s, e, dom, ferme, paqu
     for (const q of paquets) if (q.t >= 0) R.push(point(lerp3(pos[q.a], pos[q.b], Math.min(1, q.t)), { e: 1, eLow: 1, td: 0, t0: r() * .5 }));
     return R;
 }
+// #endregion

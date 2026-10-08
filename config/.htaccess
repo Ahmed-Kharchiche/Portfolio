@@ -1,0 +1,3 @@
+<Files "secrets.php">
+    Require all denied
+</Files>

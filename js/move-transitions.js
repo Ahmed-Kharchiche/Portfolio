@@ -3,9 +3,11 @@
    Modifie UNIQUEMENT les valeurs de CFG ci-dessous (rien d'autre à toucher). Unités : secondes (s) sauf mention (ms),
    « u » = unités 3D de la scène. Les valeurs actuelles reproduisent exactement le comportement d'origine.
    ===================================================================================================================== */
+// #region RÉGLAGES (CFG)
 export const CFG = {
 
-    /* ---------- INTRO : spirale du point guide, puis apparition du réseau ---------- */
+    // #region INTRO
+    // spirale du point guide, puis apparition du réseau
     intro: {
         fin: 8,                 // s : durée de l'intro (avant, ESPACE / molette / clic sur un acte sont ignorés)
         texteApres: 7500,       // ms : délai avant l'apparition du texte, de l'astuce et du bouton « Suivre la lumière »
@@ -22,8 +24,9 @@ export const CFG = {
         spiraleFermeDuree: 2,   // s : durée du resserrement
         spiraleAplat: .6        // 0..1 : aplatissement vertical de la spirale
     },
+    // #endregion
 
-    /* ---------- CAMÉRA AU REPOS (entre deux voyages) ---------- */
+    // #region CAMÉRA AU REPOS (ENTRE DEUX VOYAGES)
     camera: {
         fov: 60,                // degrés : champ de vision normal
         fovLissage: 3,          // vitesse de retour du champ de vision (plus grand = plus vif)
@@ -40,8 +43,9 @@ export const CFG = {
         yBase: 1.5, yFreq: .09, yAmp: 2, // hauteur de base, dérive verticale (fréquence, amplitude)
         sourisX: 3, sourisY: 2.2         // u : déplacement de la caméra par la souris (X, Y)
     },
+    // #endregion
 
-    /* ---------- VOYAGE ENTRE ACTES (portail, flash, nouveau monde) ---------- */
+    // #region VOYAGE ENTRE ACTES (PORTAIL, FLASH, NOUVEAU MONDE)
     voyage: {
         attente: .45,           // s : silence + particules freinées + onde, avant le départ
         duree: 3.4,             // s : durée du voyage jusqu'au flash
@@ -59,8 +63,9 @@ export const CFG = {
         cameraKGain: 14,        // gain d'inertie en fin de voyage (la caméra rattrape de plus en plus vite)
         fovGain: 40             // degrés ajoutés au champ de vision à pleine vitesse (effet tunnel)
     },
+    // #endregion
 
-    /* ---------- SORTIE VERS LE CORE (lien « ← CORE » ou Échap sur l'acte 1) ---------- */
+    // #region SORTIE VERS LE CORE (LIEN « ← CORE » OU ÉCHAP SUR L'ACTE 1)
     sortie: {
         actif: true,            // false = le lien « ← CORE » navigue normalement, sans transition
         duree: 2.6,             // s : durée de la transition
@@ -72,8 +77,10 @@ export const CFG = {
         couleurFondu: "#09090B",// couleur du fondu (celle du fond de la page Core)
         cible: "core.php"       // page ouverte à la fin
     },
+    // #endregion
 
-    /* ---------- FLUX GLOBAL DES PARTICULES : rafales brutales puis quasi-arrêt ---------- */
+    // #region FLUX GLOBAL DES PARTICULES
+    // rafales brutales puis quasi-arrêt
     flux: {
         base: .15,              // flux minimal permanent
         rafale: 2.2,            // intensité des rafales
@@ -84,16 +91,19 @@ export const CFG = {
         boostDecay: .6,         // vitesse d'extinction du boost
         retenu: .05             // facteur de flux pendant l'attente avant un voyage (les particules freinent)
     },
+    // #endregion
 
-    /* ---------- AMBIANCE PAR ACTE : [flux, distance de connexion des liens] ---------- */
+    // #region AMBIANCE PAR ACTE
+    // [flux, distance de connexion des liens]
     zones: {
         ambiance: [{ flow: 1, link: 6 }, { flow: 1.3, link: 5 }, { flow: .9, link: 7 }, { flow: .4, link: 8 }], // 0 DISCOVER, 1 UNDERSTAND, 2 EXPERIENCE, 3 RESULT
         entree: 1.6,            // vitesse d'apparition d'un acte (plus grand = plus rapide)
         sortie: 4,              // vitesse de disparition d'un acte
         profondeur: 8           // u : l'acte arrive de cette profondeur
     },
+    // #endregion
 
-    /* ---------- CHAMP DE PARTICULES ---------- */
+    // #region CHAMP DE PARTICULES
     particules: {
         nb: 380, nbMobile: 220, // nombre de particules (bureau / mobile)
         liensMax: 1600,         // nombre maximal de liens affichés
@@ -105,8 +115,9 @@ export const CFG = {
         sillage: { rayon: 10, force: 3, entrainement: .5, vitMin: .05 },            // sillage du point guide : portée, repoussement, entraînement, vitesse minimale
         portail: { proche: 45, loin: 80, aspire: 30, repousse: 8 }                  // portail pendant le voyage : portée d'aspiration, portée de répulsion, forces
     },
+    // #endregion
 
-    /* ---------- PANNEAUX HOLOGRAPHIQUES ---------- */
+    // #region PANNEAUX HOLOGRAPHIQUES
     panneaux: {
         suiviY: .5, suiviX: .4, // rotation vers le curseur (autour de Y, de X)
         vitesse: 3,             // vitesse de réaction des panneaux (plus grand = plus vif)
@@ -114,13 +125,16 @@ export const CFG = {
         reculAutres: 4,         // u : les autres panneaux reculent de…
         echelleSelection: .15   // agrandissement du panneau sélectionné
     },
+    // #endregion
 
-    /* ---------- ENTRÉES ---------- */
+    // #region ENTRÉES
     molette: { seuil: 140, fenetre: 300 }, // cumul de molette (px) pour changer d'acte ; fenêtre de cumul (ms)
     son: { volume: .45 }                   // volume général (0..1)
+    // #endregion
 };
+// #endregion
 
-/* ===================================== fonctions (pures, sans Three.js) ===================================== */
+// #region FONCTIONS (PURES, SANS THREE.JS)
 export const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
 export const E = { // courbes d'easing
     inOut: (t) => (t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2),
@@ -190,3 +204,4 @@ export function particules(c, dt) {
         pos[a3] = bx * ex + off[a3]; pos[a3 + 1] = by * ex + off[a3 + 1]; pos[a3 + 2] = bz * ex + off[a3 + 2];
     }
 }
+// #endregion

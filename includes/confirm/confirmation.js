@@ -1,3 +1,4 @@
+// #region OUVERTURE DE LA CONFIRMATION
 function ouvrirConfirmation(action, id, titre, message, danger = false) {
     const modale = document.getElementById("modale-confirmation");
     const contenu = modale.querySelector(".confirmation-contenu");
@@ -25,13 +26,18 @@ function ouvrirConfirmation(action, id, titre, message, danger = false) {
 
     modale.classList.add("active");
 }
+// #endregion
 
+// #region FERMETURE DE LA CONFIRMATION
 function fermerConfirmation() {
     document.getElementById("modale-confirmation").classList.remove("active");
 }
+// #endregion
 
+// #region FERMETURE AU CLAVIER
 document.addEventListener("keydown", function(event) {
     if (event.key === "Escape") {
         fermerConfirmation();
     }
 });
+// #endregion

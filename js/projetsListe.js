@@ -1,3 +1,4 @@
+// #region ÉLÉMENTS ET RÉGLAGES
 const cartes = document.querySelectorAll(".carte-3d");
 const nombreCartes = cartes.length;
 
@@ -8,8 +9,10 @@ const espacementX = carte.getBoundingClientRect().width - 90;
 
 const profondeurZ = 150;
 const angleInclinaison = 35;
+// #endregion
 
 
+// #region POSITIONS DES CARTES
 function actualiserPositions(focus = false) {
 
     cartes.forEach((carte, index) => {
@@ -43,8 +46,10 @@ function actualiserPositions(focus = false) {
             distance <= 2 ? "auto" : "none";
     });
 }
+// #endregion
 
 
+// #region FOCUS D'UNE CARTE
 function focusCarte() {
 
     actualiserPositions(true);
@@ -53,8 +58,10 @@ function focusCarte() {
         actualiserPositions(false);
     }, 600);
 }
+// #endregion
 
 
+// #region CLIC SUR UNE CARTE
 cartes.forEach((carte, index) => {
 
     carte.addEventListener("click", () => {
@@ -73,8 +80,10 @@ cartes.forEach((carte, index) => {
     });
 
 });
+// #endregion
 
 
+// #region ROTATION
 function tourner(direction) {
 
     indexActif =
@@ -82,8 +91,10 @@ function tourner(direction) {
 
     focusCarte();
 }
+// #endregion
 
 
+// #region DÉFILEMENT À LA MOLETTE
 const conteneur =
     document.getElementById("carousel-conteneur");
 
@@ -109,6 +120,7 @@ conteneur.addEventListener("wheel", (evenement) => {
     }
 
 }, { passive: false });
+// #endregion
 
 
 actualiserPositions();

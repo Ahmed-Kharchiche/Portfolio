@@ -1,3 +1,4 @@
+// #region BOUTON VOIR PLUS
 document.querySelectorAll('.bouton-voir-plus').forEach(bouton => {
     bouton.onclick = function () {
         const container = this.parentElement;
@@ -12,3 +13,4 @@ document.querySelectorAll('.bouton-voir-plus').forEach(bouton => {
         }
     };
 });
+// #endregion

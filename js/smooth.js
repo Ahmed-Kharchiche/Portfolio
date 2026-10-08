@@ -1,7 +1,4 @@
-// ==============================
-//      PARAMÈTRES DU SCROLL
-// ==============================
-//
+// #region PARAMÈTRES DU SCROLL
 
 // ↑ AUGMENTER = va plus loin à chaque coup de molette
 // ↓ DIMINUER = va moins loin
@@ -10,15 +7,14 @@ const vitesseScroll = 0.55;
 // ↑ AUGMENTER = s'arrête plus rapidement
 // ↓ DIMINUER = continue plus longtemps
 const fluiditeScroll = 0.035;
+// #endregion
 
 
-// ==============================
-//      SCROLL PERSONNALISÉ
-// ==============================
+// #region SCROLL PERSONNALISÉ
 
 // Sur mobile/tablette, on garde le scroll natif
 const estMobile =
-    window.matchMedia("(max-width: 600px)").matches ||
+    window.matchMedia("(max-width: 700px)").matches ||
     window.matchMedia("(pointer: coarse)").matches;
 
 if (!estMobile) {
@@ -27,9 +23,7 @@ if (!estMobile) {
     let positionScroll = window.scrollY;
 
 
-    // ==============================
-    //          MOLETTE
-    // ==============================
+    // #region MOLETTE
 
     window.addEventListener('wheel', (e) => {
 
@@ -46,11 +40,10 @@ if (!estMobile) {
         );
 
     }, { passive: false });
+    // #endregion
 
 
-    // ==============================
-    //       BARRE DE DÉFILEMENT
-    // ==============================
+    // #region BARRE DE DÉFILEMENT
 
     window.addEventListener('scroll', () => {
 
@@ -61,11 +54,10 @@ if (!estMobile) {
         }
 
     });
+    // #endregion
 
 
-    // ==============================
-    //          ANIMATION
-    // ==============================
+    // #region ANIMATION
 
     function animationScroll() {
 
@@ -76,10 +68,9 @@ if (!estMobile) {
 
         requestAnimationFrame(animationScroll);
     }
+    // #endregion
 
-    // ==============================
-//       LIENS D'ANCRE
-// ==============================
+    // #region LIENS D'ANCRE
 
     document.querySelectorAll('a[href^="#"]').forEach(lien => {
         lien.addEventListener('click', (e) => {
@@ -100,12 +91,10 @@ if (!estMobile) {
             cibleScroll = cible.offsetTop;
         });
     });
+    // #endregion
 
     animationScroll();
 }
-else {
-    cible.scrollIntoView({
-        behavior: "smooth"
-    });
-}
+
+// #endregion
 

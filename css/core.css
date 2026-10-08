@@ -1,5 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Fraunces:wght@300;700&family=Hanken+Grotesk:wght@400;500&display=swap");
 
+/* #region BASE DE LA SCÈNE */
 .core {
     --r: 0;
     --i: 0;
@@ -11,8 +12,10 @@ html:has(.core:not(.simple)) { overflow: hidden; }
 #scene { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; cursor: grab; }
 .vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 50%, transparent 50%, rgba(9, 9, 11, .75)); }
 .fondu { position: absolute; inset: 0; z-index: 20; background: #09090B; opacity: 0; pointer-events: none; }
+/* #endregion */
 
-/* informations : elles émergent ligne par ligne, sur un fond calme pour rester lisibles */
+/* #region INFORMATIONS */
+/* elles émergent ligne par ligne, sur un fond calme pour rester lisibles */
 .info { position: absolute; z-index: 5; left: 0; top: 0; width: 280px; padding: 14px 18px; pointer-events: none; opacity: 0; transition: opacity .5s;
     background: linear-gradient(90deg, rgba(9, 9, 11, .8), rgba(9, 9, 11, 0)); border-left: 1px solid var(--lav); }
 .info.on { opacity: 1; }
@@ -20,41 +23,54 @@ html:has(.core:not(.simple)) { overflow: hidden; }
 .info h2 { margin: 8px 0 0; font: 700 28px/1.1 var(--serif); opacity: 0; transform: translateY(8px); transition: opacity .7s .5s, transform .7s .5s; }
 .info.on span, .info.on h2 { opacity: 1; transform: none; }
 .info.on span:nth-child(2) { transition-delay: .12s; } .info.on span:nth-child(3) { transition-delay: .24s; }
+/* #endregion */
 
+/* #region HUD ET ASTUCE */
 .hud { position: absolute; z-index: 10; left: 24px; bottom: 24px; display: flex; gap: 18px; font: 500 12px var(--sans); letter-spacing: .1em; }
 .hud a { color: var(--blanc); text-decoration: none; opacity: .45; transition: opacity .3s, color .3s; }
 .hud a:hover, .hud a.on { opacity: 1; } .hud a.on { color: var(--lav); }
 .astuce { position: absolute; z-index: 10; left: 50%; bottom: 24px; transform: translateX(-50%); margin: 0; font: 500 11px var(--sans); letter-spacing: .12em; opacity: 0; transition: opacity 2s; }
 .astuce.on { opacity: .5; }
+/* #endregion */
 
-/* liste : accessible au clavier, discrète en mode normal */
+/* #region LISTE DES PROJETS */
+/* accessible au clavier, discrète en mode normal */
 .liste { position: absolute; z-index: 10; right: 24px; bottom: 24px; margin: 0; padding: 0; list-style: none; text-align: right; font: 500 12px var(--sans); letter-spacing: .06em; }
 .liste a { color: var(--blanc); opacity: .35; text-decoration: none; transition: opacity .3s; }
 .liste a:hover, .liste a:focus-visible { opacity: 1; outline: 0; color: var(--lav); }
+/* #endregion */
 
+/* #region MODE SIMPLE */
 .core.simple { height: auto; min-height: 100dvh; overflow: visible; }
 .core.simple #scene, .core.simple .vignette, .core.simple .info, .core.simple .astuce { display: none; }
 .core.simple .liste { position: static; margin: 12vh auto; width: min(560px, 88vw); text-align: left; font-size: 22px; line-height: 2; }
 .core.simple .liste a { opacity: 1; }
 @media (max-width: 700px) { .info { width: 220px; } .liste, .astuce { display: none; } }
+/* #endregion */
 
+/* #region SON */
 .son { position: absolute; z-index: 10; left: 24px; bottom: 56px; padding: 0; background: none; border: 0; color: var(--blanc); opacity: .45; cursor: pointer; font: 500 12px var(--sans); letter-spacing: .1em; transition: opacity .3s; }
 .son:hover { opacity: 1; }
 .core.simple .son { display: none; }
+/* #endregion */
 
-/* ===== MODE INSPECT : observer l'objet (EXPERIENCE, elle, le fait vivre) ===== */
+/* #region MODE INSPECT */
+/* observer l'objet (EXPERIENCE, elle, le fait vivre) */
 .vignette::after { content: ""; position: absolute; inset: 0; opacity: 0; transition: opacity 1.2s; background: radial-gradient(ellipse at 62% 50%, transparent 30%, rgba(9, 9, 11, .8)); }
 .core.inspecting .vignette::after { opacity: 1; }
 .core.inspecting .hud, .core.inspecting .liste { opacity: .3; transition: opacity .8s; }
 
+/* #region CONTRÔLE DANS LE HUD */
 /* le contrôle vit dans le HUD : texte entre crochets qui s'écartent, pas de bouton HTML */
 .info .ins-b { display: block; margin: 14px 0 0; padding: 0; background: none; border: 0; color: var(--lav); font: 500 11px var(--sans); letter-spacing: .2em; cursor: pointer;
     opacity: 0; transform: translateX(-6px); pointer-events: none; transition: opacity .7s, transform .7s, letter-spacing .4s, color .3s; }
 .info.on.pret .ins-b { opacity: 1; transform: none; pointer-events: auto; }
 .ins-b::before { content: "[ "; } .ins-b::after { content: " ]"; }
 .info .ins-b:hover, .info .ins-b:focus-visible { color: var(--blanc); letter-spacing: .3em; outline: 0; }
+/* #endregion */
 
-/* contenu : colonne calme sur dégradé (lisibilité > spectacle), éléments en chaîne avec un petit ressort */
+/* #region CONTENU DU PANNEAU */
+/* colonne calme sur dégradé (lisibilité > spectacle), éléments en chaîne avec un petit ressort */
 .inspect { position: absolute; z-index: 12; left: 0; top: 0; bottom: 0; width: min(440px, 42vw); box-sizing: border-box; padding: 9vh 36px 10vh 28px; overflow: auto; pointer-events: none; scrollbar-width: thin;
     background: linear-gradient(90deg, rgba(9, 9, 11, .92), rgba(9, 9, 11, .82) 60%, rgba(9, 9, 11, 0)); }
 .inspect.on { pointer-events: auto; }
@@ -76,11 +92,17 @@ html:has(.core:not(.simple)) { overflow: hidden; }
 .ins-close { position: fixed; right: 24px; top: 24px; border: 0; opacity: 0; pointer-events: none; transition: opacity .8s .6s; }
 .inspect.on .ins-close { opacity: .6; pointer-events: auto; }
 .core.simple .inspect, .core.simple .ins-b { display: none; }
+/* #endregion */
+/* #endregion */
 
-/* mobile : le contenu devient prioritaire (panneau bas, pas de plan 3D) */
+/* #region MOBILE */
+/* le contenu devient prioritaire (panneau bas, pas de plan 3D) */
 @media (max-width: 700px) {
     .inspect { top: auto; width: 100%; max-height: 58dvh; padding: 28px 22px 32px; background: linear-gradient(0deg, rgba(9, 9, 11, .96) 72%, rgba(9, 9, 11, 0)); }
     .it { transform: translateY(16px); }
     .vignette::after { background: radial-gradient(ellipse at 50% 30%, transparent 30%, rgba(9, 9, 11, .8)); }
 }
+/* #endregion */
+/* #region MOUVEMENT RÉDUIT */
 @media (prefers-reduced-motion: reduce) { .it, .inspect.on .it { transition-duration: .01s; transition-delay: 0s; } }
+/* #endregion */

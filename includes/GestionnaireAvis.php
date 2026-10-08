@@ -9,6 +9,7 @@ require_once __DIR__ . '/Avis.php';
  */
 class GestionnaireAvis
 {
+    // #region PROPRIÉTÉS ET CONSTRUCTEUR
     /** @var Avis[] */
     private array $avis = [];
 
@@ -16,7 +17,9 @@ class GestionnaireAvis
     {
         $this->charger();
     }
+    // #endregion
 
+    // #region CHARGEMENT ET SAUVEGARDE
     public function charger(): void
     {
         $this->avis = [];
@@ -53,7 +56,9 @@ class GestionnaireAvis
             LOCK_EX
         );
     }
+    // #endregion
 
+    // #region LECTURE
     /** @return Avis[] */
     public function getTous(): array
     {
@@ -88,7 +93,9 @@ class GestionnaireAvis
 
         return null;
     }
+    // #endregion
 
+    // #region MODIFICATION
     public function ajouter(Avis $avis): void
     {
         $avis->setId('avis_' . bin2hex(random_bytes(6)));
@@ -115,4 +122,5 @@ class GestionnaireAvis
             $this->sauvegarder();
         }
     }
+    // #endregion
 }

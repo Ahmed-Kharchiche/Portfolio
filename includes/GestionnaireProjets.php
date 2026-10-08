@@ -11,6 +11,7 @@ require_once 'Projet.php';
  */
 class GestionnaireProjets
 {
+    // #region PROPRIÉTÉS ET CONSTRUCTEUR
     private string $cheminFichier;
     private array $projets = []; // tableau d'objets Projet
 
@@ -19,7 +20,9 @@ class GestionnaireProjets
         $this->cheminFichier = $cheminFichier;
         $this->charger();
     }
+    // #endregion
 
+    // #region CHARGEMENT ET SAUVEGARDE
     /**
      * Lit projets.json et reconstruit un objet Projet par entrée.
      * Appelé automatiquement par le constructeur.
@@ -48,7 +51,9 @@ class GestionnaireProjets
         $donnees = array_map(fn(Projet $projet) => $projet->versTableau(), $this->projets);
         file_put_contents($this->cheminFichier, json_encode($donnees, JSON_PRETTY_PRINT));
     }
+    // #endregion
 
+    // #region LECTURE
     /**
      * Retourne tous les projets (utile pour les boucles d'affichage).
      */
@@ -69,7 +74,9 @@ class GestionnaireProjets
         }
         return null;
     }
+    // #endregion
 
+    // #region MODIFICATION
     /**
      * Ajoute un nouveau projet : lui attribue un id unique, l'ajoute à la liste,
      * puis sauvegarde tout de suite dans le fichier.
@@ -92,4 +99,5 @@ class GestionnaireProjets
         ));
         $this->sauvegarder();
     }
+    // #endregion
 }

@@ -1,14 +1,15 @@
 <?php
 session_start();
 
-// ==================================================
-//      PROTECTION DE LA PAGE (avant tout le reste)
-// ==================================================
+// #region PROTECTION DE LA PAGE
+// avant tout le reste
 if (($_SESSION["connecte"] ?? false) !== true) {
     header("Location: login.php");
     exit;
 }
+// #endregion
 
+// #region DÉPENDANCES ET GESTIONNAIRES
 require_once 'includes/Projet.php';
 require_once 'includes/GestionnaireProjets.php';
 require_once 'includes/affichage_projets.php';
@@ -20,10 +21,9 @@ require_once 'includes/confirm/confirmation.php';
 
 $gestionnaire = new GestionnaireProjets("data/projets.json");
 $gestionnaireAvis = new GestionnaireAvis("data/avis.json");
+// #endregion
 
-// ==================================================
-//      CONFIGURATION
-// ==================================================
+// #region PARAMÈTRES DE L'ADMIN
 $technologies_disponibles = [
         "Python",
         "Java",
@@ -36,10 +36,9 @@ $technologies_disponibles = [
 ];
 
 $extensions_images = ["jpg", "jpeg", "png", "gif", "webp"];
+// #endregion
 
-// ==================================================
-//      ENREGISTREMENT DES IMAGES
-// ==================================================
+// #region ENREGISTREMENT DES IMAGES
 /**
  * Enregistre les images envoyées dans images/projets/ et renvoie leurs chemins.
  * Seuls les vrais fichiers image (extension autorisée + contenu vérifié) sont acceptés.
@@ -75,10 +74,9 @@ function enregistrerImages(array $fichiers, array $extensionsAutorisees): array
 
     return $chemins;
 }
+// #endregion
 
-// ==================================================
-//      PROJET À MODIFIER
-// ==================================================
+// #region PROJET À MODIFIER
 $projetAModifier = null;
 if (isset($_GET["id"])) {
     $projetAModifier = $gestionnaire->trouverParId($_GET["id"]);
@@ -87,10 +85,9 @@ if (isset($_GET["id"])) {
         exit;
     }
 }
+// #endregion
 
-// ==================================================
-//      TRAITEMENT DES FORMULAIRES (POST)
-// ==================================================
+// #region TRAITEMENT DES FORMULAIRES (POST)
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $action = $_POST["action"] ?? "";
     $id = $_POST["id"] ?? "";
@@ -102,7 +99,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     ));
 
     switch ($action) {
-        // ---------------- PROJETS ----------------
+        // #region PROJETS
         case "ajouter":
             $projet = new Projet(
                     null,
@@ -141,8 +138,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $gestionnaire->supprimer($id);
             }
             break;
+        // #endregion
 
-        // ---------------- AVIS ----------------
+        // #region AVIS
         case "publier_avis":
             if ($id !== "") {
                 $gestionnaireAvis->publier($id);
@@ -155,21 +153,20 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             }
             break;
     }
+        // #endregion
 
     header("Location: admin.php");
     exit;
 }
+// #endregion
 
-// ==================================================
-//      AVIS EN ATTENTE ET PUBLIES
-// ==================================================
+// #region AVIS EN ATTENTE ET PUBLIES
 // getNonPublies() renvoie directement des objets Avis : plus rien à convertir
 $avisEnAttente = $gestionnaireAvis->getNonPublies();
 $avisPublies = $gestionnaireAvis->getPublies();
+// #endregion
 
-// ==================================================
-//      VALEURS DU FORMULAIRE
-// ==================================================
+// #region VALEURS DU FORMULAIRE
 $modeModification = ($projetAModifier !== null);
 $titreFormulaire = $modeModification ? "Modifier le projet" : "Ajouter un projet";
 $texteBouton = $modeModification ? "Sauvegarder les modifications" : "Ajouter le projet";
@@ -177,21 +174,25 @@ $titre = $projetAModifier?->getTitre() ?? "";
 $description = $projetAModifier?->getDescription() ?? "";
 $gitlab = $projetAModifier?->getGitlab() ?? "";
 $technologiesProjet = $projetAModifier?->getTechnologies() ?? [];
+// #endregion
 
-// ==================================================
-//      CONFIGURATION DE LA PAGE
-// ==================================================
+// #region CONFIGURATION DE LA PAGE
 $titre_page = "Administration";
 $page_css = "admin.css";
 include 'includes/header.php';
+// #endregion
 ?>
 
+    <!-- #region PAGE ADMIN -->
     <main class="admin">
+        <!-- #region BARRE DU HAUT -->
         <div class="top-bar">
             <h1>Espace admin</h1>
             <a class="bouton-deconnexion" href="logout.php">Se déconnecter</a>
         </div>
+        <!-- #endregion -->
 
+        <!-- #region FORMULAIRE DE PROJET -->
         <section class="ajout-projet">
             <h2><?php echo htmlspecialchars($titreFormulaire); ?></h2>
             <form class="formulaire-projet" method="POST" enctype="multipart/form-data">
@@ -258,19 +259,17 @@ include 'includes/header.php';
                 <button class="bouton-ajouter" type="submit"><?php echo htmlspecialchars($texteBouton); ?></button>
             </form>
         </section>
+        <!-- #endregion -->
 
-        <!-- ==========================================
-             LISTE DES PROJETS
-             ========================================== -->
+        <!-- #region LISTE DES PROJETS -->
         <div class="grille-projets">
             <?php foreach ($gestionnaire->getTous() as $projet): ?>
                 <?php afficherCarteProjet($projet, true); ?>
             <?php endforeach; ?>
         </div>
+        <!-- #endregion -->
 
-        <!-- ==========================================
-             AVIS EN ATTENTE
-             ========================================== -->
+        <!-- #region AVIS EN ATTENTE -->
         <section class="avis-admin">
             <h2>Avis reçus</h2>
             <?php if (empty($avisEnAttente)): ?>
@@ -281,6 +280,8 @@ include 'includes/header.php';
                 <?php endforeach; ?>
             <?php endif; ?>
         </section>
+        <!-- #endregion -->
+        <!-- #region AVIS PUBLIÉS -->
         <section class="petits-avis">
             <h2>Avis</h2>
 
@@ -290,10 +291,14 @@ include 'includes/header.php';
                 <?php endforeach; ?>
             </div>
         </section>
+        <!-- #endregion -->
 
     </main>
+    <!-- #endregion -->
+    <!-- #region MODALE ET SCRIPTS -->
     <?php afficherConfirmation(); ?>
     <script src="js/administration.js"></script>
     <script src="js/carrousel.js"></script>
     <script src="includes/confirm/confirmation.js"></script>
+    <!-- #endregion -->
 <?php include 'includes/footer.php'; ?>

@@ -1,8 +1,4 @@
-//
-// ==============================
-//        PARAMÈTRES
-// ==============================
-//
+// #region PARAMÈTRES
 
 // Nombre de points dans le réseau
 const nombreDePoints = 90;
@@ -44,13 +40,10 @@ const ralentissementClic = 0.96;
 // Distance entre la caméra et le réseau
 const positionCameraZ = 50;
 
-//
+// #endregion
 
 
-// ==============================
-//        THREE.JS
-// ==============================
-//
+// #region THREE.JS
 
 const scene = new THREE.Scene();
 
@@ -84,11 +77,10 @@ for (let i = 0; i < nombreDePoints; i++) {
 
     positions.push(new THREE.Vector3(x, y, z));
 }
+// #endregion
 
 
-// ==============================
-//           POINTS
-// ==============================
+// #region POINTS
 
 const geometriePoints =
     new THREE.BufferGeometry().setFromPoints(positions);
@@ -104,11 +96,10 @@ const points = new THREE.Points(
 );
 
 reseau.add(points);
+// #endregion
 
 
-// ==============================
-//           LIGNES
-// ==============================
+// #region LIGNES
 
 const sommetsLignes = [];
 
@@ -141,11 +132,10 @@ const lignes = new THREE.LineSegments(
 );
 
 reseau.add(lignes);
+// #endregion
 
 
-// ==============================
-//           SOURIS
-// ==============================
+// #region SOURIS
 
 let sourisX = 0;
 let sourisY = 0;
@@ -158,11 +148,10 @@ window.addEventListener("mousemove", (evenement) => {
     sourisY =
         (evenement.clientY / window.innerHeight) * 2 - 1;
 });
+// #endregion
 
 
-// ==============================
-//            CLIC
-// ==============================
+// #region CLIC
 
 let impulsionX = 0;
 let impulsionY = 0;
@@ -175,11 +164,10 @@ window.addEventListener("click", (evenement) => {
     impulsionY =
         (evenement.clientY / window.innerHeight) * 2 - 1;
 });
+// #endregion
 
 
-// ==============================
-//          ANIMATION
-// ==============================
+// #region ANIMATION
 
 function animer() {
 
@@ -202,11 +190,10 @@ function animer() {
 }
 
 animer();
+// #endregion
 
 
-// ==============================
-//            RESIZE
-// ==============================
+// #region RESIZE
 
 window.addEventListener("resize", () => {
 
@@ -220,8 +207,10 @@ window.addEventListener("resize", () => {
         window.innerHeight
     );
 });
+// #endregion
 
 
+// #region COULEURS ET THÈME
 function mettreAJourCouleurs() {
 
     couleurPoints = getComputedStyle(document.body)
@@ -239,3 +228,4 @@ function mettreAJourCouleurs() {
 mettreAJourCouleurs();
 
 window.addEventListener('themeChange', mettreAJourCouleurs);
+// #endregion

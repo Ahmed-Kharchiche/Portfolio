@@ -1,3 +1,4 @@
+// #region ANIMATION DES CARTES DE PROJET
 const projets = document.querySelectorAll('.carte-projet');
 
 window.addEventListener('scroll', () => {
@@ -31,8 +32,10 @@ window.addEventListener('scroll', () => {
         }
     });
 });
+// #endregion
 
 
+// #region ANIMATION DE L'INTRODUCTION
 const introGauche = document.querySelector('.intro-gauche');
 const introDroite = document.querySelector('.intro-droite');
 
@@ -58,3 +61,4 @@ window.addEventListener('scroll', () => {
 
     dernierScroll = scrollActuel;
 });
+// #endregion

@@ -1,3 +1,4 @@
+/* #region MODALE */
 .modale-confirmation {
     display: none;
     position: fixed;
@@ -13,7 +14,9 @@
 .modale-confirmation.active {
     display: flex;
 }
+/* #endregion */
 
+/* #region CONTENU */
 .confirmation-contenu {
     position: relative;
     width: 100%;
@@ -57,7 +60,9 @@
     margin-bottom: 25px;
     color: var(--texte-secondaire);
 }
+/* #endregion */
 
+/* #region ACTIONS */
 .confirmation-actions {
     display: flex;
     justify-content: center;
@@ -82,7 +87,9 @@
     background: var(--accent);
     color: #FFFFFF;
 }
+/* #endregion */
 
+/* #region VARIANTE DANGER */
 .confirmation-danger .confirmation-icone {
     color: #DC2626;
     border-color: #DC2626;
@@ -92,3 +99,4 @@
     background: #DC2626;
     border-color: #DC2626;
 }
+/* #endregion */

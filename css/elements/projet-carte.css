@@ -1,3 +1,4 @@
+/* #region LISTE ET GRILLE DES PROJETS */
 .liste-projets {
     display: flex;
     flex-wrap: wrap;
@@ -34,7 +35,9 @@
     margin: 30px auto;
     padding: 0 20px;
 }
+/* #endregion */
 
+/* #region CARTE D'UN PROJET */
 .carte-projet {
     background-color: var(--carte);
     border: 1px solid var(--bordure);
@@ -59,7 +62,9 @@
     aspect-ratio: 16 / 9;
     object-fit: cover;
 }
+/* #endregion */
 
+/* #region DATE DE CRÉATION */
 .date-projet {
     display: inline-block;
     width: fit-content;
@@ -75,7 +80,9 @@
     font-weight: 500;
     letter-spacing: 0.3px;
 }
+/* #endregion */
 
+/* #region CONTENU ET DESCRIPTION */
 .contenu-projet {
     padding: 20px;
     display: flex;
@@ -141,7 +148,9 @@
     outline: 2px solid var(--accent);
     outline-offset: 3px;
 }
+/* #endregion */
 
+/* #region TECHNOLOGIES */
 .technologies {
     display: flex;
     flex-wrap: wrap;
@@ -168,7 +177,9 @@
     color: var(--accent-hover);
     border-color: var(--accent-hover);
 }
+/* #endregion */
 
+/* #region BAS DE CARTE ET LIENS */
 .bas-carte {
     margin-top: auto;
     display: flex;
@@ -238,13 +249,17 @@
     color: #FFFFFF;
     background-color: var(--accent);
 }
+/* #endregion */
 
+/* #region MESSAGE VIDE */
 .message-vide {
     text-align: center;
     color: var(--texte-secondaire);
     padding: 60px 20px;
 }
+/* #endregion */
 
+/* #region ACTIONS ADMIN */
 .actions-admin {
     display: flex;
     align-items: center;
@@ -300,9 +315,11 @@
     background-color: #EF4444;
     transform: translateY(-1px);
 }
+/* #endregion */
 
 
 
+/* #region RESPONSIVE */
 @media (max-width: 600px) {
     .liste-projets {
         width: 100%;
@@ -322,7 +339,9 @@
         gap: 8px;
     }
 }
+/* #endregion */
 
+/* #region MOUVEMENT RÉDUIT */
 @media (prefers-reduced-motion: reduce) {
     .carte-projet,
     .bouton-voir-plus,
@@ -348,3 +367,4 @@
         scroll-behavior: auto !important;
     }
 }
+/* #endregion */
