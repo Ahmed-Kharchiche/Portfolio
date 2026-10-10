@@ -136,18 +136,18 @@
 
 /* #region RESPONSIVE */
 
+/* Tablettes et petits ordinateurs */
+@media (max-width: 1024px) {
+    .login-contenu { max-width: 400px; padding: 30px; }
+}
+
+/* Mobiles */
 @media (max-width: 600px) {
-    .login {
-        padding: 20px 15px;
-    }
-
-    .login-contenu {
-        padding: 25px 20px;
-    }
-
-    .login-contenu h2 {
-        font-size: 24px;
-    }
+    .login { min-height: 100dvh; padding: 20px 15px; }
+    .login-contenu { padding: 25px 20px; }
+    .login-contenu h2 { font-size: 24px; }
+    .login-formulaire input { font-size: 16px; }
+    .login-compteur { font-size: 20px; }
 }
 
 /* #endregion */
@@ -164,4 +164,4 @@
     font-variant-numeric: tabular-nums;
 }
 
-/* #endregion */
+/* #endregion */

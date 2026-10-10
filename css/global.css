@@ -270,12 +270,21 @@ h1 {
 /* #endregion */
 
 /* #region RESPONSIVE */
-@media (max-width: 600px) {
 
-    h1 {
-        margin-top: 100px;
-        font-size: 32px;
-        letter-spacing: 1px;
-    }
+/* Tablettes et petits ordinateurs */
+@media (max-width: 1024px) {
+    img { max-width: 100%; height: auto; }
+    section { padding: 24px; }
+    h1 { font-size: 56px; letter-spacing: 4px; }
 }
+
+/* Mobiles */
+@media (max-width: 600px) {
+    section { padding: 20px 15px; }
+    h1 { margin-top: 100px; font-size: 32px; letter-spacing: 1px; overflow-wrap: anywhere; }
+    .ligne-titre { width: 120px; }
+    .liste-custom { min-width: 0; max-width: 100%; }
+    .bouton-haut { bottom: 15px; right: 15px; padding: 10px 14px; }
+}
+
 /* #endregion */

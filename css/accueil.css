@@ -207,142 +207,34 @@ canvas {
 
 
 
-/* #region RESPONSIVE (CODE MIS EN COMMENTAIRE) */
-/*@media (max-width: 600px) {*/
+/* #region RESPONSIVE */
 
-/*    !* =========================*/
-/*       STRUCTURE GÉNÉRALE*/
-/*       ========================= *!*/
+/* Tablettes et petits ordinateurs */
+@media (max-width: 1024px) {
+    .hero { padding: 40px 24px; }
+    #presentation { font-size: 20px; }
+    .zone { height: 420px; }
+    .carousel-3d, .carte-3d { width: 380px; height: 300px; }
+    .carousel-3d { margin: 50px auto; }
+}
 
-/*    .hero,*/
-/*    .technos,*/
-/*    .apercu-projets {*/
-/*        width: calc(100% - 30px);*/
-/*        max-width: 500px;*/
-/*        margin-left: auto;*/
-/*        margin-right: auto;*/
-/*        text-align: center;*/
-/*    }*/
+/* Mobiles */
+@media (max-width: 600px) {
+    .hero { padding: 35px 0; }
+    #presentation { font-size: 16px; letter-spacing: 1px; }
+    .hero-boutons { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; }
+    .bouton { width: 100%; max-width: 240px; margin: 0; text-align: center; }
+    .zone { height: 350px; }
+    .technos { margin-top: 40px; margin-bottom: 40px; }
+    .technos ul { justify-content: center; gap: 8px; }
+    .technos li { padding: 5px 10px; }
+    .apercu-projets { padding: 16px 8px; }
+    .projects-title { text-align: center; width: 100%; }
+    .carousel-3d, .carte-3d { width: 280px; height: 220px; }
+    .carousel-3d { margin: 35px auto; }
+    .carte-3d h3 { font-size: 16px; }
+    .carte-3d p { font-size: 14px; line-height: 1.5; }
+    .carousel-astuce { width: 100%; padding: 0 15px; text-align: center; font-size: 12px; line-height: 1.4; }
+}
 
-
-/*    !* =========================*/
-/*       HERO*/
-/*       ========================= *!*/
-
-/*    .hero {*/
-/*        padding: 35px 0;*/
-/*    }*/
-
-/*    #presentation {*/
-/*        font-size: 16px;*/
-/*        letter-spacing: 1px;*/
-/*        text-align: center;*/
-/*    }*/
-
-/*    .hero p {*/
-/*        text-align: center;*/
-/*        margin-bottom: 15px;*/
-/*    }*/
-
-/*    .hero-boutons {*/
-/*        display: flex;*/
-/*        flex-direction: column;*/
-/*        align-items: center;*/
-/*        justify-content: center;*/
-/*        gap: 10px;*/
-/*        width: 100%;*/
-/*    }*/
-
-/*    .bouton {*/
-/*        width: 100%;*/
-/*        max-width: 240px;*/
-/*        margin: 0;*/
-/*        text-align: center;*/
-/*    }*/
-
-
-/*    !* =========================*/
-/*       ZONE THREE.JS*/
-/*       ========================= *!*/
-
-/*    .zone {*/
-/*        width: 100%;*/
-/*        height: 350px;*/
-/*    }*/
-
-
-/*    !* =========================*/
-/*       TECHNOLOGIES*/
-/*       ========================= *!*/
-
-/*    .technos {*/
-/*        margin-top: 40px;*/
-/*        margin-bottom: 40px;*/
-/*    }*/
-
-/*    .technos ul {*/
-/*        display: flex;*/
-/*        justify-content: center;*/
-/*        align-items: center;*/
-/*        flex-wrap: wrap;*/
-/*        gap: 8px;*/
-/*    }*/
-
-/*    .technos li {*/
-/*        padding: 5px 10px;*/
-/*    }*/
-
-
-/*    !* =========================*/
-/*       PROJETS*/
-/*       ========================= *!*/
-
-/*    .apercu-projets {*/
-/*        padding: 16px 0;*/
-/*    }*/
-
-/*    .projects-title {*/
-/*        text-align: center;*/
-/*        width: 100%;*/
-/*    }*/
-
-/*    .carousel-conteneur {*/
-/*        width: 100%;*/
-/*        display: flex;*/
-/*        align-items: center;*/
-/*        justify-content: center;*/
-/*    }*/
-
-/*    .carousel-3d {*/
-/*        width: 280px;*/
-/*        height: 220px;*/
-/*        margin: 35px auto;*/
-/*    }*/
-
-/*    .carte-3d {*/
-/*        width: 280px;*/
-/*        height: 220px;*/
-/*        padding: 16px;*/
-/*        text-align: center;*/
-
-/*    }*/
-
-/*    .carte-3d h3 {*/
-/*        font-size: 20px;*/
-/*        text-align: center;*/
-/*    }*/
-
-/*    .carte-3d p {*/
-/*        font-size: 14px;*/
-/*        line-height: 1.5;*/
-/*        text-align: center;*/
-/*    }*/
-
-/*    .carousel-astuce {*/
-/*        width: 100%;*/
-/*        padding: 0 15px;*/
-/*        text-align: center;*/
-/*        font-size: 12px;*/
-/*        line-height: 1.4;*/
-/*    }*/
 /* #endregion */

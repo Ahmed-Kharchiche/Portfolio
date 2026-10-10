@@ -157,13 +157,13 @@
 
 .dino.agrandi {
     position: fixed;
-    top: 50%;
-    left: 50%;
+    inset: 0;
     z-index: 9999;
     width: 75vw;
     height: 75vh;
+    height: 75dvh;
+    margin: auto;
     aspect-ratio: auto;
-    transform: translate(-50%, -50%);
     border: 1px solid var(--bordure);
     border-radius: 12px;
     box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.6);
@@ -214,6 +214,21 @@
 }
 
 @media (pointer: coarse) {
+    /* bande réservée sous le jeu pour les boutons : ils ne recouvrent plus le dino */
+    .dino {
+        box-sizing: content-box;
+        padding-bottom: 76px;
+    }
+
+    .dino.agrandi {
+        box-sizing: border-box;
+    }
+
+    .dino canvas {
+        height: 100%;
+        border-bottom: 1px solid var(--bordure);
+    }
+
     .dino-tactile {
         position: absolute;
         right: 12px;
@@ -237,7 +252,7 @@
 }
 /* #endregion */
 
-/* #region RESPONSIVE */
+/* #region RESPONSIVE (ANCIEN POINT DE RUPTURE 700px) */
 @media (max-width: 700px) {
     .dino {
         aspect-ratio: 16 / 10;
@@ -246,7 +261,32 @@
     .dino.agrandi {
         width: 92vw;
         height: 75vh;
+        height: 75dvh;
     }
 }
 /* #endregion */
+/* #endregion */
+
+/* #region RESPONSIVE */
+
+/* Tablettes et petits ordinateurs */
+@media (max-width: 1024px) {
+    .titre-page-projets { margin-bottom: 70px; }
+    .intro-projets { margin-bottom: 90px; }
+    .grille-projets { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
+    .filtre-technologie { position: relative; }
+}
+
+/* Mobiles */
+@media (max-width: 600px) {
+    .titre-page-projets { margin-bottom: 60px; padding: 20px 15px; }
+    .intro-projets { margin-bottom: 70px; padding: 0 15px; }
+    .intro-projets p { font-size: 15px; }
+    .grille-projets { grid-template-columns: 1fr; gap: 20px; padding: 0 15px; }
+    .tri-projets { flex-wrap: wrap; justify-content: flex-start; padding: 0 15px; }
+    .filtre-technologies { padding: 0 15px; }
+    .dino { min-height: 180px; }
+    .dino-barre button { width: 32px; height: 32px; }
+}
+
 /* #endregion */

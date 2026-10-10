@@ -46,7 +46,7 @@ nav .logo {
 }
 /* #endregion */
 
-/* #region RESPONSIVE */
+/* #region RESPONSIVE (ANCIEN POINT DE RUPTURE 700px) */
 @media (max-width: 700px) {
 
     header nav {
@@ -88,4 +88,22 @@ nav .logo {
         margin: 0;
     }
 }
+/* #endregion */
+
+/* #region RESPONSIVE */
+
+/* Tablettes et petits ordinateurs */
+@media (max-width: 1024px) {
+    nav { padding: 15px 20px; }
+    .menu { gap: 8px; }
+    .menu a { padding: 10px 14px; }
+}
+
+/* Mobiles */
+@media (max-width: 600px) {
+    nav { padding: 10px 12px; }
+    nav .logo { font-size: 16px; }
+    .menu a { padding: 8px 10px; font-size: 14px; }
+}
+
 /* #endregion */

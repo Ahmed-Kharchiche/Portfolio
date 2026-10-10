@@ -330,7 +330,7 @@
 }
 /* #endregion */
 
-/* #region RESPONSIVE */
+/* #region RESPONSIVE (ANCIEN POINT DE RUPTURE 700px) */
 
 @media (max-width: 700px) {
     .avis {
@@ -362,4 +362,27 @@
         padding: 20px;
     }
 }
+/* #endregion */
+
+/* #region RESPONSIVE */
+
+/* Tablettes et petits ordinateurs */
+@media (max-width: 1024px) {
+    .moyenne-avis { padding: 24px; }
+    #laisser-avis { font-size: 40px; }
+    .avis-ajouter-bas { margin-top: 70px; }
+}
+
+/* Mobiles */
+@media (max-width: 600px) {
+    .avis-ajouter-bas { margin-top: 60px; }
+    #laisser-avis { font-size: 28px; overflow-wrap: anywhere; }
+    .moyenne-note { flex-wrap: wrap; }
+    .tri-avis { flex-wrap: wrap; padding: 0; }
+    .carte-avis { padding: 16px; }
+    .note-avis { font-size: 16px; }
+    .avis-intro .bouton, .avis-ajouter-bas .bouton { max-width: 100%; }
+    .formulaire-avis input, .formulaire-avis select, .formulaire-avis textarea { font-size: 16px; }
+}
+
 /* #endregion */

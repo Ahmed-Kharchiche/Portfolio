@@ -102,3 +102,15 @@
     opacity: 0;
 }
 /* #endregion */
+
+/* #region RESPONSIVE */
+
+/* Tablettes et petits ordinateurs */
+@media (max-width: 1024px) {
+}
+
+/* Mobiles */
+@media (max-width: 600px) {
+}
+
+/* #endregion */

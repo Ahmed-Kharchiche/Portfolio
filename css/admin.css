@@ -330,68 +330,31 @@
 
 
 /* #region RESPONSIVE */
-@media (max-width: 600px) {
 
-    .admin {
-        padding: 200px 15px 30px;
-    }
-
-    .top-bar {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 15px;
-        margin-bottom: 25px;
-    }
-
-    .top-bar h1 {
-        font-size: 26px;
-        text-align: left;
-    }
-
-    .bouton-deconnexion {
-        width: 100%;
-        text-align: center;
-        padding: 10px;
-    }
-
-    .ajout-projet {
-        padding: 20px;
-        border-radius: 10px;
-    }
-
-    .formulaire-projet {
-        gap: 18px;
-    }
-
-    .champ input[type="text"],
-    .champ input[type="url"],
-    .champ textarea {
-        padding: 12px;
-        font-size: 16px;
-    }
-
-    .champ input[type="file"] {
-        padding: 10px;
-        font-size: 14px;
-    }
-
-    .champ input[type="file"]::file-selector-button {
-        padding: 9px 12px;
-        margin-right: 8px;
-    }
-
-    .cases-technologies {
-        gap: 8px;
-    }
-
-    .case-technologie {
-        padding: 8px 10px;
-    }
-
-    .bouton-ajouter {
-        width: 100%;
-        padding: 12px;
-        font-size: 15px;
-    }
+/* Tablettes et petits ordinateurs */
+@media (max-width: 1024px) {
+    .admin { padding: 120px 24px 40px; }
+    .case-technologie { position: relative; }
 }
+
+/* Mobiles */
+@media (max-width: 600px) {
+    .admin { padding: 200px 15px 30px; }
+    .top-bar { flex-direction: column; align-items: stretch; gap: 15px; margin-bottom: 25px; }
+    .top-bar h1 { font-size: 26px; text-align: left; }
+    .bouton-deconnexion { width: 100%; text-align: center; padding: 10px; }
+    .ajout-projet { padding: 20px; border-radius: 10px; }
+    .formulaire-projet { gap: 18px; }
+    .champ input[type="text"], .champ input[type="url"], .champ textarea { padding: 12px; font-size: 16px; }
+    .champ input[type="file"] { padding: 10px; font-size: 14px; }
+    .champ input[type="file"]::file-selector-button { padding: 9px 12px; margin-right: 8px; }
+    .zone-fichier { min-height: 110px; padding: 15px; }
+    .aperçu-image { width: calc(50% - 6px); }
+    .cases-technologies { gap: 8px; }
+    .case-technologie { padding: 8px 10px; }
+    .bouton-ajouter { width: 100%; padding: 12px; font-size: 15px; }
+    .avis-admin h2, .petits-avis h2 { font-size: 1.3rem; }
+    .tri-avis { width: 100%; margin-left: 0; }
+}
+
 /* #endregion */

@@ -207,3 +207,23 @@
 }
 
 /* #endregion */
+
+/* #region RESPONSIVE */
+
+/* Tablettes et petits ordinateurs */
+@media (max-width: 1024px) {
+    .etoile { font-size: 22px; }
+}
+
+/* Mobiles */
+@media (max-width: 600px) {
+    .carte-avis { padding: 16px; }
+    .entete-avis { flex-wrap: wrap; gap: 8px; }
+    .etoile { font-size: 20px; }
+    .actions-avis { flex-wrap: wrap; }
+    .petit-avis-entete { flex-wrap: wrap; padding-right: 40px; }
+    .petit-avis-note { right: 0; font-size: 18px; }
+    .petit-avis-message { overflow-wrap: anywhere; }
+}
+
+/* #endregion */

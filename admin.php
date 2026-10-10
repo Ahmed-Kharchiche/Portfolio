@@ -25,6 +25,7 @@ $gestionnaireAvis = new GestionnaireAvis("data/avis.json");
 // #endregion
 
 
+
 // #region AJOUT RETRAIT FAVORIS AVIS
 if (
         $_SERVER["REQUEST_METHOD"] === "POST"
@@ -64,6 +65,53 @@ if (
 }
 // #endregion
 
+// #region AJOUT RETRAIT FAVORIS PROJETS
+if (
+    $_SERVER["REQUEST_METHOD"] === "POST"
+    && ($_POST["action"] ?? "") === "toggle_favori"
+) {
+    header("Content-Type: application/json; charset=utf-8");
+
+    $titreProjet = $_POST["titre"] ?? "";
+
+    // Vérifier que le titre est valide
+    if (!is_string($titreProjet) || $titreProjet === "") {
+        http_response_code(400);
+        echo json_encode([
+            "succes" => false,
+            "message" => "Titre du projet invalide."
+        ]);
+        exit;
+    }
+    $projetExiste = false;
+    foreach ($gestionnaire->getTous() as $projet) {
+        if ($projet->getTitre() === $titreProjet) {
+            $projetExiste = true;
+            break;
+        }
+    }
+    if (!$projetExiste) {
+        http_response_code(400);
+        echo json_encode([
+            "succes" => false,
+            "message" => "Projet introuvable."
+        ]);
+        exit;
+    }
+    if ($gestionnaire->estFavori($titreProjet)) {
+        $gestionnaire->retirerFavori($titreProjet);
+        $favori = false;
+    } else {
+        $gestionnaire->ajouterFavori($titreProjet);
+        $favori = true;
+    }
+    echo json_encode([
+        "succes" => true,
+        "favori" => $favori
+    ]);
+    exit;
+}
+// #endregion
 
 // #region PARAMÈTRES DE L'ADMIN
 $technologies_disponibles = [

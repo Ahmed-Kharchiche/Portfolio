@@ -23,3 +23,19 @@ footer a:hover {
     color: var(--accent-hover);
 }
 /* #endregion */
+
+/* #region RESPONSIVE */
+
+/* Tablettes et petits ordinateurs */
+@media (max-width: 1024px) {
+    footer { padding: 28px 20px; }
+}
+
+/* Mobiles */
+@media (max-width: 600px) {
+    footer { padding: 24px 15px; font-size: 13px; }
+    footer p { overflow-wrap: anywhere; }
+    footer a { display: inline-block; margin: 3px 5px; }
+}
+
+/* #endregion */

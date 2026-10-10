@@ -44,3 +44,18 @@
     right: 8px;
 }
 /* #endregion */
+
+/* #region RESPONSIVE */
+
+/* Tablettes et petits ordinateurs */
+@media (max-width: 1024px) {
+}
+
+/* Mobiles */
+@media (max-width: 600px) {
+    .fleche { width: 28px; height: 28px; font-size: 20px; }
+    .fleche-gauche { left: 6px; }
+    .fleche-droite { right: 6px; }
+}
+
+/* #endregion */

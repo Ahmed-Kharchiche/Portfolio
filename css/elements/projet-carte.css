@@ -6,11 +6,7 @@
     gap: 12px;
     width: 1000px;
     max-width: 95vw;
-    margin-top: 40px;
-    margin-bottom: 40px;
-    position: relative;
-    left: 50%;
-    transform: translateX(-50%);
+    margin: 40px auto;
 }
 
 .liste-projets .carte-projet {
@@ -349,25 +345,27 @@
 
 
 /* #region RESPONSIVE */
-@media (max-width: 600px) {
-    .liste-projets {
-        width: 100%;
-        max-width: 95vw;
-        gap: 16px;
-    }
 
-    .liste-projets .carte-projet {
-        flex: 1 1 100%;
-    }
-
-    .contenu-projet {
-        padding: 18px;
-    }
-
-    .bas-carte {
-        gap: 8px;
-    }
+/* Tablettes et petits ordinateurs */
+@media (max-width: 1024px) {
+    .liste-projets { gap: 16px; }
+    .titre-page-projets { padding: 40px 20px 10px; }
+    .grille-projets { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
 }
+
+/* Mobiles */
+@media (max-width: 600px) {
+    .liste-projets { width: 100%; max-width: 95vw; gap: 16px; }
+    .liste-projets .carte-projet { flex: 1 1 100%; }
+    .grille-projets { grid-template-columns: 1fr; padding: 0 15px; }
+    .contenu-projet { padding: 18px; }
+    .contenu-projet h3 { font-size: 17px; }
+    .contenu-projet p { font-size: 14px; }
+    .bas-carte { flex-wrap: wrap; gap: 8px; }
+    .lien-gitlab { padding: 8px 12px; }
+    .bouton-favori { font-size: 2rem; }
+}
+
 /* #endregion */
 
 /* #region MOUVEMENT RÉDUIT */

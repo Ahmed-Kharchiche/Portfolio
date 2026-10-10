@@ -71,3 +71,22 @@
     margin-bottom: 0;
 }
 /* #endregion */
+
+/* #region RESPONSIVE */
+
+/* Tablettes et petits ordinateurs */
+@media (max-width: 1024px) {
+    .apropos { padding: 125px 20px 50px; }
+    .apropos h1 { font-size: 48px; }
+}
+
+/* Mobiles */
+@media (max-width: 600px) {
+    .apropos { padding-left: 15px; padding-right: 15px; }
+    .apropos h1 { font-size: 34px; overflow-wrap: anywhere; }
+    .apropos section { padding: 20px; }
+    .bloc-apropos { padding: 14px; }
+    .technologies-apropos span { padding: 6px 11px; font-size: 13px; }
+}
+
+/* #endregion */

@@ -45,7 +45,7 @@ html:has(.core:not(.simple)) { overflow: hidden; }
 .core.simple #scene, .core.simple .vignette, .core.simple .info, .core.simple .astuce { display: none; }
 .core.simple .liste { position: static; margin: 12vh auto; width: min(560px, 88vw); text-align: left; font-size: 22px; line-height: 2; }
 .core.simple .liste a { opacity: 1; }
-@media (max-width: 700px) { .info { width: 220px; } .liste, .astuce { display: none; } }
+@media (max-width: 700px) { .info { width: 220px; } .core:not(.simple) .liste, .astuce { display: none; } }
 /* #endregion */
 
 /* #region SON */
@@ -105,4 +105,32 @@ html:has(.core:not(.simple)) { overflow: hidden; }
 /* #endregion */
 /* #region MOUVEMENT RÉDUIT */
 @media (prefers-reduced-motion: reduce) { .it, .inspect.on .it { transition-duration: .01s; transition-delay: 0s; } }
+/* #endregion */
+
+/* #region RESPONSIVE */
+
+/* Tablettes et petits ordinateurs */
+@media (max-width: 1024px) {
+    .info { width: 260px; }
+    .inspect { width: min(400px, 46vw); padding: 9vh 28px 10vh 24px; }
+    .hud, .son { left: 20px; }
+    .liste { right: 20px; }
+    .ins-close { right: 20px; top: 20px; }
+}
+
+/* Mobiles */
+@media (max-width: 600px) {
+    .hud { left: 16px; bottom: 16px; flex-wrap: wrap; gap: 6px 14px; max-width: calc(100% - 32px); }
+    .son { left: 16px; bottom: 48px; }
+    .info { width: min(220px, 70vw); padding: 12px 14px; }
+    .info h2 { font-size: 24px; }
+    .inspect { max-height: 62dvh; padding: 24px 18px 28px; }
+    .ins-t { font-size: clamp(24px, 7vw, 30px); }
+    .ins-img img { max-height: 22dvh; }
+    .ins-desc { font-size: 14.5px; }
+    .ins-liens { gap: 14px; }
+    .ins-close { right: 16px; top: 16px; }
+    .core.simple .liste { margin: 10vh auto; font-size: 18px; }
+}
+
 /* #endregion */

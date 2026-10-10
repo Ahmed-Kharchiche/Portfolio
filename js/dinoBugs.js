@@ -179,13 +179,16 @@
         setTimeout(() => (ignorerBlur = false), 600);
         if (jeu.classList.contains("agrandi")) {
             jeu.classList.remove("agrandi");
+            zone.appendChild(jeu);            // retour dans sa zone
             zone.style.height = "";
         } else {
             // Garde la hauteur de la zone pour que la page ne saute pas
             zone.style.height = zone.offsetHeight + "px";
             jeu.classList.add("agrandi");
+            // dans <body> : aucun parent (transform, filter...) ne peut décaler le plein écran
+            document.body.appendChild(jeu);
         }
-        jeu.focus();
+        jeu.focus({ preventScroll: true });
     }
 
 
@@ -517,7 +520,7 @@
 
     canvas.addEventListener("pointerdown", e => {
         e.preventDefault();
-        jeu.focus();
+        jeu.focus({ preventScroll: true });
         sauter();
     });
     ["pointerup", "pointerleave", "pointercancel"].forEach(ev =>
@@ -541,7 +544,7 @@
         if (b.dataset.act === "son") basculerSon();
         if (b.dataset.act === "pause" && (etat === "jeu" || etat === "pause")) basculerPause();
         if (b.dataset.act === "plein") basculerPlein();
-        jeu.focus();
+        jeu.focus({ preventScroll: true });
     });
 
     // Pause automatique : onglet caché, jeu hors écran, focus perdu

@@ -127,7 +127,7 @@
 }
 /* #endregion */
 
-/* #region RESPONSIVE */
+/* #region RESPONSIVE (ANCIEN POINT DE RUPTURE 700px) */
 @media (max-width: 700px) {
     .contact-contenu {
         grid-template-columns: 1fr;
@@ -142,4 +142,23 @@
         width: 100%;
     }
 }
+/* #endregion */
+
+/* #region RESPONSIVE */
+
+/* Tablettes et petits ordinateurs */
+@media (max-width: 1024px) {
+    .contact-intro h1 { font-size: 48px; }
+    .contact-contenu { gap: 24px; }
+}
+
+/* Mobiles */
+@media (max-width: 600px) {
+    .contact { padding: 95px 15px 50px; }
+    .contact-intro h1 { font-size: 34px; overflow-wrap: anywhere; }
+    .contact-bloc { padding: 16px; }
+    .formulaire-contact { padding: 20px; }
+    .champ input, .champ textarea { font-size: 16px; }
+}
+
 /* #endregion */
