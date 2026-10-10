@@ -1,7 +1,11 @@
 <?php
+
+use PHPMailer\PHPMailer\PHPMailer;
+
 // #region CONFIGURATION DE LA PAGE
 $titre_page = "Avis";
 $page_css = "avis.css";
+
 
 require_once 'includes/Avis.php';
 require_once 'includes/GestionnaireAvis.php';
@@ -28,18 +32,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif ($note < 1 || $note > 5) {
         $erreur = 'Veuillez choisir une note entre 1 et 5.';
     } else {
-        $avis = new Avis(
-            '',
-            $nom,
-            $note,
-            $message,
-            date('Y-m-d'),
-            false
-        );
+    $avis = new Avis(
+        '',
+        $nom,
+        $note,
+        $message,
+        date('Y-m-d'),
+        false
+    );
 
-        $gestionnaireAvis->ajouter($avis);
-        $messageConfirmation = 'Merci pour votre avis ! Il sera publié après validation.';
+    $gestionnaireAvis->ajouter($avis);
+
+    // Notification par e-mail
+    try {
+        require_once __DIR__ . '/vendor/autoload.php';
+        $config = require __DIR__ . '/config/secrets.php';
+
+        $mail = new PHPMailer(true);
+        $mail->isSMTP();
+        $mail->Host = 'smtp.ionos.fr';
+        $mail->SMTPAuth = true;
+        $mail->Username = $config['smtp_email'];
+        $mail->Password = $config['smtp_mot_de_passe'];
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port = 587;
+        $mail->CharSet = 'UTF-8';
+
+        $mail->setFrom($config['smtp_email'], 'Portfolio Ahmed');
+        $mail->addAddress($config['email_notification']);
+        $mail->Subject = 'Nouvel avis à valider sur le portfolio';
+        $mail->Body =
+            "Un nouvel avis attend votre validation.\n\n" .
+            "Nom : $nom\n" .
+            "Note : $note/5\n\n" .
+            "Avis :\n$message\n";
+
+        $mail->send();
+    } catch (Throwable $e) {
+        error_log('Erreur notification avis : ' . $e->getMessage());
     }
+
+    $messageConfirmation = 'Merci pour votre avis ! Il sera publié après validation.';
+}
 }
 // #endregion
 
