@@ -1,7 +1,7 @@
 [
     {
         "id": "projet_6ac0b082d7122",
-        "titre": "test",
+        "titre": "Audi RS6",
         "description": "test",
         "technologies": [
             "Java"
@@ -14,7 +14,7 @@
     },
     {
         "id": "projet_6ac0cf7f0abc0",
-        "titre": "Portfolio",
+        "titre": "Application de r\u00e9servation h\u00f4teli\u00e8re",
         "description": "D\u00e9veloppement d\u2019une application permettant de g\u00e9rer des r\u00e9servations de chambres d\u2019h\u00f4tel. Le projet comprend la gestion des utilisateurs, des r\u00e9servations, des paiements, de l\u2019historique et des services suppl\u00e9mentaires. L\u2019application utilise Java et JavaFX avec une base de donn\u00e9es locale.",
         "technologies": [
             "Java",
@@ -32,7 +32,7 @@
     },
     {
         "id": "projet_6ac0cfaaf3a1b",
-        "titre": "Portfolio",
+        "titre": "Portfolio personnel",
         "description": "D\u00e9veloppement d\u2019une application permettant de g\u00e9rer des r\u00e9servations de chambres d\u2019h\u00f4tel. Le projet comprend la gestion des utilisateurs, des r\u00e9servations, des paiements, de l\u2019historique et des services suppl\u00e9mentaires. L\u2019application utilise Java et JavaFX avec une base de donn\u00e9es locale.",
         "technologies": [
             "Java",
@@ -49,7 +49,7 @@
     },
     {
         "id": "projet_6ac2733002b81",
-        "titre": "test",
+        "titre": "Test Java 1",
         "description": "test",
         "technologies": [
             "Java"
@@ -62,7 +62,7 @@
     },
     {
         "id": "projet_6ac2735605887",
-        "titre": "test",
+        "titre": "Test Java 2",
         "description": "test",
         "technologies": [
             "Java"
@@ -75,7 +75,7 @@
     },
     {
         "id": "projet_6ac39608edc4c",
-        "titre": "test",
+        "titre": "Test Python",
         "description": "juste untest",
         "technologies": [
             "Python",

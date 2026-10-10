@@ -61,3 +61,62 @@ if (triAvis && listeAvis) {
     // #endregion
 }
 // #endregion
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    // #region ÉLÉMENTS
+    const triAvis = document.getElementById("tri-avis");
+    const listeAvis = document.querySelector(".liste-petits-avis");
+
+    if (!triAvis || !listeAvis) {
+        return;
+    }
+    // #endregion
+
+    // #region CARTES ORIGINALES
+    const cartesOriginales = [
+        ...listeAvis.querySelectorAll(".petit-avis")
+    ];
+    // #endregion
+
+    // #region TRI DES AVIS
+    function trierCartes() {
+        const typeTri = triAvis.value;
+        const cartesTriees = [...cartesOriginales];
+
+        if (typeTri === "note-desc") {
+            cartesTriees.sort((a, b) =>
+                Number(b.dataset.note) - Number(a.dataset.note)
+            );
+        } else if (typeTri === "note-asc") {
+            cartesTriees.sort((a, b) =>
+                Number(a.dataset.note) - Number(b.dataset.note)
+            );
+        } else if (typeTri === "recent") {
+            cartesTriees.sort((a, b) =>
+                (b.dataset.date || "").localeCompare(a.dataset.date || "")
+            );
+        } else if (typeTri === "ancien") {
+            cartesTriees.sort((a, b) =>
+                (a.dataset.date || "").localeCompare(b.dataset.date || "")
+            );
+        }
+
+        return cartesTriees;
+    }
+    // #endregion
+
+    // #region MISE À JOUR DE L'AFFICHAGE
+    function mettreAJourAvis() {
+        const cartesTriees = trierCartes();
+
+        cartesTriees.forEach(carte => {
+            listeAvis.appendChild(carte);
+        });
+    }
+
+    triAvis.addEventListener("change", mettreAJourAvis);
+    // #endregion
+});
+
+

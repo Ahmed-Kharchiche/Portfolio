@@ -267,11 +267,64 @@
 }
 /* #endregion */
 
+/* #region SECTION AVIS ADMIN */
+.avis-admin {
+    margin-top: 60px;
+    padding: 30px 0 20px;
+    border-top: 2px solid var(--bordure);
+}
+
+.avis-admin h2 {
+    margin: 0 0 25px;
+    padding-left: 14px;
+    border-left: 4px solid var(--accent);
+    font-size: 1.6rem;
+    font-weight: 700;
+}
+/* #endregion */
+
+/* #region SECTION PETITS AVIS */
+.petits-avis {
+    margin-top: 60px;
+    padding: 30px 0 20px;
+    border-top: 2px solid var(--bordure);
+}
+
+.petits-avis h2 {
+    margin: 0 0 25px;
+    padding-left: 14px;
+    border-left: 4px solid var(--accent);
+    font-size: 1.6rem;
+    font-weight: 700;
+}
+
+/* #endregion */
+
 /* #region LISTE DES AVIS */
 .liste-petits-avis {
+    margin-top: 15px;
     display: flex;
     flex-direction: column;
     gap: 15px;
+}
+/* #endregion */
+
+/* #region TRI DES AVIS */
+.tri-avis {
+    width: 220px;
+    max-width: 100%;
+    margin-left: auto;
+    margin-bottom: 25px;
+}
+
+.tri-avis label {
+    display: block;
+    margin-bottom: 6px;
+}
+
+.tri-avis select {
+    width: 100%;
+    box-sizing: border-box;
 }
 /* #endregion */
 

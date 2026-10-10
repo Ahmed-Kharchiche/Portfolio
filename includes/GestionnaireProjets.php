@@ -12,13 +12,20 @@ require_once 'Projet.php';
 class GestionnaireProjets
 {
     // #region PROPRIÉTÉS ET CONSTRUCTEUR
+
+    public static array $projetsFavoris = [];
+    private string $cheminFichierFavoris;
+
     private string $cheminFichier;
     private array $projets = []; // tableau d'objets Projet
 
     public function __construct(string $cheminFichier)
     {
         $this->cheminFichier = $cheminFichier;
+        $this->cheminFichierFavoris = "data/projets_favoris.json";
+
         $this->charger();
+        $this->chargerFavoris();
     }
     // #endregion
 
@@ -52,6 +59,8 @@ class GestionnaireProjets
         file_put_contents($this->cheminFichier, json_encode($donnees, JSON_PRETTY_PRINT));
     }
     // #endregion
+
+
 
     // #region LECTURE
     /**
@@ -91,13 +100,88 @@ class GestionnaireProjets
     /**
      * Supprime un projet par son id, puis sauvegarde.
      */
+
     public function supprimer(string $id): void
     {
+        $projet = $this->trouverParId($id);
+
+        if ($projet === null) {
+            return;
+        }
+
+        // Retirer le projet de la liste des projets
         $this->projets = array_values(array_filter(
             $this->projets,
-            fn(Projet $projet) => $projet->getId() !== $id
+            fn(Projet $p) => $p->getId() !== $id
         ));
+
+        $this->retirerFavori($projet->getTitre());
+
         $this->sauvegarder();
     }
+
     // #endregion
+
+    // #region FAVORIS
+
+    public function chargerFavoris(): void
+    {
+        if (!file_exists($this->cheminFichierFavoris)) {
+            self::$projetsFavoris = [];
+            return;
+        }
+
+        $contenu = file_get_contents($this->cheminFichierFavoris);
+        self::$projetsFavoris = json_decode($contenu, true) ?? [];
+    }
+
+    public function sauvegarderFavoris(): void
+    {
+        file_put_contents(
+            $this->cheminFichierFavoris,
+            json_encode(self::$projetsFavoris, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE),
+            LOCK_EX
+        );
+    }
+
+    public function estFavori(string $titre): bool
+    {
+        return in_array($titre, self::$projetsFavoris, true);
+    }
+
+    public function ajouterFavori(string $titre): void
+    {
+        if (!$this->estFavori($titre)) {
+            self::$projetsFavoris[] = $titre;
+            $this->sauvegarderFavoris();
+        }
+    }
+
+    public function retirerFavori(string $titre): void
+    {
+        self::$projetsFavoris = array_values(
+            array_filter(
+                self::$projetsFavoris,
+                fn(string $favori) => $favori !== $titre
+            )
+        );
+
+        $this->sauvegarderFavoris();
+    }
+
+
+    public function getTitresFavoris(): array
+    {
+        return self::$projetsFavoris;
+    }
+
+    public function getProjetsFavoris(): array
+    {
+        return array_values(array_filter(
+            $this->projets,
+            fn(Projet $projet) => $this->estFavori($projet->getTitre())
+        ));
+    }
+
+// #endregion
 }

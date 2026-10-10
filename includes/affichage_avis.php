@@ -95,11 +95,24 @@ function afficherPetitAvis(Avis $avis, bool $admin = false): void
 {
     $note = $avis->getNote();
     $id = $avis->getId();
-
     $timestamp = strtotime($avis->getDate());
     $dateAffichee = $timestamp !== false ? date('d/m/Y', $timestamp) : $avis->getDate();
     ?>
-    <article class="petit-avis">
+    <article
+            class="petit-avis"
+            data-note="<?= (int) $note ?>"
+            data-date="<?= htmlspecialchars($avis->getDate(), ENT_QUOTES, 'UTF-8') ?>"
+    >
+        <?php if ($admin): ?>
+            <?php $estFavori = $GLOBALS['gestionnaireAvis']->estFavori($id); ?>
+
+            <button type="button"
+                    class="bouton-favori-petit-avis<?php echo $estFavori ? ' selectionne' : ''; ?>"
+                    data-id="<?php echo htmlspecialchars($id, ENT_QUOTES, 'UTF-8'); ?>"
+                    title="<?php echo $estFavori ? 'Retirer des favoris' : 'Ajouter aux favoris'; ?>"
+                    aria-label="<?php echo $estFavori ? 'Retirer des favoris' : 'Ajouter aux favoris'; ?>"
+                    aria-pressed="<?php echo $estFavori ? 'true' : 'false'; ?>"><?php echo $estFavori ? '★' : '☆'; ?></button>
+        <?php endif; ?>
         <div class="petit-avis-entete">
             <div>
                 <h3><?php echo htmlspecialchars($avis->getNom()); ?></h3>

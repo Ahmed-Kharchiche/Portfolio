@@ -26,6 +26,16 @@ function afficherCarteProjet(Projet $projet, bool $admin = false): void
                     <button type="button" class="fleche fleche-gauche" aria-label="Image précédente">‹</button>
                     <button type="button" class="fleche fleche-droite" aria-label="Image suivante">›</button>
                 <?php endif; ?>
+                <?php if ($admin): ?>
+                    <?php $estFavori = $GLOBALS['gestionnaire']->estFavori($projet->getTitre()); ?>
+
+                    <button type="button"
+                            class="bouton-favori<?php echo $estFavori ? ' selectionne' : ''; ?>"
+                            data-titre="<?php echo htmlspecialchars($projet->getTitre(), ENT_QUOTES, 'UTF-8'); ?>"
+                            title="<?php echo $estFavori ? 'Retirer des favoris' : 'Ajouter aux favoris'; ?>"
+                            aria-label="<?php echo $estFavori ? 'Retirer des favoris' : 'Ajouter aux favoris'; ?>"
+                            aria-pressed="<?php echo $estFavori ? 'true' : 'false'; ?>"><?php echo $estFavori ? '★' : '☆'; ?></button>
+                <?php endif; ?>
             </div>
         <?php endif; ?>
         <div class="contenu-projet">

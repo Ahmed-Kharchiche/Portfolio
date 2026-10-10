@@ -24,7 +24,7 @@
 <body>
 
 <!-- #region EN-TÊTE DU SITE -->
-<header>
+<header id="haut">
     <nav>
         <div class="logo">Ahmed Kharchiche</div>
 
@@ -44,6 +44,23 @@
     </nav>
 </header>
 <!-- #endregion -->
+
+<?php
+// #region BOUTON RETOUR EN HAUT
+$pagesAvecBoutonHaut = [
+        'projets.php',
+        'apropos.php',
+        'contact.php',
+        'avis.php'
+];
+
+$pageActuelle = basename($_SERVER['PHP_SELF']);
+
+if (in_array($pageActuelle, $pagesAvecBoutonHaut, true)) {
+    include __DIR__ . '/bouton_haut.php';
+}
+// #endregion
+?>
 
 <!-- #region SCRIPT -->
 <script src="js/theme.js"></script>

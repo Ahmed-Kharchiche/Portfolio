@@ -99,8 +99,11 @@
 }
 
 .petit-avis-note {
+    position: relative;
+    right: 100px;
+    top: 0px;
     white-space: nowrap;
-    font-size: 13px;
+    font-size: 20px;
 }
 
 .petit-avis-etoile {
@@ -172,4 +175,35 @@
     color: var(--accent);
     -webkit-text-stroke: 1px var(--accent);
 }
+/* #endregion */
+
+/* #Region FAVORIS PETITS AVIS */
+
+.petit-avis {
+    position: relative;
+    overflow: hidden;
+}
+
+.bouton-favori-petit-avis {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 5;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: #f5c518;
+    font-size: 2rem;
+    line-height: 1;
+}
+
+.bouton-favori-petit-avis:hover {
+    transform: scale(1.15);
+}
+
+.bouton-favori-petit-avis.selectionne {
+    color: #f5c518;
+}
+
 /* #endregion */

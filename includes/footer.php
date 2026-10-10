@@ -11,6 +11,7 @@
 <!-- #endregion -->
 <!-- #region SCRIPT -->
 <script src="js/smooth.js"></script>
+<script src="includes/confirm/confirmation.js"></script>
 <!-- #endregion -->
 
 </body>

@@ -4,27 +4,23 @@
 $titre_page = "Accueil";
 $page_css = "accueil.css";
 require_once 'includes/GestionnaireProjets.php';
+require_once 'includes/GestionnaireAvis.php';
+
+require_once 'includes/affichage_projets.php';
+require_once 'includes/affichage_avis.php';
 
 include 'includes/header.php';
 // #endregion
 
 // #region PROJETS FAVORIS
-$gestionnaire = new GestionnaireProjets("data/projets.json");
+$gestionnaireProjets = new GestionnaireProjets("data/projets.json");
+$gestionnaireAvis = new GestionnaireAvis(__DIR__ . '/data/avis.json');
 
-$favoris = ["Portfolio", "test"];
+
+$projetsFavoris = $gestionnaireProjets->getProjetsFavoris();
+$avisFavoris = $gestionnaireAvis->getAvisFavoris();
 
 
-$projetsFavoris = [];
-
-foreach ($gestionnaire->getTous() as $projet) {
-
-    foreach ($favoris as $titreFavori) {
-        if ($projet->getTitre() === $titreFavori) {
-            $projetsFavoris[] = $projet;
-            break;
-        }
-    }
-}
 // #endregion
 ?>
 
@@ -90,6 +86,22 @@ foreach ($gestionnaire->getTous() as $projet) {
 
             <p class="carousel-astuce">Selectionne la carte avec un clic et choisis la avec un double clic</p>
         </div>
+    </section>
+    <section class="appercu-avis">
+        <h2>Quelques avis</h2>
+
+        <div class="avis-boutons">
+            <a href="avis.php" class="bouton">
+                Voir plus d'avis
+            </a>
+            <a href="avis.php#ajouter-avis" class="bouton bouton-secondaire">
+                Ajouter mon avis
+            </a>
+        </div>
+
+        <?php foreach ($avisFavoris as $avis): ?>
+            <?php afficherPetitAvis($avis); ?>
+        <?php endforeach; ?>
     </section>
     <!-- #endregion -->
     <!-- #region SCRIPTS -->

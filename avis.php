@@ -115,24 +115,17 @@ $moyenneAvis = count($avisPublies) > 0
         </div>
 
         <?php if (empty($avisPublies)): ?>
-
             <p class="aucun-avis">
                 Aucun avis pour le moment.
             </p>
-
         <?php else: ?>
-
             <?php foreach ($avisPublies as $avis): ?>
                 <?php afficherCarteAvis($avis); ?>
             <?php endforeach; ?>
-
         <?php endif; ?>
-
         <div class="avis-ajouter-bas">
             <p id="laisser-avis">Vous souhaitez laisser un avis ?</p>
-
         </div>
-
     </section>
     <!-- #endregion -->
 
@@ -211,9 +204,6 @@ $moyenneAvis = count($avisPublies) > 0
         </form>
 
     </section>
-    <!-- #endregion -->
-    <!-- #region RETOUR EN HAUT -->
-    <a href="#haut" class="bouton-haut">↑</a>
     <!-- #endregion -->
 </main>
 <!-- #endregion -->

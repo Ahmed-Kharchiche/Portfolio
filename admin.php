@@ -9,6 +9,7 @@ if (($_SESSION["connecte"] ?? false) !== true) {
 }
 // #endregion
 
+
 // #region DÉPENDANCES ET GESTIONNAIRES
 require_once 'includes/Projet.php';
 require_once 'includes/GestionnaireProjets.php';
@@ -22,6 +23,47 @@ require_once 'includes/confirm/confirmation.php';
 $gestionnaire = new GestionnaireProjets("data/projets.json");
 $gestionnaireAvis = new GestionnaireAvis("data/avis.json");
 // #endregion
+
+
+// #region AJOUT RETRAIT FAVORIS AVIS
+if (
+        $_SERVER["REQUEST_METHOD"] === "POST"
+        && ($_POST["action"] ?? "") === "toggle_favori_avis"
+) {
+    header("Content-Type: application/json; charset=utf-8");
+
+    $id = $_POST["id"] ?? "";
+
+    // Vérifier que l'avis existe
+    if (
+            !is_string($id)
+            || $gestionnaireAvis->trouverParId($id) === null
+    ) {
+        http_response_code(400);
+        echo json_encode([
+                "succes" => false,
+                "message" => "Avis introuvable."
+        ]);
+        exit;
+    }
+
+    // Ajouter ou retirer le favori
+    if ($gestionnaireAvis->estFavori($id)) {
+        $gestionnaireAvis->retirerFavori($id);
+        $favori = false;
+    } else {
+        $gestionnaireAvis->ajouterFavori($id);
+        $favori = true;
+    }
+
+    echo json_encode([
+            "succes" => true,
+            "favori" => $favori
+    ]);
+    exit;
+}
+// #endregion
+
 
 // #region PARAMÈTRES DE L'ADMIN
 $technologies_disponibles = [
@@ -37,6 +79,7 @@ $technologies_disponibles = [
 
 $extensions_images = ["jpg", "jpeg", "png", "gif", "webp"];
 // #endregion
+
 
 // #region ENREGISTREMENT DES IMAGES
 /**
@@ -159,6 +202,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     exit;
 }
 // #endregion
+
+
+
 
 // #region AVIS EN ATTENTE ET PUBLIES
 // getNonPublies() renvoie directement des objets Avis : plus rien à convertir
@@ -285,6 +331,17 @@ include 'includes/header.php';
         <section class="petits-avis">
             <h2>Avis</h2>
 
+            <div class="tri-avis">
+                <label for="tri-avis">Trier par</label>
+                <select id="tri-avis" class="liste-perso">
+                    <option value="original">Ordre d'origine</option>
+                    <option value="note-desc">Plus d'étoiles</option>
+                    <option value="note-asc">Moins d'étoiles</option>
+                    <option value="recent">Plus récent</option>
+                    <option value="ancien">Plus ancien</option>
+                </select>
+            </div>
+
             <div class="liste-petits-avis">
                 <?php foreach ($avisPublies as $avis): ?>
                     <?php afficherPetitAvis($avis,true); ?>
@@ -299,6 +356,9 @@ include 'includes/header.php';
     <?php afficherConfirmation(); ?>
     <script src="js/administration.js"></script>
     <script src="js/carrousel.js"></script>
-    <script src="includes/confirm/confirmation.js"></script>
+    <script src="js/favoris-projets.js"></script>
+    <script src="js/favoris-avis.js"></script>
+    <script src="js/avisTri.js"></script>
+    <script src="js/listeDeroulante.js"></script>
     <!-- #endregion -->
 <?php include 'includes/footer.php'; ?>

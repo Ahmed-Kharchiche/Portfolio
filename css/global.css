@@ -218,6 +218,57 @@ h1 {
 }
 /* #endregion */
 
+/* #region BOUTON RETOUR EN HAUT */
+
+.bouton-haut {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    z-index: 1000;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 12px 18px;
+    border: 1px solid var(--bordure);
+    border-radius: 10px;
+
+    background: var(--carte);
+    color: var(--texte);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.4;
+    white-space: nowrap;
+
+    box-shadow: 0 4px 15px var(--ombre);
+
+    transition:
+            transform 0.25s ease,
+            box-shadow 0.25s ease,
+            border-color 0.25s ease,
+            background-color 0.25s ease;
+}
+
+.bouton-haut:hover {
+    transform: translateY(-3px);
+    border-color: var(--accent);
+    box-shadow: 0 7px 22px var(--ombre);
+}
+
+.bouton-haut:active {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px var(--ombre);
+}
+
+.bouton-haut:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+}
+
+/* #endregion */
+
 /* #region RESPONSIVE */
 @media (max-width: 600px) {
 

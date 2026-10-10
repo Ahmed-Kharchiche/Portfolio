@@ -189,6 +189,22 @@ canvas {
 /* #endregion */
 /* #endregion */
 
+/* #region APERÇU DES AVIS */
+.appercu-avis {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.avis-boutons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+/* #endregion */
+
 
 
 /* #region RESPONSIVE (CODE MIS EN COMMENTAIRE) */

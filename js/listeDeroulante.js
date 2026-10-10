@@ -115,6 +115,9 @@ document.querySelectorAll(".liste-perso").forEach(select => {
     }, 100));
     // #endregion
 
+    // #region SYNCHRONISATION
+    select.addEventListener("change", afficherSelection);
     afficherSelection();
+    // #endregion
 });
 // #endregion

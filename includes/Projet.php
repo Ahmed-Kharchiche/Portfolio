@@ -11,6 +11,7 @@
 class Projet
 {
     // #region PROPRIÉTÉS ET CONSTRUCTEUR
+
     private ?string $id;
     private string $titre;
     private string $description;
