@@ -1745,6 +1745,9 @@ addEventListener(
     "keydown",
     (e) => {
 
+        // En version simple, le défilement est natif : on ne capte ni Espace ni Échap
+        if (simple) return;
+
         if (
             e.code ===
             "Space"

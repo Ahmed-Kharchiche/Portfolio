@@ -12,6 +12,12 @@ class Projet
 {
     // #region PROPRIÉTÉS ET CONSTRUCTEUR
 
+    // Templates de page projet autorisés (liste blanche).
+    // Clé = identifiant technique (fichier includes/templates/<clé>.php), valeur = libellé affiché dans l'admin.
+    public const TEMPLATES = [
+        "emotion-ai" => "Emotion AI",
+    ];
+
     private ?string $id;
     private string $titre;
     private string $description;
@@ -19,6 +25,7 @@ class Projet
     private string $gitlab;
     private array $images;
     private ?string $dateCreation;
+    private ?string $template;
 
     public function __construct(
         ?string $id,
@@ -27,7 +34,8 @@ class Projet
         array $technologies = [],
         string $gitlab = "",
         array $images = [],
-        ?string $dateCreation = null
+        ?string $dateCreation = null,
+        ?string $template = null
     ) {
         $this->id = $id;
         $this->titre = $titre;
@@ -36,6 +44,7 @@ class Projet
         $this->gitlab = $gitlab;
         $this->images = $images;
         $this->dateCreation = $dateCreation;
+        $this->template = self::validerTemplate($template);
     }
     // #endregion
 
@@ -74,6 +83,12 @@ class Projet
     public function getDateCreation(): ?string
     {
         return $this->dateCreation;
+    }
+
+    // Retourne l'identifiant du template (liste blanche) ou null pour la page standard
+    public function getTemplate(): ?string
+    {
+        return $this->template;
     }
     // #endregion
 
@@ -121,6 +136,17 @@ class Projet
     public function setDateCreation(?string $dateCreation): void
     {
         $this->dateCreation = $dateCreation;
+    }
+
+    public function setTemplate(?string $template): void
+    {
+        $this->template = self::validerTemplate($template);
+    }
+
+    // Toute valeur absente de la liste blanche devient null (page standard)
+    private static function validerTemplate(?string $template): ?string
+    {
+        return ($template !== null && array_key_exists($template, self::TEMPLATES)) ? $template : null;
     }
     // #endregion
 
@@ -171,7 +197,7 @@ class Projet
      */
     public function versTableau(): array
     {
-        return [
+        $tableau = [
             "id" => $this->id,
             "titre" => $this->titre,
             "description" => $this->description,
@@ -180,6 +206,13 @@ class Projet
             "images" => $this->images,
             "dateCreation" => $this->dateCreation
         ];
+
+        // Écrit seulement si défini : les anciens projets gardent exactement le même JSON
+        if ($this->template !== null) {
+            $tableau["template"] = $this->template;
+        }
+
+        return $tableau;
     }
 
     /**
@@ -207,7 +240,8 @@ class Projet
             $donnees["technologies"] ?? [],
             $donnees["gitlab"] ?? "",
             $images,
-            $donnees["dateCreation"] ?? null
+            $donnees["dateCreation"] ?? null,
+            is_string($donnees["template"] ?? null) ? $donnees["template"] : null
         );
     }
     // #endregion

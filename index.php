@@ -33,7 +33,7 @@ $avisFavoris = $gestionnaireAvis->getAvisFavoris();
 
             <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
             <script src="js/reseau.js"></script>
-            
+
         </div>
 
         <div class="hero-boutons">
@@ -67,7 +67,7 @@ $avisFavoris = $gestionnaireAvis->getAvisFavoris();
 
                     <div
                             class="carte-3d"
-                            data-lien="projet.php?id=<?php echo urlencode($projet->getId()); ?>"
+                            data-lien="detail-projet.php?id=<?php echo urlencode($projet->getId()); ?>"
                     >
                         <h3>
                             <?php echo htmlspecialchars($projet->getTitre()); ?>

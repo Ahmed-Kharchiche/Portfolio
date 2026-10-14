@@ -17,6 +17,17 @@ if ($projet === null) {
 $titre_page = $projet->getTitre();
 $page_css = "detail-projet.css";
 
+// Template optionnel (liste blanche de Projet::TEMPLATES) : met en scène la version simple.
+// Sans template, ou si son fichier est absent, la page reste exactement celle d'avant.
+$template = $projet->getTemplate();
+$fichierTemplate = $template !== null ? __DIR__ . "/includes/templates/" . $template . ".php" : null;
+if ($fichierTemplate === null || !is_file($fichierTemplate)) {
+    $template = null;
+    $fichierTemplate = null;
+}
+$css_supplementaires = $template !== null ? ["projet-base.css", "projets/" . $template . ".css"] : [];
+$sans_smooth = $template !== null; // smooth.js intercepte la molette : incompatible avec un scroll piloté
+
 $technologies = $projet->getTechnologies() ?: [];
 $image = $projet->getPremiereImage();
 $images = method_exists($projet, 'getImages') ? ($projet->getImages() ?: []) : ($image ? [$image] : []);
@@ -26,7 +37,7 @@ include 'includes/header.php';
 ?>
 
     <!-- #region PAGE PROJET -->
-    <main class="detail-projet">
+    <main class="detail-projet<?= $template !== null ? ' has-exp' : '' ?>">
         <!-- #region DÉCOR 3D -->
         <canvas id="scene-3d" aria-hidden="true"></canvas>
         <div class="voile" aria-hidden="true"></div>
@@ -80,6 +91,10 @@ include 'includes/header.php';
         </section>
         <!-- #endregion -->
 
+        <!-- #region VERSION SIMPLE ANIMÉE (template optionnel) -->
+        <?php if ($fichierTemplate !== null) { include $fichierTemplate; } ?>
+        <!-- #endregion -->
+
         <!-- #region COMMANDES -->
         <nav class="actes" id="actes" aria-label="Actes du projet">
             <a href="projets.php">← CORE</a>
@@ -109,6 +124,10 @@ include 'includes/header.php';
         } }
     </script>
     <script type="module" src="js/detail-projet.js"></script>
+<?php if ($template !== null): ?>
+    <!-- Animations de la version simple : indépendantes de la scène 3D, chargées seulement pour ce template -->
+    <script type="module" src="js/projets/<?= htmlspecialchars($template, ENT_QUOTES, 'UTF-8') ?>.js"></script>
+<?php endif; ?>
     <!-- #endregion -->
 
 <?php include 'includes/footer.php'; ?>

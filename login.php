@@ -72,6 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         session_regenerate_id(true);
 
         $_SESSION['connecte'] = true;
+        $_SESSION["version_admin"] = 1;
 
         // #region NOTIFICATION PAR E-MAIL
 

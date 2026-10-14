@@ -18,6 +18,9 @@
     <?php if (isset($page_css)): ?>
         <link rel="stylesheet" href="css/<?php echo $page_css; ?>">
     <?php endif; ?>
+    <?php foreach (($css_supplementaires ?? []) as $feuille): ?>
+        <link rel="stylesheet" href="css/<?php echo htmlspecialchars($feuille, ENT_QUOTES, 'UTF-8'); ?>">
+    <?php endforeach; ?>
     <!-- #endregion -->
 
 </head>

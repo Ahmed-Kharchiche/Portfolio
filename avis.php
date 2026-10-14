@@ -6,7 +6,6 @@ use PHPMailer\PHPMailer\PHPMailer;
 $titre_page = "Avis";
 $page_css = "avis.css";
 
-
 require_once 'includes/Avis.php';
 require_once 'includes/GestionnaireAvis.php';
 require_once 'includes/affichage_avis.php';
@@ -32,48 +31,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif ($note < 1 || $note > 5) {
         $erreur = 'Veuillez choisir une note entre 1 et 5.';
     } else {
-    $avis = new Avis(
-        '',
-        $nom,
-        $note,
-        $message,
-        date('Y-m-d'),
-        false
-    );
+        $avis = new Avis(
+                '',
+                $nom,
+                $note,
+                $message,
+                date('Y-m-d'),
+                false
+        );
 
-    $gestionnaireAvis->ajouter($avis);
+        $gestionnaireAvis->ajouter($avis);
 
-    // Notification par e-mail
-    try {
-        require_once __DIR__ . '/vendor/autoload.php';
-        $config = require __DIR__ . '/config/secrets.php';
+        // Notification par e-mail
+        try {
+            require_once __DIR__ . '/vendor/autoload.php';
+            $config = require __DIR__ . '/config/secrets.php';
 
-        $mail = new PHPMailer(true);
-        $mail->isSMTP();
-        $mail->Host = 'smtp.ionos.fr';
-        $mail->SMTPAuth = true;
-        $mail->Username = $config['smtp_email'];
-        $mail->Password = $config['smtp_mot_de_passe'];
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port = 587;
-        $mail->CharSet = 'UTF-8';
+            $mail = new PHPMailer(true);
+            $mail->isSMTP();
+            $mail->Host = 'smtp.ionos.fr';
+            $mail->SMTPAuth = true;
+            $mail->Username = $config['smtp_email'];
+            $mail->Password = $config['smtp_mot_de_passe'];
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port = 587;
+            $mail->CharSet = 'UTF-8';
 
-        $mail->setFrom($config['smtp_email'], 'Portfolio Ahmed');
-        $mail->addAddress($config['email_notification']);
-        $mail->Subject = 'Nouvel avis à valider sur le portfolio';
-        $mail->Body =
-            "Un nouvel avis attend votre validation.\n\n" .
-            "Nom : $nom\n" .
-            "Note : $note/5\n\n" .
-            "Avis :\n$message\n";
+            $mail->setFrom($config['smtp_email'], 'Portfolio Ahmed');
+            $mail->addAddress($config['email_notification']);
+            $mail->Subject = 'Nouvel avis à valider sur le portfolio';
+            $mail->Body =
+                    "Un nouvel avis attend votre validation.\n\n" .
+                    "Nom : $nom\n" .
+                    "Note : $note/5\n\n" .
+                    "Avis :\n$message\n";
 
-        $mail->send();
-    } catch (Throwable $e) {
-        error_log('Erreur notification avis : ' . $e->getMessage());
+            $mail->send();
+        } catch (Throwable $e) {
+            error_log('Erreur notification avis : ' . $e->getMessage());
+        }
+
+        $messageConfirmation = 'Merci pour votre avis ! Il sera publié après validation.';
     }
-
-    $messageConfirmation = 'Merci pour votre avis ! Il sera publié après validation.';
-}
 }
 // #endregion
 
@@ -185,12 +184,12 @@ $moyenneAvis = count($avisPublies) > 0
             <div class="champ">
                 <label for="nom">Nom</label>
                 <input
-                    type="text"
-                    id="nom"
-                    name="nom"
-                    placeholder="Votre nom"
-                    maxlength="50"
-                    required
+                        type="text"
+                        id="nom"
+                        name="nom"
+                        placeholder="Votre nom"
+                        maxlength="50"
+                        required
                 >
             </div>
 
@@ -211,12 +210,12 @@ $moyenneAvis = count($avisPublies) > 0
 
                 <div class="textarea-container">
                 <textarea
-                    id="message"
-                    name="message"
-                    rows="5"
-                    maxlength="2000"
-                    placeholder="Votre avis..."
-                    required
+                        id="message"
+                        name="message"
+                        rows="5"
+                        maxlength="2000"
+                        placeholder="Votre avis..."
+                        required
                 ></textarea>
 
                     <span class="compteur" id="compteur-message">0 / 2000</span>

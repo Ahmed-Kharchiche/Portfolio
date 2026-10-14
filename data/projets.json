@@ -87,5 +87,20 @@
             "images\/projets\/chambresimplee.jpg"
         ],
         "dateCreation": "2026-10-05"
+    },
+    {
+        "id": "projet_6acb63d1d1a7e",
+        "titre": "Emotion AI",
+        "description": "Emotion AI est un projet d\u2019intelligence artificielle d\u00e9velopp\u00e9 en Python permettant d\u2019analyser un texte et d\u2019identifier automatiquement l\u2019\u00e9motion dominante parmi plusieurs cat\u00e9gories : joie, tristesse, col\u00e8re et peur. Gr\u00e2ce au Machine Learning, le mod\u00e8le transforme les textes en donn\u00e9es num\u00e9riques avec CountVectorizer, puis utilise MultinomialNB pour effectuer la classification et estimer la probabilit\u00e9 associ\u00e9e \u00e0 chaque \u00e9motion.\r\n\r\nCe projet met en pratique les fondamentaux du traitement automatique du langage naturel (NLP), de l\u2019apprentissage supervis\u00e9 et de la classification de textes, tout en proposant une application interactive permettant de tester le mod\u00e8le sur des phrases du quotidien et de visualiser les r\u00e9sultats.",
+        "technologies": [
+            "Python"
+        ],
+        "gitlab": "",
+        "images": [
+            "images\/projets\/6acb63f078586_apercu-ia1.png",
+            "images\/projets\/6acb6409422b6_apercu-ia2.png"
+        ],
+        "dateCreation": "2026-10-11",
+        "template": "emotion-ai"
     }
 ]

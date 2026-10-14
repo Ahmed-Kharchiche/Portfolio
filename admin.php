@@ -3,12 +3,16 @@ session_start();
 
 // #region PROTECTION DE LA PAGE
 // avant tout le reste
-if (($_SESSION["connecte"] ?? false) !== true) {
+if (
+        ($_SESSION["connecte"] ?? false) !== true ||
+        ($_SESSION["version_admin"] ?? 0) !== 1
+) {
+    session_unset();
+    session_destroy();
     header("Location: login.php");
     exit;
 }
 // #endregion
-
 
 // #region DÉPENDANCES ET GESTIONNAIRES
 require_once 'includes/Projet.php';
@@ -67,8 +71,8 @@ if (
 
 // #region AJOUT RETRAIT FAVORIS PROJETS
 if (
-    $_SERVER["REQUEST_METHOD"] === "POST"
-    && ($_POST["action"] ?? "") === "toggle_favori"
+        $_SERVER["REQUEST_METHOD"] === "POST"
+        && ($_POST["action"] ?? "") === "toggle_favori"
 ) {
     header("Content-Type: application/json; charset=utf-8");
 
@@ -78,8 +82,8 @@ if (
     if (!is_string($titreProjet) || $titreProjet === "") {
         http_response_code(400);
         echo json_encode([
-            "succes" => false,
-            "message" => "Titre du projet invalide."
+                "succes" => false,
+                "message" => "Titre du projet invalide."
         ]);
         exit;
     }
@@ -93,8 +97,8 @@ if (
     if (!$projetExiste) {
         http_response_code(400);
         echo json_encode([
-            "succes" => false,
-            "message" => "Projet introuvable."
+                "succes" => false,
+                "message" => "Projet introuvable."
         ]);
         exit;
     }
@@ -106,8 +110,8 @@ if (
         $favori = true;
     }
     echo json_encode([
-        "succes" => true,
-        "favori" => $favori
+            "succes" => true,
+            "favori" => $favori
     ]);
     exit;
 }
@@ -189,6 +193,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $technologies_disponibles
     ));
 
+    // Template de la page projet : valeur de la liste blanche de Projet, sinon null (page standard)
+    $templateChoisi = $_POST["template"] ?? "";
+    $templateChoisi = (is_string($templateChoisi) && $templateChoisi !== "") ? $templateChoisi : null;
+
     switch ($action) {
         // #region PROJETS
         case "ajouter":
@@ -199,7 +207,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     $technologiesChoisies,
                     trim($_POST["gitlab"] ?? ""),
                     enregistrerImages($_FILES["images"] ?? [], $extensions_images),
-                    date("Y-m-d")
+                    date("Y-m-d"),
+                    $templateChoisi
             );
             $gestionnaire->ajouter($projet);
             break;
@@ -211,6 +220,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $projet->setDescription(trim($_POST["description"] ?? ""));
                 $projet->setTechnologies($technologiesChoisies);
                 $projet->setGitlab(trim($_POST["gitlab"] ?? ""));
+                $projet->setTemplate($templateChoisi);
 
                 // Garde les anciennes images (sauf celles supprimées) et ajoute les nouvelles
                 $imagesConservees = array_values(array_diff(
@@ -244,7 +254,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             }
             break;
     }
-        // #endregion
+    // #endregion
 
     header("Location: admin.php");
     exit;
@@ -268,6 +278,7 @@ $titre = $projetAModifier?->getTitre() ?? "";
 $description = $projetAModifier?->getDescription() ?? "";
 $gitlab = $projetAModifier?->getGitlab() ?? "";
 $technologiesProjet = $projetAModifier?->getTechnologies() ?? [];
+$templateProjet = $projetAModifier?->getTemplate();
 // #endregion
 
 // #region CONFIGURATION DE LA PAGE
@@ -326,6 +337,17 @@ include 'includes/header.php';
                 <div class="champ">
                     <label for="gitlab">Lien GitHub</label>
                     <input type="url" id="gitlab" name="gitlab" placeholder="https://github.com/..." value="<?php echo htmlspecialchars($gitlab); ?>">
+                </div>
+
+                <!-- VERSION SIMPLE DE LA PAGE -->
+                <div class="champ">
+                    <label for="template">Mise en scène de la version simple</label>
+                    <select id="template" name="template" class="liste-perso">
+                        <option value="">Standard</option>
+                        <?php foreach (Projet::TEMPLATES as $cle => $libelle): ?>
+                            <option value="<?php echo htmlspecialchars($cle); ?>"<?php echo $templateProjet === $cle ? " selected" : ""; ?>><?php echo htmlspecialchars($libelle); ?></option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
 
                 <!-- IMAGES -->
@@ -401,7 +423,7 @@ include 'includes/header.php';
     </main>
     <!-- #endregion -->
     <!-- #region MODALE ET SCRIPTS -->
-    <?php afficherConfirmation(); ?>
+<?php afficherConfirmation(); ?>
     <script src="js/administration.js"></script>
     <script src="js/carrousel.js"></script>
     <script src="js/favoris-projets.js"></script>

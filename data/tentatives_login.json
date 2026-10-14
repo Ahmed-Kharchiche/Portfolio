@@ -2,5 +2,9 @@
     "127.0.0.1": {
         "nombre": 0,
         "bloque_jusqua": 0
+    },
+    "::1": {
+        "nombre": 0,
+        "bloque_jusqua": 0
     }
 }
