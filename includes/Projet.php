@@ -15,6 +15,7 @@ class Projet
     // Templates de page projet autorisés (liste blanche).
     // Clé = identifiant technique (fichier includes/templates/<clé>.php), valeur = libellé affiché dans l'admin.
     public const TEMPLATES = [
+        "standard" => "Standard",
         "emotion-ai" => "Emotion AI",
     ];
 
@@ -35,7 +36,7 @@ class Projet
         string $gitlab = "",
         array $images = [],
         ?string $dateCreation = null,
-        ?string $template = null
+        ?string $template = "standard"
     ) {
         $this->id = $id;
         $this->titre = $titre;
@@ -44,7 +45,7 @@ class Projet
         $this->gitlab = $gitlab;
         $this->images = $images;
         $this->dateCreation = $dateCreation;
-        $this->template = self::validerTemplate($template);
+        $this->template = self::validerTemplate($template ?? "standard") ?? "standard";
     }
     // #endregion
 

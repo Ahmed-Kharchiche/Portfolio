@@ -172,7 +172,7 @@ const CONFIG = {
 
     son: {
         active: true,
-        volume: 0.45,
+        volume: 0,
 
         frequenceBase: 55,
         filtreBase: 200
@@ -240,7 +240,7 @@ const E = {
 
 // #region ÉLÉMENTS HTML
 
-const main = $(".detail-projet");
+const main = $("#mode-immersif");
 const flashEl = $("#flash");
 const btn = $("#suiv");
 const astuce = $("#astuce");
@@ -5283,8 +5283,11 @@ if (simple) {
 
 // #region BOUCLE PRINCIPALE
 
-const clock =
-    new THREE.Clock();
+// THREE.Clock est déprécié (r18x) : on utilise THREE.Timer quand il existe, avec la même interface (getDelta)
+const horloge = THREE.Timer ? new THREE.Timer() : null;
+const clock = horloge
+    ? { getDelta: () => { horloge.update(); return horloge.getDelta(); } }
+    : new THREE.Clock();
 
 
 function frame() {

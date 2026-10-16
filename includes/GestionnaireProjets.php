@@ -83,6 +83,16 @@ class GestionnaireProjets
         }
         return null;
     }
+
+    public function trouverParNom(string $nom): ?Projet
+    {
+        foreach ($this->projets as $projet) {
+            if ($projet->getTitre() === $nom) {
+                return $projet;
+            }
+        }
+        return null;
+    }
     // #endregion
 
     // #region MODIFICATION

@@ -67,4 +67,5 @@ if (in_array($pageActuelle, $pagesAvecBoutonHaut, true)) {
 
 <!-- #region SCRIPT -->
 <script src="js/theme.js"></script>
+
 <!-- #endregion -->

@@ -343,7 +343,6 @@ include 'includes/header.php';
                 <div class="champ">
                     <label for="template">Mise en scène de la version simple</label>
                     <select id="template" name="template" class="liste-perso">
-                        <option value="">Standard</option>
                         <?php foreach (Projet::TEMPLATES as $cle => $libelle): ?>
                             <option value="<?php echo htmlspecialchars($cle); ?>"<?php echo $templateProjet === $cle ? " selected" : ""; ?>><?php echo htmlspecialchars($libelle); ?></option>
                         <?php endforeach; ?>

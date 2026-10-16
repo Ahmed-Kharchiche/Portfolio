@@ -28,7 +28,7 @@ $avisFavoris = $gestionnaireAvis->getAvisFavoris();
     <section class="hero">
         <br><br>
         <h1 id="nom">AHMED KHARCHICHE</h1>
-        <p id="presentation">Étudiant en BUT Informatique</p>
+        <p id="presentation"></p>
         <div class="zone">
 
             <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -107,6 +107,7 @@ $avisFavoris = $gestionnaireAvis->getAvisFavoris();
     <!-- #region SCRIPTS -->
     <script src="js/moveAccueil.js"></script>
     <script src="js/projetsListe.js"></script>
+    <script src="js/presentation.js"></script>
     <!-- #endregion -->
 
 

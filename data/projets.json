@@ -10,7 +10,8 @@
         "images": [
             "images\/projets\/rs6.webp"
         ],
-        "dateCreation": "2026-08-07"
+        "dateCreation": "2026-08-07",
+        "template": "standard"
     },
     {
         "id": "projet_6ac0cf7f0abc0",

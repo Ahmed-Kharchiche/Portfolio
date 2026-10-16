@@ -20,12 +20,12 @@
 
 #presentation {
     font-size: 22px;
-    font-weight: 400;
+    font-weight: 600;
     color: var(--accent);
     letter-spacing: 2px;
     text-transform: uppercase;
-    text-shadow: 0 0 10px var(--ombre),
-    0 0 25px var(--ombre);
+    text-shadow: 0 0 40px var(--ombre-texte),
+    0 0 25px var(--ombre-texte);
 }
 
 
