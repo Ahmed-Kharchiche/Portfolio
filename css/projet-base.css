@@ -1,0 +1,100 @@
+/* ==========================================================================
+   projet-base.css : socle commun des pages projet à mise en scène (« .exp »)
+   Chargé après detail-projet.css, uniquement si le projet a un template.
+   Il ne contient que des règles génériques ; le style propre à un projet
+   vit dans css/projets/<template>.css.
+   ========================================================================== */
+
+/* --- Contrat de visibilité --------------------------------------------------
+   Dans la scène 3D, la mise en scène est masquée (les 4 zones d'origine
+   portent déjà le texte). Elle ne s'affiche qu'en « version simple ». */
+.detail-projet .exp {
+    display: none;
+}
+
+.detail-projet.simple .exp {
+    display: block;
+}
+
+/* En version simple, le fond de la page suit le thème du site (global.css) */
+.detail-projet.simple.has-exp {
+    background: var(--fond, #09090B);
+    color: var(--texte, #FAFAFA);
+}
+
+/* En version simple, la mise en scène remplace les 4 zones génériques
+   et leurs commandes de la scène 3D. */
+.detail-projet.simple.has-exp > .zone,
+.detail-projet.simple.has-exp > .actes,
+.detail-projet.simple.has-exp > .guide,
+.detail-projet.simple.has-exp > .astuce,
+.detail-projet.simple.has-exp > .son:not(.skip) {
+    display: none;
+}
+
+/* Le bouton de bascule reste atteignable pendant tout le défilement
+   (il est sinon positionné tout en bas d'une page devenue très longue). */
+.detail-projet.simple.has-exp > .skip {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 30;
+}
+
+/* Thème clair : le bouton de bascule (conçu pour la scène sombre) reprend les couleurs du site */
+[data-theme="light"] .detail-projet.simple.has-exp > .skip {
+    color: var(--texte);
+    background: var(--carte);
+    border-color: var(--bordure);
+}
+
+/* --- Neutralisation des sélecteurs globaux du site --------------------------
+   global.css / header.css stylent directement section, h1, nav, header :
+   on les remet à zéro à l'intérieur de la mise en scène. */
+.exp section {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+}
+
+.exp h1,
+.exp h2,
+.exp h3 {
+    margin: 0;
+    padding: 0;
+    max-width: none;                /* certaines feuilles de page limitent h1 (ex. detail-projet.css : 900px) */
+    text-align: left;
+    letter-spacing: normal;
+    font-style: normal;
+    overflow-wrap: normal;
+}
+
+.exp ol,
+.exp ul,
+.exp dl,
+.exp dd,
+.exp figure,
+.exp p {
+    margin: 0;
+    padding: 0;
+}
+
+.exp a {
+    color: inherit;
+}
+
+/* --- Accessibilité --------------------------------------------------------- */
+.exp :focus-visible {
+    outline: 2px solid var(--emotion-focus, #FAFAFA);
+    outline-offset: 3px;
+}
+
+.exp-visuellement-cache {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}

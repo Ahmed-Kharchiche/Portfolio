@@ -1,0 +1,678 @@
+/* ==========================================================================
+   emotion-ai.css : mise en scène « Emotion AI » (version simple de la page projet)
+   Étape 3 : composition STATIQUE de chaque scène, lisible sans animation.
+   Tout est préfixé ea- et scopé sous .ea pour ne rien affecter ailleurs.
+   Les animations (GSAP) s'appuieront sur ces mêmes classes aux étapes suivantes.
+   ========================================================================== */
+
+/* Police de la page : Hanken Grotesk (déjà utilisée par detail-projet.css), poids étendus pour les gros titres */
+@import url("https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400..800&display=swap");
+
+/* --- Variables ------------------------------------------------------------------
+   Les couleurs de base viennent de global.css (--fond, --texte, --texte-secondaire, --accent, --carte) :
+   la scène suit donc le bouton de thème du site et se règle au même endroit que le reste du portfolio.
+   Les valeurs de repli sont la palette sombre/violette du cahier des charges.
+   Les autres jetons n'existent pas dans global.css : ils sont définis ici, avec une variante claire. */
+.ea {
+    --emotion-bg: var(--fond, #09090B);
+    --emotion-surface: var(--carte, #18181B);
+    --emotion-text: var(--texte, #FAFAFA);
+    --emotion-muted: var(--texte-secondaire, #A1A1AA);
+    --emotion-accent: var(--accent, #7C3AED);
+
+    --emotion-surface-alt: #111113;
+    --emotion-accent-soft: #A78BFA;           /* accent lisible en petit texte et en contour */
+    --emotion-accent-strong: #7C3AED;         /* fond d'un élément portant du texte blanc */
+    --emotion-accent-hover: #6D28D9;
+    --emotion-alerte: #A78BFA;                /* « Faux » : jamais la couleur de la réussite */
+    --emotion-success: #22C55E;
+    --emotion-on-accent: #FFFFFF;
+    --emotion-border: rgba(255, 255, 255, 0.12);
+    --emotion-glow: rgba(124, 58, 237, 0.30);
+    --emotion-wash: rgba(124, 58, 237, 0.14);
+    --emotion-line: rgba(167, 139, 250, 0.35);
+    --emotion-track: rgba(255, 255, 255, 0.08);
+    --emotion-focus: #FAFAFA;
+
+    --ea-font: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    --ea-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --ea-header-h: 80px;            /* hauteur du header fixe, mesurée à 79 px (ajustée sur mobile plus bas) */
+    --ea-pad: clamp(20px, 5vw, 80px);
+    --ea-mesure: 62ch;
+
+    position: relative;
+    overflow-x: clip;
+    font-family: var(--ea-font);
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--emotion-text);
+    background: var(--emotion-bg);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Thème clair du site (theme.js pose data-theme="light" sur <body>) : gris, blanc et vert.
+   Le vert de global.css (#16A34A) ne passe pas le contraste en petit texte (2,6:1 sur le fond) :
+   il reste réservé aux éléments décoratifs ; le texte vert et les fonds à texte blanc utilisent
+   des verts plus foncés. Le violet du site sert pour le survol et pour « Faux ». */
+[data-theme="light"] .ea {
+    --emotion-surface-alt: #ECECEF;
+    --emotion-accent-soft: #166534;           /* texte vert : 5,6:1 sur le fond */
+    --emotion-accent-strong: #15803D;         /* fond vert + texte blanc : 5,0:1 */
+    --emotion-accent-hover: #6D28D9;
+    --emotion-alerte: #6D28D9;
+    --emotion-success: #166534;
+    --emotion-border: rgba(24, 24, 27, 0.18);
+    --emotion-glow: rgba(22, 163, 74, 0.20);
+    --emotion-wash: rgba(22, 163, 74, 0.14);
+    --emotion-line: rgba(21, 128, 61, 0.40);
+    --emotion-track: rgba(24, 24, 27, 0.10);
+    --emotion-focus: #18181B;
+}
+
+@media (max-width: 700px) {
+    .ea { --ea-header-h: 140px; }  /* mesuré à 136 px : la nav passe en colonne */
+}
+
+.ea h1,
+.ea h2,
+.ea h3 {
+    font-family: var(--ea-font);
+    font-weight: 700;
+}
+
+.ea code {
+    font-family: var(--ea-mono);
+    font-size: 0.9em;
+    color: var(--emotion-accent-soft);
+    background: var(--emotion-wash);
+    padding: 0.08em 0.35em;
+    border-radius: 3px;
+}
+
+.ea strong { color: var(--emotion-text); font-weight: 600; }
+
+/* --- Structure commune des scènes ------------------------------------------ */
+.ea .ea-scene {
+    position: relative;
+    padding: clamp(72px, 14vh, 168px) var(--ea-pad);
+    overflow-x: clip;
+    scroll-margin-top: var(--ea-header-h);
+}
+
+.ea .ea-scene + .ea-scene,
+.ea .pin-spacer + .ea-scene { border-top: 1px solid var(--emotion-border); }
+
+.ea .ea-titre-scene {
+    max-width: 22ch;
+    font-size: clamp(1.5rem, 3.4vw, 3rem);
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+}
+
+.ea .ea-sous-titre {
+    font-size: 1.125rem;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+}
+
+.ea .ea-texte {
+    max-width: var(--ea-mesure);
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    color: var(--emotion-muted);
+}
+
+.ea .ea-note {
+    max-width: 60ch;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--emotion-muted);
+}
+
+.ea .ea-acompleter {
+    color: var(--emotion-accent-soft);
+    border-bottom: 1px dashed currentColor;
+}
+
+.ea .ea-lien-evitement {
+    position: absolute;
+    top: -100px;
+    left: 16px;
+    z-index: 40;
+    padding: 0.6rem 1rem;
+    border-radius: 4px;
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--emotion-bg);
+    background: var(--emotion-text);
+}
+.ea .ea-lien-evitement:focus { top: calc(var(--ea-header-h) + 8px); }
+
+/* --- Scène 1 : le signal ----------------------------------------------------- */
+.ea .ea-signal {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto 1fr auto;
+    grid-template-areas:
+        "meta meta"
+        "titre titre"
+        "accroche indice";
+    gap: 1.5rem 2rem;
+    min-height: 100vh;
+    min-height: 100svh;
+    padding-top: calc(var(--ea-header-h) + 2rem);
+    padding-bottom: clamp(32px, 6vh, 72px);
+}
+
+/* Une seule source de lumière violette, derrière le titre */
+.ea .ea-signal::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(55% 45% at 82% 30%, var(--emotion-glow), transparent 70%);
+}
+.ea .ea-signal > * { position: relative; }
+
+.ea .ea-meta {
+    grid-area: meta;
+    font-size: 0.8125rem;
+    color: var(--emotion-muted);
+}
+
+.ea .ea-titre {
+    grid-area: titre;
+    align-self: center;
+    font-size: clamp(3rem, 17vw, 22rem);
+    font-weight: 800;
+    line-height: 0.84;
+    letter-spacing: -0.045em;
+    text-transform: uppercase;
+}
+
+.ea .ea-titre-haut,
+.ea .ea-titre-bas { display: block; }
+
+/* Seconde couche typographique : mot en contour, décalé à droite */
+.ea .ea-titre-bas {
+    text-align: right;
+    color: transparent;
+    -webkit-text-stroke: clamp(1.5px, 0.22vw, 3px) var(--emotion-accent-soft);
+}
+@supports not (-webkit-text-stroke: 1px #000) {
+    .ea .ea-titre-bas { color: var(--emotion-accent-soft); }
+}
+
+.ea .ea-accroche {
+    grid-area: accroche;
+    align-self: end;
+    max-width: 30ch;
+    font-size: clamp(1.125rem, 1.8vw, 1.5rem);
+    line-height: 1.3;
+}
+
+.ea .ea-indice {
+    grid-area: indice;
+    align-self: end;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.8125rem;
+    color: var(--emotion-muted);
+}
+.ea .ea-indice-trait { width: 3rem; height: 1px; background: var(--emotion-accent-soft); }
+
+@media (max-width: 700px) {
+    .ea .ea-signal {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-areas: "meta" "titre" "accroche" "indice";
+    }
+}
+
+/* --- Scène 1 animée -------------------------------------------------------------
+   Ces calques n'existent que si projet-core.js a monté l'animation (classe .exp-anime) :
+   sans JavaScript, sans GSAP ou avec « réduire les animations », la composition statique ci-dessus reste. */
+.exp-anime .ea-signal::before { content: none; }        /* la lueur statique devient un vrai calque animable */
+
+.ea .ea-signal > .ea-lueur {
+    --lueur: clamp(320px, 75vmin, 900px);                /* cercle : jamais une bande verticale sur mobile */
+    position: absolute;
+    top: calc(30% - var(--lueur) / 2);
+    left: calc(82% - var(--lueur) / 2);
+    width: var(--lueur);
+    height: var(--lueur);
+    background: radial-gradient(closest-side, var(--emotion-glow), transparent);
+    pointer-events: none;
+    will-change: transform, opacity;
+}
+
+/* Canevas du sablier 3D : décoratif, couvre la scène, passe sous tout le texte (calque créé par JS) */
+.ea .ea-signal > .ea-sablier {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.ea .ea-haut-anime { position: relative; }
+.ea .ea-lettre,
+.ea .ea-bas-texte { display: inline-block; }
+
+/* Texte plein (base) et son écho en contour (ombre), superposés ; l'écho est derrière */
+.ea .ea-base { position: relative; z-index: 1; display: block; white-space: nowrap; }
+.ea .ea-ombre {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0;
+    display: block;
+    width: 100%;
+    white-space: nowrap;
+    pointer-events: none;
+    color: transparent;
+    -webkit-text-stroke: clamp(1.5px, 0.22vw, 3px) var(--emotion-accent-soft);
+}
+.exp-anime .ea-titre-bas { position: relative; z-index: 2; }
+.exp-anime .ea-accroche { z-index: 3; }
+
+/* --- Scène 2 : le langage humain --------------------------------------------- */
+.ea .ea-langage {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: clamp(1.5rem, 4vw, 3rem);
+    min-height: 100vh;
+    min-height: 100svh;
+}
+
+.ea .ea-phrase {
+    font-size: clamp(2rem, 6.2vw, 6.25rem);
+    font-weight: 700;
+    line-height: 1.04;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+}
+
+.ea .ea-etapes {
+    display: flex;
+    gap: 1.25rem;
+    max-width: 44rem;
+    list-style: none;
+}
+.ea .ea-etapes li {
+    flex: 1;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--emotion-border);
+    font-size: 0.8125rem;
+    color: var(--emotion-muted);
+}
+
+/* --- Scène 3 : du texte aux caractéristiques -------------------------------- */
+.ea .ea-donnees {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(2rem, 6vw, 6rem);
+    align-items: start;
+}
+.ea .ea-donnees-texte { display: grid; gap: 1.25rem; }
+
+.ea .ea-matrice {
+    display: grid;
+    gap: 1.5rem;
+    min-width: 0;
+    padding: clamp(1rem, 2.5vw, 2rem);
+    border: 1px solid var(--emotion-border);
+    border-radius: 6px;
+    background: var(--emotion-surface-alt);
+}
+.ea .ea-matrice-titre {
+    margin-bottom: 0.6rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--emotion-accent-soft);
+}
+.ea .ea-termes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    list-style: none;
+}
+.ea .ea-termes li {
+    padding: 0.25rem 0.6rem;
+    border: 1px solid var(--emotion-border);
+    border-radius: 3px;
+    font-size: 0.9rem;
+    background: var(--emotion-surface);
+}
+.ea .ea-termes--paires li { border-color: var(--emotion-line); }
+
+/* Une case = un terme du vecteur (schéma, sans valeur) */
+.ea .ea-poids {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(18px, 1fr));
+    gap: 3px;
+}
+.ea .ea-poids i {
+    display: block;
+    aspect-ratio: 1;
+    border: 1px solid var(--emotion-border);
+    border-radius: 2px;
+}
+
+/* --- Scène 4 : le modèle ------------------------------------------------------ */
+.ea .ea-modele {
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+}
+
+.ea .ea-flux {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    list-style: none;
+}
+.ea .ea-flux li {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.25rem 0 0.25rem 1rem;
+    border-left: 1px solid var(--emotion-accent);
+}
+.ea .ea-flux-nom { font-size: clamp(1rem, 1.6vw, 1.375rem); font-weight: 700; }
+.ea .ea-flux-detail { font-size: 0.8125rem; color: var(--emotion-muted); }
+
+.ea .ea-modele-colonnes {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(1.5rem, 4vw, 4rem);
+    align-items: start;
+}
+.ea .ea-modele-texte { display: grid; gap: 1rem; }
+
+.ea .ea-code { display: grid; gap: 0.6rem; min-width: 0; }
+.ea .ea-code pre {
+    margin: 0;
+    padding: 1.25rem;
+    overflow-x: auto;
+    border: 1px solid var(--emotion-border);
+    border-radius: 6px;
+    font: 0.875rem/1.6 var(--ea-mono);
+    background: var(--emotion-surface);
+}
+.ea .ea-code pre code { padding: 0; color: var(--emotion-text); background: none; font-size: inherit; }
+
+@media (max-width: 899px) {
+    .ea .ea-flux { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+}
+
+/* --- Scène 5 : la prédiction -------------------------------------------------- */
+.ea .ea-prediction { display: grid; gap: clamp(2rem, 5vw, 4rem); }
+.ea .ea-resultat-bloc { display: grid; gap: 0.75rem; justify-items: start; }
+
+.ea .ea-phrase--retour {
+    max-width: 34ch;
+    font-size: clamp(1.25rem, 2.4vw, 2rem);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--emotion-muted);
+}
+.ea .ea-resultat-etiquette { margin-top: 1rem; font-size: 0.875rem; color: var(--emotion-muted); }
+.ea .ea-resultat {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    font-size: clamp(3rem, 13vw, 12rem);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.05em;
+    border-bottom: 0.05em solid var(--emotion-accent);
+}
+
+.ea .ea-scores {
+    display: grid;
+    gap: 0.4rem;
+    width: min(100%, 22rem);
+    margin-top: 1rem;
+    list-style: none;
+    font-variant-numeric: tabular-nums;
+}
+.ea .ea-scores li {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--emotion-border);
+    color: var(--emotion-muted);
+}
+.ea .ea-scores li:first-child { color: var(--emotion-text); font-weight: 700; }
+
+.ea .ea-champ {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    list-style: none;
+}
+.ea .ea-champ li {
+    padding: 0.4rem 0.9rem;
+    border: 1px solid var(--emotion-border);
+    border-radius: 3px;
+    font-size: 0.9375rem;
+    color: var(--emotion-muted);
+}
+.ea .ea-champ li.est-retenue {
+    font-weight: 700;
+    color: var(--emotion-on-accent);
+    border-color: var(--emotion-accent-strong);
+    background: var(--emotion-accent-strong);
+}
+
+.ea .ea-certitude { display: grid; gap: 0.75rem; }
+
+/* Tableaux : défilent dans leur propre conteneur, jamais dans la page */
+.ea .ea-cas {
+    overflow-x: auto;
+    border: 1px solid var(--emotion-border);
+    border-radius: 6px;
+}
+.ea .ea-tableau {
+    width: 100%;
+    min-width: 44rem;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    font-variant-numeric: tabular-nums;
+}
+.ea .ea-tableau--dense { min-width: 28rem; }
+.ea .ea-tableau caption {
+    padding: 1rem;
+    text-align: left;
+    color: var(--emotion-muted);
+}
+.ea .ea-tableau th,
+.ea .ea-tableau td {
+    padding: 0.7rem 1rem;
+    text-align: left;
+    vertical-align: top;
+    border-top: 1px solid var(--emotion-border);
+}
+.ea .ea-tableau thead th { font-size: 0.8125rem; font-weight: 600; color: var(--emotion-muted); }
+.ea .ea-tableau tbody th { max-width: 24ch; font-weight: 500; }
+.ea .ea-top { display: grid; gap: 0.15rem; list-style: none; }
+.ea .ea-top span { margin-left: 0.4rem; color: var(--emotion-muted); }
+.ea .ea-statut { font-weight: 600; }
+.ea .ea-statut--juste { color: var(--emotion-success); }
+.ea .ea-statut--faux { color: var(--emotion-alerte); }
+
+/* Sur mobile, les trois cas deviennent des blocs empilés : le résultat (juste / faux) reste visible
+   sans défilement horizontal. Les rôles ARIA du template conservent la sémantique de tableau. */
+@media (max-width: 699px) {
+    .ea .ea-tableau--cartes { min-width: 0; }
+    .ea .ea-tableau--cartes caption,
+    .ea .ea-tableau--cartes tbody,
+    .ea .ea-tableau--cartes tr,
+    .ea .ea-tableau--cartes th,
+    .ea .ea-tableau--cartes td { display: block; }
+    .ea .ea-tableau--cartes thead {
+        position: absolute; width: 1px; height: 1px; margin: -1px;
+        overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+    }
+    .ea .ea-tableau--cartes tr { padding: 0.9rem 1rem; border-top: 1px solid var(--emotion-border); }
+    .ea .ea-tableau--cartes th,
+    .ea .ea-tableau--cartes td { max-width: none; padding: 0.15rem 0; border: 0; }
+    .ea .ea-tableau--cartes tbody th { margin-bottom: 0.4rem; font-weight: 600; }
+    .ea .ea-tableau--cartes td[data-label]::before { content: attr(data-label) " : "; color: var(--emotion-muted); }
+    .ea .ea-tableau--cartes td[data-label="Scores"]::before { display: block; }
+}
+
+/* --- Scène 6 : contenu technique (rythme documentaire) ------------------------ */
+.ea .ea-technique { display: grid; }
+.ea .ea-technique-entete { display: grid; gap: 1rem; margin-bottom: clamp(2.5rem, 6vw, 5rem); }
+
+.ea .ea-ligne {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+    padding: clamp(1.5rem, 3vw, 2.5rem) 0;
+    border-top: 1px solid var(--emotion-border);
+}
+.ea .ea-ligne-corps { display: grid; gap: 1rem; min-width: 0; }
+
+.ea .ea-faits { display: grid; gap: 0.6rem; }
+.ea .ea-faits div { display: grid; grid-template-columns: 6.5rem minmax(0, 1fr); gap: 1rem; }
+.ea .ea-faits dt { color: var(--emotion-muted); }
+
+.ea .ea-modeles { display: grid; gap: 0.4rem; list-style: none; }
+.ea .ea-modeles li { padding-left: 0.9rem; border-left: 2px solid var(--emotion-border); color: var(--emotion-muted); }
+.ea .ea-modeles li.est-retenu { border-left-color: var(--emotion-accent); color: var(--emotion-text); font-weight: 600; }
+.ea .ea-badge {
+    margin-left: 0.5rem;
+    padding: 0.1rem 0.45rem;
+    border-radius: 3px;
+    font-size: 0.75rem;
+    color: var(--emotion-on-accent);
+    background: var(--emotion-accent-strong);
+}
+
+.ea .ea-chiffres {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.5rem;
+}
+.ea .ea-chiffres div { display: flex; flex-direction: column-reverse; justify-content: flex-end; gap: 0.35rem; }
+.ea .ea-chiffres dt { font-size: 0.875rem; color: var(--emotion-muted); }
+.ea .ea-chiffres dd {
+    font-size: clamp(2.25rem, 5vw, 4rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums;
+}
+
+.ea .ea-graphique { display: grid; gap: 0.75rem; }
+.ea .ea-barres { display: grid; gap: 0.35rem; list-style: none; }
+.ea .ea-barres li {
+    display: grid;
+    grid-template-columns: 6.5rem minmax(0, 1fr) 3.6rem;
+    gap: 0.75rem;
+    align-items: center;
+    font-size: 0.875rem;
+}
+.ea .ea-barre {
+    position: relative;
+    height: 0.5rem;
+    overflow: hidden;
+    border-radius: 2px;
+    background: var(--emotion-track);
+}
+.ea .ea-barre::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: var(--v);
+    background: var(--emotion-accent);
+}
+.ea .ea-barre-valeur { text-align: right; font-variant-numeric: tabular-nums; color: var(--emotion-muted); }
+
+.ea .ea-detail summary { padding: 0.5rem 0; cursor: pointer; color: var(--emotion-accent-soft); }
+.ea .ea-detail .ea-cas { margin-top: 0.75rem; }
+
+.ea .ea-confusion { display: inline-block; margin-right: 0.9rem; color: var(--emotion-text); }
+.ea .ea-reserve { padding-left: 1rem; border-left: 2px solid var(--emotion-accent); }
+
+.ea .ea-liste { display: grid; gap: 0.5rem; padding-left: 1.25rem; list-style: disc; color: var(--emotion-muted); }
+.ea .ea-liste li { max-width: var(--ea-mesure); padding-left: 0.25rem; }
+
+.ea .ea-techs { display: flex; flex-wrap: wrap; gap: 0.5rem; list-style: none; }
+.ea .ea-techs li {
+    padding: 0.3rem 0.8rem;
+    border: 1px solid var(--emotion-line);
+    border-radius: 3px;
+    font-size: 0.9rem;
+}
+
+.ea .ea-captures {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
+    gap: 1rem;
+}
+.ea .ea-capture img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    border: 1px solid var(--emotion-border);
+    border-radius: 6px;
+    background: var(--emotion-surface);
+}
+
+/* --- Scène 7 : conclusion -------------------------------------------------------- */
+.ea .ea-conclusion {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 2rem;
+    min-height: 80vh;
+    min-height: 80svh;
+}
+.ea .ea-titre-conclusion {
+    font-size: clamp(3rem, 14vw, 14rem);
+    font-weight: 800;
+    line-height: 0.86;
+    letter-spacing: -0.045em;
+    text-transform: uppercase;
+}
+.ea .ea-conclusion-texte { max-width: 52ch; }
+
+.ea .ea-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; list-style: none; }
+.ea .ea-btn {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0.7rem 1.3rem;
+    border: 1px solid var(--emotion-border);
+    border-radius: 4px;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--emotion-text);
+    background: transparent;
+}
+.ea .ea-btn--principal { color: var(--emotion-on-accent); border-color: var(--emotion-accent-strong); background: var(--emotion-accent-strong); }
+.ea .ea-btn--inactif { color: var(--emotion-muted); border-style: dashed; }
+.ea .ea-btn--discret { color: var(--emotion-muted); border-color: transparent; text-decoration: underline; }
+@media (hover: hover) {
+    .ea a.ea-btn:hover { border-color: var(--emotion-accent-soft); }
+    .ea a.ea-btn--principal:hover { border-color: var(--emotion-accent-hover); background: var(--emotion-accent-hover); }
+}
+
+/* --- Adaptations par largeur ------------------------------------------------------- */
+@media (min-width: 700px) {
+    .ea .ea-chiffres { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (min-width: 900px) {
+    .ea .ea-donnees { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+    .ea .ea-modele-colonnes { grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); }
+    .ea .ea-ligne { grid-template-columns: minmax(0, 3fr) minmax(0, 8fr); gap: clamp(2rem, 5vw, 5rem); }
+    .ea .ea-barres li { grid-template-columns: 9rem minmax(0, 1fr) 3.6rem; }
+    .ea .ea-faits div { grid-template-columns: 8rem minmax(0, 1fr); }
+}

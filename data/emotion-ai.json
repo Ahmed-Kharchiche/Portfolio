@@ -1,0 +1,348 @@
+{
+  "source": "Chiffres du README du projet et de resultats_resume.json (extrait de meilleurs_parametres.json) ; architecture lue dans modeles.py, sauvegarde.py et predire.py ; 3 démonstrations = sortie de predire.py (MODE = test) fournie par l'auteur, non recalculée ici.",
+  "emotions": [
+    "amour",
+    "anxiété",
+    "colère",
+    "culpabilité",
+    "dégoût",
+    "ennui",
+    "espoir",
+    "fierté",
+    "frustration",
+    "gratitude",
+    "honte",
+    "jalousie",
+    "joie",
+    "nostalgie",
+    "peur",
+    "solitude",
+    "soulagement",
+    "surprise",
+    "sérénité",
+    "tristesse"
+  ],
+  "dataset": {
+    "nb_phrases": 11076,
+    "colonnes": [
+      "phrase",
+      "emotion"
+    ],
+    "valeurs_manquantes": 0,
+    "doublons": 0,
+    "par_emotion_min": 549,
+    "par_emotion_max": 559,
+    "entrainement": 8860,
+    "test": 2216,
+    "part_test": 0.2,
+    "provenance": null
+  },
+  "modele": {
+    "vectoriseur": "TfidfVectorizer",
+    "classificateur": "LinearSVC",
+    "ngrammes": [
+      1,
+      2
+    ],
+    "min_df": 1,
+    "C": 1,
+    "class_weight": null
+  },
+  "comparaison": [
+    {
+      "nom": "Count + Naive Bayes",
+      "retenu": false
+    },
+    {
+      "nom": "TF-IDF + Naive Bayes",
+      "retenu": false
+    },
+    {
+      "nom": "TF-IDF + régression logistique",
+      "retenu": false
+    },
+    {
+      "nom": "TF-IDF + SVM linéaire",
+      "retenu": true
+    }
+  ],
+  "recherche": {
+    "combinaisons": 180,
+    "ecart_dix_premieres": 0.002,
+    "moins_bonnes": "régression logistique avec C = 0,1 (environ 0,93)"
+  },
+  "validation_croisee": {
+    "plis": 5,
+    "accuracy": 0.9517,
+    "f1_macro": 0.9517
+  },
+  "test_final": {
+    "nb_phrases": 2216,
+    "accuracy": 0.9607,
+    "f1_macro": 0.9606
+  },
+  "par_emotion": [
+    {
+      "emotion": "amour",
+      "precision": 0.95,
+      "rappel": 0.96,
+      "f1": 0.9593,
+      "phrases": 110
+    },
+    {
+      "emotion": "anxiété",
+      "precision": 0.99,
+      "rappel": 0.94,
+      "f1": 0.963,
+      "phrases": 111
+    },
+    {
+      "emotion": "colère",
+      "precision": 0.95,
+      "rappel": 0.93,
+      "f1": 0.9401,
+      "phrases": 110
+    },
+    {
+      "emotion": "culpabilité",
+      "precision": 0.95,
+      "rappel": 0.93,
+      "f1": 0.9369,
+      "phrases": 112
+    },
+    {
+      "emotion": "dégoût",
+      "precision": 0.97,
+      "rappel": 0.94,
+      "f1": 0.9537,
+      "phrases": 110
+    },
+    {
+      "emotion": "ennui",
+      "precision": 0.97,
+      "rappel": 0.98,
+      "f1": 0.9776,
+      "phrases": 111
+    },
+    {
+      "emotion": "espoir",
+      "precision": 0.97,
+      "rappel": 0.98,
+      "f1": 0.9776,
+      "phrases": 111
+    },
+    {
+      "emotion": "fierté",
+      "precision": 0.94,
+      "rappel": 0.94,
+      "f1": 0.9364,
+      "phrases": 110
+    },
+    {
+      "emotion": "frustration",
+      "precision": 0.96,
+      "rappel": 0.96,
+      "f1": 0.9643,
+      "phrases": 112
+    },
+    {
+      "emotion": "gratitude",
+      "precision": 0.96,
+      "rappel": 0.97,
+      "f1": 0.9646,
+      "phrases": 112
+    },
+    {
+      "emotion": "honte",
+      "precision": 0.96,
+      "rappel": 0.97,
+      "f1": 0.964,
+      "phrases": 110
+    },
+    {
+      "emotion": "jalousie",
+      "precision": 0.94,
+      "rappel": 0.98,
+      "f1": 0.9604,
+      "phrases": 111
+    },
+    {
+      "emotion": "joie",
+      "precision": 0.97,
+      "rappel": 0.95,
+      "f1": 0.9593,
+      "phrases": 112
+    },
+    {
+      "emotion": "nostalgie",
+      "precision": 0.96,
+      "rappel": 0.96,
+      "f1": 0.964,
+      "phrases": 111
+    },
+    {
+      "emotion": "peur",
+      "precision": 0.96,
+      "rappel": 0.99,
+      "f1": 0.9735,
+      "phrases": 111
+    },
+    {
+      "emotion": "solitude",
+      "precision": 0.98,
+      "rappel": 0.99,
+      "f1": 0.9864,
+      "phrases": 110
+    },
+    {
+      "emotion": "soulagement",
+      "precision": 0.96,
+      "rappel": 0.96,
+      "f1": 0.9596,
+      "phrases": 111
+    },
+    {
+      "emotion": "surprise",
+      "precision": 0.97,
+      "rappel": 0.92,
+      "f1": 0.9439,
+      "phrases": 110
+    },
+    {
+      "emotion": "sérénité",
+      "precision": 0.95,
+      "rappel": 0.98,
+      "f1": 0.9646,
+      "phrases": 111
+    },
+    {
+      "emotion": "tristesse",
+      "precision": 0.96,
+      "rappel": 0.97,
+      "f1": 0.964,
+      "phrases": 110
+    }
+  ],
+  "confusions": [
+    {
+      "vraie": "anxiété",
+      "prise_pour": "surprise",
+      "nb": 3
+    },
+    {
+      "vraie": "colère",
+      "prise_pour": "jalousie",
+      "nb": 3
+    },
+    {
+      "vraie": "fierté",
+      "prise_pour": "gratitude",
+      "nb": 3
+    }
+  ],
+  "test_manuel": {
+    "nb_phrases": 60,
+    "correctes": 50,
+    "signalees_incertaines": 21,
+    "erreurs": 10,
+    "erreurs_signalees": 10,
+    "non_signalees": 39,
+    "non_signalees_fausses": 0,
+    "reserve": "Le critère d'incertitude a été choisi en observant ces mêmes 60 phrases : il doit être revalidé sur de nouvelles données."
+  },
+  "seuils_incertitude": {
+    "ecart_min": 0.25,
+    "score_min": 0.0,
+    "note": "Valeurs par défaut de predire.py ; config.py peut les remplacer."
+  },
+  "demonstrations": [
+    {
+      "phrase": "J'ai raté mon bus alors que je suis déjà en retard.",
+      "attendue": "frustration",
+      "retenue": "frustration",
+      "juste": true,
+      "top": [
+        {
+          "emotion": "frustration",
+          "score": 0.797
+        },
+        {
+          "emotion": "honte",
+          "score": -0.919
+        },
+        {
+          "emotion": "anxiété",
+          "score": -0.961
+        }
+      ],
+      "ecart_avec_la_2e": 1.716,
+      "incertain": false,
+      "raison": ""
+    },
+    {
+      "phrase": "Je suis resté devant la porte, incapable de sonner.",
+      "attendue": "peur",
+      "retenue": "honte",
+      "juste": false,
+      "top": [
+        {
+          "emotion": "honte",
+          "score": -0.093
+        },
+        {
+          "emotion": "anxiété",
+          "score": -0.425
+        },
+        {
+          "emotion": "surprise",
+          "score": -0.464
+        }
+      ],
+      "ecart_avec_la_2e": 0.332,
+      "incertain": true,
+      "raison": "score trop bas"
+    },
+    {
+      "phrase": "Il m'a annoncé une nouvelle incroyable et je suis resté sans voix.",
+      "attendue": "surprise",
+      "retenue": "surprise",
+      "juste": true,
+      "top": [
+        {
+          "emotion": "surprise",
+          "score": 0.262
+        },
+        {
+          "emotion": "anxiété",
+          "score": -0.452
+        },
+        {
+          "emotion": "tristesse",
+          "score": -0.758
+        }
+      ],
+      "ecart_avec_la_2e": 0.714,
+      "incertain": false,
+      "raison": ""
+    }
+  ],
+  "limites": [
+    "Le modèle compte les mots et les paires de mots : il ne comprend pas l'ironie ni les phrases à double sens.",
+    "Certaines étiquettes sont intrinsèquement discutables : une même phrase peut exprimer plusieurs émotions.",
+    "Le score de 96 % porte sur le jeu de test du dataset. Sur des phrases d'un style différent, la performance baisse (83 % sur le test manuel)."
+  ],
+  "pistes": [
+    "Relire les phrases des émotions les plus confondues et corriger les étiquettes ambiguës.",
+    "Ajouter des phrases d'argot et des formulations indirectes.",
+    "Comparer avec un modèle de langage préentraîné (CamemBERT).",
+    "Brancher le site sur predire.py, qui renverrait l'émotion en JSON (non fait à ce jour)."
+  ],
+  "technologies_projet": [
+    "Python",
+    "scikit-learn",
+    "pandas",
+    "joblib",
+    "NumPy"
+  ],
+  "role": null
+}
