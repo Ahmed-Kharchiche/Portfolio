@@ -1,0 +1,367 @@
+/* #region PAGE ET BARRE DU HAUT */
+.admin {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 200px 20px 40px;
+}
+
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 35px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--bordure);
+}
+
+.top-bar h1 {
+    font-size: 28px;
+}
+
+.bouton-deconnexion {
+    padding: 8px 14px;
+    border: 1px solid var(--bordure);
+    border-radius: 6px;
+    color: var(--texte-secondaire);
+}
+
+.bouton-deconnexion:hover {
+    color: var(--texte);
+    border-color: var(--accent);
+}
+/* #endregion */
+
+/* #region FORMULAIRE DE PROJET */
+.ajout-projet {
+    background-color: var(--carte);
+    border: 1px solid var(--bordure);
+    border-radius: 12px;
+    padding: 30px;
+}
+
+.ajout-projet h2 {
+    margin-bottom: 25px;
+}
+
+.formulaire-projet {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.champ {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.champ label,
+.label-technologies {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.champ input[type="text"],
+.champ input[type="url"],
+.champ textarea {
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid var(--bordure);
+    border-radius: 6px;
+    background-color: var(--fond);
+    color: var(--texte);
+    font-family: inherit;
+}
+
+.champ textarea {
+    resize: vertical;
+}
+
+.champ input[type="text"]:focus,
+.champ input[type="url"]:focus,
+.champ textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.champ input[type="file"] {
+    width: 100%;
+    padding: 12px;
+
+    color: var(--texte-secondaire);
+    background-color: var(--fond);
+    border: 1px solid var(--bordure);
+    border-radius: 8px;
+
+    font-family: inherit;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.champ input[type="file"]::file-selector-button {
+    margin-right: 12px;
+    padding: 8px 14px;
+
+    color: var(--texte);
+    background-color: var(--technologie);
+    border: 1px solid #52525B;
+    border-radius: 6px;
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+
+    cursor: pointer;
+}
+
+.champ input[type="file"]:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+/* #endregion */
+
+
+
+/* #region ZONE D'ENVOI D'IMAGES */
+.zone-fichier {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    width: 100%;
+    min-height: 140px;
+    padding: 20px;
+
+    color: var(--texte-secondaire);
+    background-color: var(--fond);
+    border: 1px solid var(--bordure);
+    border-radius: 8px;
+
+    text-align: center;
+    cursor: pointer;
+}
+
+.zone-fichier img {
+    width: 45px;
+    height: 45px;
+    object-fit: contain;
+}
+
+.zone-fichier span {
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.zone-fichier input[type="file"] {
+    display: none;
+}
+/* #endregion */
+
+/* #region APERÇU DES IMAGES */
+.aperçu-images {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.aperçu-image {
+    position: relative;
+    width: 120px;
+    border: 1px solid var(--bordure);
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: var(--fond);
+}
+
+.aperçu-image img {
+    display: block;
+    width: 100%;
+    height: 85px;
+    object-fit: cover;
+}
+
+.aperçu-image-nom {
+    padding: 6px 8px;
+
+    color: var(--texte-secondaire);
+    font-size: 11px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.supprimer-image {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+
+    width: 24px;
+    height: 24px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #FFFFFF;
+    background-color: rgba(0, 0, 0, 0.65);
+    border: none;
+    border-radius: 50%;
+
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+}
+/* #endregion */
+
+/* #region CASES DES TECHNOLOGIES */
+.cases-technologies {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.case-technologie {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 12px;
+
+    border: 1px solid var(--texte);
+    border-radius: 6px;
+    background-color: transparent;
+
+    cursor: pointer;
+
+    transition: border-color 0.2s ease;
+}
+
+/* Cache visuellement la checkbox */
+.case-technologie input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Technologie sélectionnée */
+.case-technologie:has(input:checked) {
+    border: 2px solid var(--accent);
+}
+/* #endregion */
+
+/* #region BOUTON D'AJOUT */
+.bouton-ajouter {
+    align-self: flex-start;
+    padding: 10px 20px;
+    background-color: var(--accent);
+    color: #FFFFFF;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.bouton-ajouter:hover {
+    background-color: var(--accent-hover);
+}
+/* #endregion */
+
+/* #region SECTION AVIS ADMIN */
+.avis-admin {
+    margin-top: 60px;
+    padding: 30px 0 20px;
+    border-top: 2px solid var(--bordure);
+}
+
+.avis-admin h2 {
+    margin: 0 0 25px;
+    padding-left: 14px;
+    border-left: 4px solid var(--accent);
+    font-size: 1.6rem;
+    font-weight: 700;
+}
+/* #endregion */
+
+/* #region SECTION PETITS AVIS */
+.petits-avis {
+    margin-top: 60px;
+    padding: 30px 0 20px;
+    border-top: 2px solid var(--bordure);
+}
+
+.petits-avis h2 {
+    margin: 0 0 25px;
+    padding-left: 14px;
+    border-left: 4px solid var(--accent);
+    font-size: 1.6rem;
+    font-weight: 700;
+}
+
+/* #endregion */
+
+/* #region LISTE DES AVIS */
+.liste-petits-avis {
+    margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+/* #endregion */
+
+/* #region TRI DES AVIS */
+.tri-avis {
+    width: 220px;
+    max-width: 100%;
+    margin-left: auto;
+    margin-bottom: 25px;
+}
+
+.tri-avis label {
+    display: block;
+    margin-bottom: 6px;
+}
+
+.tri-avis select {
+    width: 100%;
+    box-sizing: border-box;
+}
+/* #endregion */
+
+
+/* #region RESPONSIVE */
+
+/* Tablettes et petits ordinateurs */
+@media (max-width: 1024px) {
+    .admin {
+        padding: 120px 20px 40px;
+    }
+
+    .case-technologie {
+        position: relative;
+    }
+}
+
+/* Mobiles */
+@media (max-width: 600px) {
+    .admin {
+        padding: 200px 0px 40px;
+    }
+    .top-bar { flex-direction: column; align-items: stretch; gap: 15px; margin-bottom: 25px; }
+    .top-bar h1 { font-size: 26px; text-align: left; }
+    .bouton-deconnexion { width: 100%; text-align: center; padding: 10px; }
+    .ajout-projet { padding: 20px; border-radius: 10px; }
+    .formulaire-projet { gap: 18px; }
+    .champ input[type="text"], .champ input[type="url"], .champ textarea { padding: 12px; font-size: 16px; }
+    .champ input[type="file"] { padding: 10px; font-size: 14px; }
+    .champ input[type="file"]::file-selector-button { padding: 9px 12px; margin-right: 8px; }
+    .zone-fichier { min-height: 110px; padding: 15px; }
+    .aperçu-image { width: calc(50% - 6px); }
+    .cases-technologies { gap: 8px; }
+    .case-technologie { padding: 8px 10px; }
+    .bouton-ajouter { width: 100%; padding: 12px; font-size: 15px; }
+    .avis-admin h2, .petits-avis h2 { font-size: 1.3rem; }
+    .tri-avis { width: 100%; margin-left: 0; }
+}
+
+/* #endregion */

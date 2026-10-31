@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Réseau 3D - démo</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #09090B;
+        }
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+
+    // ---- Mise en place de la scène ----
+
+    const scene = new THREE.Scene();
+
+    const camera = new THREE.PerspectiveCamera(
+        60,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000
+    );
+    camera.position.z = 45;
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    // Le groupe contient les points et les lignes, ça permet de tout faire tourner ensemble
+    const reseau = new THREE.Group();
+    scene.add(reseau);
+
+    // ---- Génération des points ----
+
+    const nombreDePoints = 100;
+    const positions = [];
+
+    for (let i = 0; i < nombreDePoints; i++) {
+        const x = (Math.random() - 0.5) * 60;
+        const y = (Math.random() - 0.5) * 40;
+        const z = (Math.random() - 0.5) * 40;
+        positions.push(new THREE.Vector3(x, y, z));
+    }
+
+    const geometriePoints = new THREE.BufferGeometry().setFromPoints(positions);
+
+    const materielPoints = new THREE.PointsMaterial({
+        color: 0xA78BFA,
+        size: 0.8
+    });
+
+    const points = new THREE.Points(geometriePoints, materielPoints);
+    reseau.add(points);
+
+    // ---- Génération des connexions entre points proches ----
+
+    const distanceMax = 17;
+    const sommetsLignes = [];
+
+    for (let i = 0; i < positions.length; i++) {
+        for (let j = i + 1; j < positions.length; j++) {
+            const distance = positions[i].distanceTo(positions[j]);
+
+            if (distance < distanceMax) {
+                sommetsLignes.push(positions[i], positions[j]);
+            }
+        }
+    }
+
+    const geometrieLignes = new THREE.BufferGeometry().setFromPoints(sommetsLignes);
+
+    const materielLignes = new THREE.LineBasicMaterial({
+        color: 0x7C3AED,
+        transparent: true,
+        opacity: 0.3
+    });
+
+    const lignes = new THREE.LineSegments(geometrieLignes, materielLignes);
+    reseau.add(lignes);
+
+    // ---- Interaction souris ----
+
+    // Position de la souris normalisée entre -1 et 1
+    let sourisX = 0;
+    let sourisY = 0;
+
+    window.addEventListener("mousemove", (evenement) => {
+        sourisX = (evenement.clientX / window.innerWidth) * 2 - 1;
+        sourisY = (evenement.clientY / window.innerHeight) * 2 - 1;
+    });
+
+    // ---- Interaction clic ----
+
+    // À chaque clic, on donne un petit "coup" de rotation qui s'estompe progressivement
+    let impulsion = 0;
+
+    window.addEventListener("click", () => {
+        impulsion = 1;
+    });
+
+    // ---- Réception des événements depuis la page parente (cas de l'iframe) ----
+
+    // Si cette page est affichée dans une iframe avec pointer-events: none,
+    // elle ne reçoit jamais mousemove/click directement. La page parente
+    // doit alors nous transmettre les infos via postMessage.
+    window.addEventListener("message", (evenement) => {
+        if (evenement.data.type === "mousemove") {
+            sourisX = evenement.data.x;
+            sourisY = evenement.data.y;
+        }
+
+        if (evenement.data.type === "click") {
+            impulsion = 1;
+        }
+    });
+
+    // ---- Animation ----
+
+    function animer() {
+        requestAnimationFrame(animer);
+
+        // Rotation de base + rotation qui suit la souris + impulsion du clic
+        reseau.rotation.y += 0.0015 + sourisX * 0.003 + impulsion * 0.04;
+        reseau.rotation.x += 0.0005 + sourisY * 0.0015;
+
+        // L'impulsion s'estompe petit à petit après un clic
+        impulsion *= 0.95;
+
+        renderer.render(scene, camera);
+    }
+
+    animer();
+
+    // ---- Adapter à la taille de la fenêtre ----
+
+    window.addEventListener("resize", () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+</script>
+
+</body>
+</html>

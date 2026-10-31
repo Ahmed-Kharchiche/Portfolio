@@ -1,0 +1,292 @@
+/* #region EN-TÊTE ET INTRODUCTION */
+.projets {
+    padding-top: 100px;
+    padding-bottom: 40px;
+}
+
+.titre-page-projets {
+    text-align: center;
+    padding: 20px;
+    margin-bottom: 100px;
+}
+
+.titre-page-projets p {
+    color: var(--texte-secondaire);
+    margin-top: 8px;
+}
+
+.intro-projets {
+    max-width: 850px;
+    margin: 0 auto 120px;
+    padding: 0 20px;
+}
+
+.intro-projets p {
+    color: var(--texte-secondaire);
+    font-size: 16px;
+    line-height: 1.7;
+    margin: 0 0 25px;
+}
+
+.intro-gauche,
+.intro-droite {
+    text-align: left;
+}
+/* #endregion */
+
+/* #region GRILLE DES PROJETS */
+.grille-projets {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 30px;
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.message-vide {
+    text-align: center;
+    color: var(--texte-secondaire);
+    padding: 60px 20px;
+}
+/* #endregion */
+
+/* #region TRI */
+
+.tri-projets {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    max-width: 1100px;
+    margin: 0 auto 20px;
+    padding: 0 20px;
+}
+
+.tri-projets label {
+    color: var(--texte-secondaire);
+    font-size: 14px;
+}
+/* #endregion */
+
+/* #region FILTRES TECHNOLOGIES */
+
+.filtre-technologies {
+    max-width: 1100px;
+    margin: 0 auto 25px;
+    padding: 0 20px;
+}
+
+.filtre-titre {
+    display: block;
+    margin-bottom: 10px;
+    color: var(--texte-secondaire);
+    font-size: 14px;
+}
+
+.technologies-filtres {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.filtre-technologie {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.filtre-technologie input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.filtre-technologie span {
+    padding: 6px 11px;
+    color: var(--texte);
+    background-color: transparent;
+    border: 1px solid var(--texte);
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    transition:
+            border-color 0.2s ease,
+            background-color 0.2s ease,
+            color 0.2s ease;
+}
+
+.filtre-technologie:has(input:checked) span {
+    color: #FFFFFF;
+    background-color: var(--accent);
+    border-color: var(--accent);
+}
+/* #endregion */
+
+/* #region MINI-JEU DINO */
+.zone-jeu-contenu.avec-jeu {
+    display: block;
+    min-height: 0;
+    padding: 0;
+    overflow: hidden;
+    border-style: solid;
+}
+
+.dino {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3 / 1;
+    min-height: 220px;
+    background-color: var(--carte);
+    outline: none;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.dino:focus-visible {
+    box-shadow: inset 0 0 0 2px var(--accent);
+}
+
+.dino canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+.dino.agrandi {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    width: 75vw;
+    height: 75vh;
+    height: 75dvh;
+    margin: auto;
+    aspect-ratio: auto;
+    border: 1px solid var(--bordure);
+    border-radius: 12px;
+    box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.6);
+    overflow: hidden;
+}
+
+/* #region BARRE DE BOUTONS */
+/* Boutons en haut à droite */
+
+.dino-barre {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    gap: 6px;
+}
+
+.dino-barre button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    color: var(--texte);
+    background-color: color-mix(in srgb, var(--carte) 85%, transparent);
+    border: 1px solid var(--bordure);
+    border-radius: 8px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: border-color 0.2s ease, transform 0.15s ease;
+}
+
+.dino-barre button:hover {
+    border-color: var(--accent);
+}
+
+.dino-barre button:active {
+    transform: scale(0.94);
+}
+/* #endregion */
+
+/* #region BOUTONS TACTILES */
+/* Boutons tactiles : uniquement sur écran tactile */
+
+.dino-tactile {
+    display: none;
+}
+
+@media (pointer: coarse) {
+    /* bande réservée sous le jeu pour les boutons : ils ne recouvrent plus le dino */
+    .dino {
+        box-sizing: content-box;
+        padding-bottom: 76px;
+    }
+
+    .dino.agrandi {
+        box-sizing: border-box;
+    }
+
+    .dino canvas {
+        height: 100%;
+        border-bottom: 1px solid var(--bordure);
+    }
+
+    .dino-tactile {
+        position: absolute;
+        right: 12px;
+        bottom: 12px;
+        left: 12px;
+        display: flex;
+        justify-content: space-between;
+        pointer-events: none;
+    }
+
+    .dino-tactile button {
+        padding: 14px 20px;
+        color: var(--texte);
+        background-color: color-mix(in srgb, var(--carte) 70%, transparent);
+        border: 1px solid var(--bordure);
+        border-radius: 12px;
+        font-size: 15px;
+        font-weight: 600;
+        pointer-events: auto;
+    }
+}
+/* #endregion */
+
+/* #region RESPONSIVE (ANCIEN POINT DE RUPTURE 700px) */
+@media (max-width: 700px) {
+    .dino {
+        aspect-ratio: 16 / 10;
+    }
+
+    .dino.agrandi {
+        width: 92vw;
+        height: 75vh;
+        height: 75dvh;
+    }
+}
+/* #endregion */
+/* #endregion */
+
+/* #region RESPONSIVE */
+
+/* Tablettes et petits ordinateurs */
+@media (max-width: 1024px) {
+    .titre-page-projets { margin-bottom: 70px; }
+    .intro-projets { margin-bottom: 90px; }
+    .grille-projets { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
+    .filtre-technologie { position: relative; }
+}
+
+/* Mobiles */
+@media (max-width: 600px) {
+    .titre-page-projets { margin-bottom: 60px; padding: 20px 15px; }
+    .intro-projets { margin-bottom: 70px; padding: 0 15px; }
+    .intro-projets p { font-size: 15px; }
+    .grille-projets { grid-template-columns: 1fr; gap: 20px; padding: 0 15px; }
+    .tri-projets { flex-wrap: wrap; justify-content: flex-start; padding: 0 15px; }
+    .filtre-technologies { padding: 0 15px; }
+    .dino { min-height: 180px; }
+    .dino-barre button { width: 32px; height: 32px; }
+}
+
+/* #endregion */

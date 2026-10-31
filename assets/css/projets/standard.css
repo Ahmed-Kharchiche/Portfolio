@@ -1,0 +1,263 @@
+
+/* #region CONTENEUR */
+
+.standard {
+    width: min(1100px, calc(100% - 48px));
+    margin: 0 auto;
+    padding: 140px 0 100px;
+    color: var(--texte);
+    font-family: Inter, sans-serif;
+}
+
+.standard *,
+.standard *::before,
+.standard *::after {
+    box-sizing: border-box;
+}
+
+/* #endregion */
+
+
+/* #region EN-TÊTE DU PROJET */
+
+.standard .standard-entete {
+    position: relative;
+    margin-bottom: 28px;
+    padding: 48px;
+    overflow: hidden;
+    border: 1px solid var(--bordure);
+    border-radius: 24px;
+    background:
+            radial-gradient(
+                    ellipse at 90% 0%,
+                    var(--ombre),
+                    transparent 55%
+            ),
+            var(--carte);
+}
+
+.standard .standard-surtitre {
+    margin: 0 0 18px;
+    color: var(--accent);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+}
+
+.standard .standard-entete h1 {
+    margin: 0;
+    font-family: "Space Grotesk", Inter, sans-serif;
+    font-size: clamp(2.4rem, 6vw, 4.5rem);
+    font-weight: 700;
+    line-height: 1.08;
+    letter-spacing: -0.045em;
+    overflow-wrap: anywhere;
+}
+
+.standard .standard-date {
+    margin: 24px 0 0;
+    color: var(--texte-secondaire);
+    font-size: 0.9rem;
+}
+
+/* #endregion */
+
+
+/* #region SECTIONS */
+
+.standard .standard-section {
+    margin-top: 24px;
+    padding: 32px;
+    border: 1px solid var(--bordure);
+    border-radius: 20px;
+    background: var(--carte);
+}
+
+.standard .standard-section h2 {
+    margin: 0 0 24px;
+    font-family: "Space Grotesk", Inter, sans-serif;
+    font-size: clamp(1.25rem, 3vw, 1.65rem);
+    font-weight: 600;
+    letter-spacing: -0.025em;
+}
+
+.standard .standard-section > p {
+    margin: 0;
+    color: var(--texte-secondaire);
+    font-size: 1rem;
+    line-height: 1.9;
+    overflow-wrap: anywhere;
+}
+
+/* #endregion */
+
+
+/* #region TECHNOLOGIES */
+
+.standard .standard-liste-technologies {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.standard .standard-liste-technologies li {
+    padding: 10px 15px;
+    border: 1px solid var(--bordure);
+    border-radius: 10px;
+    background: var(--technologie);
+    color: var(--texte);
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition:
+            background 0.25s ease,
+            border-color 0.25s ease,
+            transform 0.25s ease;
+}
+
+.standard .standard-liste-technologies li:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent);
+    background: var(--fond);
+}
+
+/* #endregion */
+
+
+/* #region GALERIE */
+
+.standard .standard-galerie {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.standard .standard-image {
+    min-width: 0;
+    margin: 0;
+    overflow: hidden;
+    border: 1px solid var(--bordure);
+    border-radius: 14px;
+    background: var(--fond);
+}
+
+.standard .standard-image img {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 520px;
+    object-fit: contain;
+    transition: transform 0.4s ease;
+}
+
+.standard .standard-image:hover img {
+    transform: scale(1.025);
+}
+
+/* #endregion */
+
+
+/* #region CODE SOURCE */
+
+.standard .standard-bouton-code {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    min-height: 48px;
+    padding: 12px 20px;
+    border: 1px solid var(--accent);
+    border-radius: 12px;
+    background: var(--fond);
+    color: var(--accent);
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition:
+            background 0.25s ease,
+            color 0.25s ease,
+            border-color 0.25s ease,
+            transform 0.25s ease;
+}
+
+.standard .standard-bouton-code:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent-hover);
+    background: var(--accent-hover);
+    color: var(--fond);
+}
+
+.standard .standard-bouton-code span {
+    font-size: 1.1rem;
+}
+
+/* #endregion */
+
+
+/* #region RESPONSIVE */
+
+@media (max-width: 700px) {
+    .standard {
+        width: calc(100% - 28px);
+        padding-top: 170px;
+        padding-bottom: 60px;
+    }
+
+    .standard .standard-entete {
+        padding: 30px 24px;
+        border-radius: 18px;
+    }
+
+    .standard .standard-section {
+        padding: 24px 20px;
+        border-radius: 16px;
+    }
+
+    .standard .standard-section h2 {
+        margin-bottom: 18px;
+    }
+
+    .standard .standard-galerie {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 14px;
+    }
+}
+
+@media (max-width: 400px) {
+    .standard {
+        width: calc(100% - 20px);
+        padding-top: 185px;
+    }
+
+    .standard .standard-entete {
+        padding: 24px 18px;
+    }
+
+    .standard .standard-section {
+        padding: 20px 16px;
+    }
+
+    .standard .standard-liste-technologies li {
+        padding: 8px 11px;
+        font-size: 0.85rem;
+    }
+}
+
+/* #endregion */
+
+
+/* #region ACCESSIBILITÉ */
+
+@media (prefers-reduced-motion: reduce) {
+    .standard *,
+    .standard *::before,
+    .standard *::after {
+        transition: none !important;
+        animation: none !important;
+    }
+}
+
+/* #endregion */
