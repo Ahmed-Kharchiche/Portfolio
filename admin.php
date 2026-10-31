@@ -15,14 +15,14 @@ if (
 // #endregion
 
 // #region DÉPENDANCES ET GESTIONNAIRES
-require_once 'includes/Projet.php';
-require_once 'includes/GestionnaireProjets.php';
-require_once 'includes/affichage_projets.php';
+require_once 'src/modeles/Projet.php';
+require_once 'src/gestionnaires/GestionnaireProjets.php';
+require_once 'templates/composants/affichage-projets.php';
 
-require_once 'includes/Avis.php';
-require_once 'includes/GestionnaireAvis.php';
-require_once 'includes/affichage_avis.php';
-require_once 'includes/confirm/confirmation.php';
+require_once 'src/modeles/Avis.php';
+require_once 'src/gestionnaires/GestionnaireAvis.php';
+require_once 'templates/composants/affichage-avis.php';
+require_once 'templates/composants/confirmation.php';
 
 $gestionnaire = new GestionnaireProjets("data/projets.json");
 $gestionnaireAvis = new GestionnaireAvis("data/avis.json");
@@ -135,7 +135,7 @@ $extensions_images = ["jpg", "jpeg", "png", "gif", "webp"];
 
 // #region ENREGISTREMENT DES IMAGES
 /**
- * Enregistre les images envoyées dans images/projets/ et renvoie leurs chemins.
+ * Enregistre les images envoyées dans assets/images/projets/ et renvoie leurs chemins.
  * Seuls les vrais fichiers image (extension autorisée + contenu vérifié) sont acceptés.
  */
 function enregistrerImages(array $fichiers, array $extensionsAutorisees): array
@@ -160,7 +160,7 @@ function enregistrerImages(array $fichiers, array $extensionsAutorisees): array
 
         // Nom nettoyé + préfixe unique pour ne jamais écraser une image existante
         $nomPropre = preg_replace('/[^A-Za-z0-9_-]/', '_', pathinfo($nomFichier, PATHINFO_FILENAME));
-        $chemin = "images/projets/" . uniqid() . "_" . $nomPropre . "." . $extension;
+        $chemin = "assets/images/projets/" . uniqid() . "_" . $nomPropre . "." . $extension;
 
         if (move_uploaded_file($temporaire, $chemin)) {
             $chemins[] = $chemin;
@@ -283,8 +283,8 @@ $templateProjet = $projetAModifier?->getTemplate();
 
 // #region CONFIGURATION DE LA PAGE
 $titre_page = "Administration";
-$page_css = "admin.css";
-include 'includes/header.php';
+$page_css = "pages/admin.css";
+include 'templates/layout/header.php';
 // #endregion
 ?>
 
@@ -353,7 +353,7 @@ include 'includes/header.php';
                 <div class="champ">
                     <label for="images"><?php echo $modeModification ? "Ajouter des images" : "Images du projet"; ?></label>
                     <label class="zone-fichier">
-                        <img src="images/upload.png" alt="Ajouter des images">
+                        <img src="assets/images/interface/upload.png" alt="Ajouter des images">
                         <span>Ajouter des images</span>
                         <input type="file" id="images" name="images[]" accept="image/*" multiple <?php echo $modeModification ? "" : "required"; ?>>
                     </label>
@@ -423,11 +423,11 @@ include 'includes/header.php';
     <!-- #endregion -->
     <!-- #region MODALE ET SCRIPTS -->
 <?php afficherConfirmation(); ?>
-    <script src="js/administration.js"></script>
-    <script src="js/carrousel.js"></script>
-    <script src="js/favoris-projets.js"></script>
-    <script src="js/favoris-avis.js"></script>
-    <script src="js/avisTri.js"></script>
-    <script src="js/listeDeroulante.js"></script>
+    <script src="assets/js/pages/administration.js"></script>
+    <script src="assets/js/composants/carrousel.js"></script>
+    <script src="assets/js/composants/favoris-projets.js"></script>
+    <script src="assets/js/composants/favoris-avis.js"></script>
+    <script src="assets/js/pages/avis-tri.js"></script>
+    <script src="assets/js/composants/liste-deroulante.js"></script>
     <!-- #endregion -->
-<?php include 'includes/footer.php'; ?>
+<?php include 'templates/layout/footer.php'; ?>

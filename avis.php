@@ -4,14 +4,14 @@ use PHPMailer\PHPMailer\PHPMailer;
 
 // #region CONFIGURATION DE LA PAGE
 $titre_page = "Avis";
-$page_css = "avis.css";
+$page_css = "pages/avis.css";
 
-require_once 'includes/Avis.php';
-require_once 'includes/GestionnaireAvis.php';
-require_once 'includes/affichage_avis.php';
+require_once 'src/modeles/Avis.php';
+require_once 'src/gestionnaires/GestionnaireAvis.php';
+require_once 'templates/composants/affichage-avis.php';
 // #endregion
 
-include 'includes/header.php';
+include 'templates/layout/header.php';
 
 // #region INITIALISATION
 $gestionnaireAvis = new GestionnaireAvis("data/avis.json");
@@ -242,8 +242,8 @@ $moyenneAvis = count($avisPublies) > 0
 <!-- #endregion -->
 
 <!-- #region SCRIPTS -->
-<script src="js/avisTri.js"></script>
-<script src="js/listeDeroulante.js"></script>
+<script src="assets/js/pages/avis-tri.js"></script>
+<script src="assets/js/composants/liste-deroulante.js"></script>
 <!-- #endregion -->
 
-<?php include 'includes/footer.php'; ?>
+<?php include 'templates/layout/footer.php'; ?>

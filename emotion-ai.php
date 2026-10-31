@@ -14,8 +14,8 @@
 
 // #region INITIALISATION
 
-require_once __DIR__ . '/includes//Projet.php';
-require_once __DIR__ . '/includes/GestionnaireProjets.php';
+require_once __DIR__ . '/src/modeles/Projet.php';
+require_once __DIR__ . '/src/gestionnaires/GestionnaireProjets.php';
 
 $id = $_GET['id'] ?? null;
 
@@ -58,7 +58,7 @@ $dec = fn($v, int $n = 3): string => is_numeric($v) ? str_replace("-", "−", nu
 // Largeur d'une barre F1 : échelle tronquée de 90 % à 100 % (annoncée dans la légende du graphique)
 $barre = fn($v): string => number_format(max(0, min(100, ($v - 0.90) / 0.10 * 100)), 1, ".", "");
 
-$fichierDonnees = __DIR__ . "/../../data/emotion-ai.json";
+$fichierDonnees = __DIR__ . "/data/emotion-ai.json";
 $d = is_file($fichierDonnees) ? (json_decode((string) file_get_contents($fichierDonnees), true) ?: []) : [];
 
 $emotions    = $d["emotions"] ?? [];
@@ -118,9 +118,9 @@ $lienSuivant  = $projetSuivant !== null ? "detail-projet.php?id=" . urlencode((s
 $titreSuivant = $projetSuivant !== null ? $projetSuivant->getTitre() : "";
 // #endregion
 
-include 'includes/header.php';
+include 'templates/layout/header.php';
 ?>
-<link rel="stylesheet" href="css/projets/emotion-ai.css">
+<link rel="stylesheet" href="assets/css/projets/emotion-ai.css">
 <div class="exp ea" id="ea-debut" data-template="emotion-ai">
     <a class="ea-lien-evitement" href="#ea-technique">Aller au contenu technique</a>
 
@@ -480,6 +480,6 @@ include 'includes/header.php';
     </section>
 
     <!-- #endregion -->
-    <script type="module" src="js/projets/emotion-ai.js"></script>
-    <?php include 'includes/footer.php';?> ?>
+    <script type="module" src="assets/js/projets/emotion-ai.js"></script>
+    <?php include 'templates/layout/footer.php';?> ?>
 </div>

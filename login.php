@@ -202,9 +202,9 @@ if ($tentatives[$ip]['bloque_jusqua'] > $maintenant) {
 // #region CONFIGURATION DE LA PAGE
 
 $titre_page = "Connexion";
-$page_css = "login.css";
+$page_css = "pages/login.css";
 
-include __DIR__ . '/includes/header.php';
+include __DIR__ . '/templates/layout/header.php';
 
 // #endregion
 
@@ -290,4 +290,4 @@ include __DIR__ . '/includes/header.php';
     <!-- #endregion -->
 
 
-<?php include __DIR__ . '/includes/footer.php'; ?>
+<?php include __DIR__ . '/templates/layout/footer.php'; ?>

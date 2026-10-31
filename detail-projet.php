@@ -1,7 +1,7 @@
 
 <?php
-require_once 'includes/Projet.php';
-require_once 'includes/GestionnaireProjets.php';
+require_once 'src/modeles/Projet.php';
+require_once 'src/gestionnaires/GestionnaireProjets.php';
 
 // Récupération du projet
 $gestionnaire = new GestionnaireProjets("data/projets.json");
@@ -14,7 +14,7 @@ if ($projet === null) {
 
 // Configuration de la page
 $titre_page = $projet->getTitre();
-$page_css = "detail-projet.css";
+$page_css = "pages/detail-projet.css";
 $sans_smooth = true;
 
 // Données utilisées par les templates
@@ -25,7 +25,7 @@ $images = $projet->getImages() ?: [];
 $template = $projet->getTemplate();
 
 // Chargement du header
-include 'includes/header.php';
+include 'templates/layout/header.php';
 
     ?>
 
@@ -50,9 +50,9 @@ include 'includes/header.php';
     <?php
 
 
-    include __DIR__ . '/includes/templates/immersif.php';
+    include __DIR__ . '/templates/projets/immersif.php';
 
 
 // Chargement du footer
-include 'includes/footer.php';
+include 'templates/layout/footer.php';
 ?>

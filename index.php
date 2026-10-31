@@ -2,14 +2,14 @@
 // Page d'accueil du portfolio
 // #region CONFIGURATION DE LA PAGE
 $titre_page = "Accueil";
-$page_css = "accueil.css";
-require_once 'includes/GestionnaireProjets.php';
-require_once 'includes/GestionnaireAvis.php';
+$page_css = "pages/accueil.css";
+require_once 'src/gestionnaires/GestionnaireProjets.php';
+require_once 'src/gestionnaires/GestionnaireAvis.php';
 
-require_once 'includes/affichage_projets.php';
-require_once 'includes/affichage_avis.php';
+require_once 'templates/composants/affichage-projets.php';
+require_once 'templates/composants/affichage-avis.php';
 
-include 'includes/header.php';
+include 'templates/layout/header.php';
 // #endregion
 
 // #region PROJETS FAVORIS
@@ -32,13 +32,13 @@ $avisFavoris = $gestionnaireAvis->getAvisFavoris();
         <div class="zone">
 
             <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-            <script src="js/reseau.js"></script>
+            <script src="assets/js/pages/reseau.js"></script>
 
         </div>
 
         <div class="hero-boutons">
             <a href="projets.php" class="bouton">Découvrir mes projets</a>
-            <a href="cv/CV_Ahmed_Kharchiche.pdf" class="bouton bouton-secondaire" download>Télécharger mon CV</a>
+            <a href="assets/cv/CV_Ahmed_Kharchiche.pdf" class="bouton bouton-secondaire" download>Télécharger mon CV</a>
         </div>
     </section>
     <!-- #endregion -->
@@ -105,10 +105,10 @@ $avisFavoris = $gestionnaireAvis->getAvisFavoris();
     </section>
     <!-- #endregion -->
     <!-- #region SCRIPTS -->
-    <script src="js/moveAccueil.js"></script>
-    <script src="js/projetsListe.js"></script>
-    <script src="js/presentation.js"></script>
+    <script src="assets/js/pages/accueil.js"></script>
+    <script src="assets/js/pages/projets-liste.js"></script>
+    <script src="assets/js/pages/presentation.js"></script>
     <!-- #endregion -->
 
 
-<?php include 'includes/footer.php'; ?>
+<?php include 'templates/layout/footer.php'; ?>

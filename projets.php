@@ -1,11 +1,11 @@
 <?php
 // #region CONFIGURATION DE LA PAGE
 $titre_page = "Projets";
-$page_css = "projets.css";
+$page_css = "pages/projets.css";
 
-require_once 'includes/Projet.php';
-require_once 'includes/GestionnaireProjets.php';
-require_once 'includes/affichage_projets.php';
+require_once 'src/modeles/Projet.php';
+require_once 'src/gestionnaires/GestionnaireProjets.php';
+require_once 'templates/composants/affichage-projets.php';
 // #endregion
 
 // #region DONNÉES DES PROJETS
@@ -23,7 +23,7 @@ $technologies_disponibles = [
 ];
 // #endregion
 
-include 'includes/header.php';
+include 'templates/layout/header.php';
 ?>
     <!-- #region PAGE PROJETS -->
     <main class="projets">
@@ -97,10 +97,10 @@ include 'includes/header.php';
     </main>
     <!-- #endregion -->
     <!-- #region SCRIPTS -->
-    <script src="js/moveProjets.js"></script>
-    <script src="js/projetsTri.js"></script>
-    <script src="js/carrousel.js"></script>
-    <script src="js/listeDeroulante.js"></script>
-    <script src="js/dinoBugs.js"></script>
+    <script src="assets/js/pages/projets.js"></script>
+    <script src="assets/js/pages/projets-tri.js"></script>
+    <script src="assets/js/composants/carrousel.js"></script>
+    <script src="assets/js/composants/liste-deroulante.js"></script>
+    <script src="assets/js/pages/dino-bugs.js"></script>
     <!-- #endregion -->
-<?php include 'includes/footer.php'; ?>
+<?php include 'templates/layout/footer.php'; ?>

@@ -2,11 +2,11 @@
 // THE CORE : lit projets.json (adapte les clés ci-dessous si ton fichier est structuré autrement)
 // #region CONFIGURATION DE LA PAGE
 $titre_page = "Core";
-$page_css = "core.css";
+$page_css = "pages/core.css";
 // #endregion
 
 // #region LECTURE DES PROJETS
-$brut = json_decode(@file_get_contents("projets.json"), true) ?: [];
+$brut = json_decode(@file_get_contents("data/projets.json"), true) ?: [];
 $items = $brut["projets"] ?? $brut;
 $projets = [];
 foreach ($items as $i => $p) {
@@ -25,7 +25,7 @@ foreach ($items as $i => $p) {
 }
 // #endregion
 
-include 'includes/header.php';
+include 'templates/layout/header.php';
 ?>
 
     <!-- #region SCÈNE CORE -->
@@ -79,8 +79,8 @@ include 'includes/header.php';
     </script>
     <script type="module">
         if (matchMedia("(prefers-reduced-motion: reduce)").matches) document.querySelector(".core").classList.add("simple");
-        else import("./js/core.js");
+        else import("./assets/js/pages/core.js");
     </script>
     <!-- #endregion -->
 
-<?php include 'includes/footer.php'; ?>
+<?php include 'templates/layout/footer.php'; ?>

@@ -1,8 +1,8 @@
 <?php
 // #region INITIALISATION
 
-require_once __DIR__ . '/includes//Projet.php';
-require_once __DIR__ . '/includes/GestionnaireProjets.php';
+require_once __DIR__ . '/src/modeles/Projet.php';
+require_once __DIR__ . '/src/gestionnaires/GestionnaireProjets.php';
 
 $id = $_GET['id'] ?? null;
 
@@ -35,13 +35,13 @@ $gitlab = $projet->getGitlab();
 
 // #endregion
 
-include 'includes/header.php';
+include 'templates/layout/header.php';
 
 ?>
 
 <!-- #region PRÉSENTATION STANDARD -->
 
-<link rel="stylesheet" href="css/projets/standard.css">
+<link rel="stylesheet" href="assets/css/projets/standard.css">
 
 <main class="standard" data-template="standard">
     <p class="standard-surtitre">PROJET</p>
@@ -134,10 +134,10 @@ include 'includes/header.php';
 
 <!-- #endregion -->
 
-<?php include 'includes/footer.php';?>
+<?php include 'templates/layout/footer.php';?>
 
 <!-- #region JAVASCRIPT -->
 
-<script type="module" src="js/projets/standard.js"></script>
+<script type="module" src="assets/js/projets/standard.js"></script>
 
 <!-- #endregion -->

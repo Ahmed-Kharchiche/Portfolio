@@ -1,9 +1,9 @@
 <?php
 // #region CONFIGURATION DE LA PAGE
 $titre_page = "À propos";
-$page_css = "apropos.css";
+$page_css = "pages/apropos.css";
 
-include 'includes/header.php';
+include 'templates/layout/header.php';
 // #endregion
 ?>
 
@@ -88,5 +88,5 @@ include 'includes/header.php';
 
     </main>
 
-<?php include 'includes/footer.php'; ?>
+<?php include 'templates/layout/footer.php'; ?>
     <!-- #endregion -->

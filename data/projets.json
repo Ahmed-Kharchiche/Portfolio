@@ -8,7 +8,7 @@
         ],
         "gitlab": "",
         "images": [
-            "images\/projets\/rs6.webp"
+            "assets\/images\/projets\/rs6.webp"
         ],
         "dateCreation": "2026-08-07",
         "template": "standard"
@@ -26,8 +26,8 @@
         ],
         "gitlab": "https:\/\/github.com\/Ahmed-Kharchiche\/Portfolio",
         "images": [
-            "images\/projets\/t\u00e9l\u00e9chargement.jpg",
-            "images\/projets\/rs6 automne.jpg"
+            "assets\/images\/projets\/t\u00e9l\u00e9chargement.jpg",
+            "assets\/images\/projets\/rs6 automne.jpg"
         ],
         "dateCreation": "2026-09-12"
     },
@@ -44,7 +44,7 @@
         ],
         "gitlab": "https:\/\/github.com\/Ahmed-Kharchiche\/Portfolio",
         "images": [
-            "images\/projets\/Snapshot_1.PNG"
+            "assets\/images\/projets\/Snapshot_1.PNG"
         ],
         "dateCreation": "2026-09-26"
     },
@@ -57,7 +57,7 @@
         ],
         "gitlab": "",
         "images": [
-            "images\/projets\/AUDI.jpg"
+            "assets\/images\/projets\/AUDI.jpg"
         ],
         "dateCreation": "2026-10-04"
     },
@@ -70,7 +70,7 @@
         ],
         "gitlab": "",
         "images": [
-            "images\/projets\/rs6 automne.jpg"
+            "assets\/images\/projets\/rs6 automne.jpg"
         ],
         "dateCreation": "2026-10-04"
     },
@@ -85,7 +85,7 @@
         ],
         "gitlab": "",
         "images": [
-            "images\/projets\/chambresimplee.jpg"
+            "assets\/images\/projets\/chambresimplee.jpg"
         ],
         "dateCreation": "2026-10-05"
     },
@@ -98,8 +98,8 @@
         ],
         "gitlab": "",
         "images": [
-            "images\/projets\/6acb63f078586_apercu-ia1.png",
-            "images\/projets\/6acb6409422b6_apercu-ia2.png"
+            "assets\/images\/projets\/6acb63f078586_apercu-ia1.png",
+            "assets\/images\/projets\/6acb6409422b6_apercu-ia2.png"
         ],
         "dateCreation": "2026-10-11",
         "template": "emotion-ai"

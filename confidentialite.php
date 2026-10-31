@@ -1,8 +1,8 @@
 <?php
 $titre_page = "Politique de confidentialité";
-$page_css = "confidentialite.css";
+$page_css = "pages/confidentialite.css";
 
-include 'includes/header.php';
+include 'templates/layout/header.php';
 ?>
 
     <main class="page-confidentialite">
@@ -125,4 +125,4 @@ include 'includes/header.php';
         </div>
     </main>
 
-<?php include 'includes/footer.php'; ?>
+<?php include 'templates/layout/footer.php'; ?>
