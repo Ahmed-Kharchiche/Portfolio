@@ -4,6 +4,8 @@ Portfolio personnel réalisé en PHP, HTML, CSS et JavaScript. Il présente les 
 
 Les données sont conservées dans des fichiers JSON : aucune base de données n'est nécessaire. Composer installe PHPMailer, utilisé pour les notifications par e-mail. Les animations utilisent notamment Three.js, chargé depuis un CDN.
 
+La présentation Emotion AI utilise GSAP et ScrollTrigger **3.13.0**, fournis localement dans `assets/js/vendor/` avec un repli CDN. Son développement et ses tests sont décrits dans [la note de livraison de la scène 2](docs/emotion-ai-scene2.md).
+
 ## Fonctionnalités
 
 - Accueil avec projets et avis favoris sélectionnés dans l'administration.
@@ -100,7 +102,8 @@ Le serveur PHP intégré est destiné au développement local et ne lit pas les 
 │   │   ├── commun/             # Comportements partagés
 │   │   ├── composants/         # Interactions des composants
 │   │   ├── pages/              # Scripts propres aux pages
-│   │   └── projets/            # Scripts des présentations de projets
+│   │   ├── projets/            # Scripts des présentations de projets
+│   │   └── vendor/             # Distributions GSAP et ScrollTrigger
 │   ├── images/
 │   │   ├── interface/          # Images de l'interface
 │   │   └── projets/            # Images des projets et fichiers téléversés

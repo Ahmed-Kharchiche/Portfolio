@@ -14,8 +14,12 @@
  *
  * État (tous nombres) : x, y, taille (px), angle (rad, 0 = vertical), lacet, tangage (rad),
  *   remplissageA / remplissageB (0..1, ampoule du haut au départ / du bas), secousse (rad),
- *   ruisseau (0..1) + phase, reseau (0..1), energie (0..1), opacite (0..1).
+ *   ruisseau (0..1) + phase, reseau (0..1), energie (0..1), opacite (0..1), verre (défaut 1).
+ *   visage facultatif : { morph, cx, cy, hauteur (px), scan, analyse, sourire, dispersion, lueur }.
+ * Le visage est injecté via options.creerVisage ; sans cette option le rendu de référence reste autonome.
  */
+
+import { creerInterieur } from "./reseau-interieur.js";
 
 const FOV = (28 * Math.PI) / 180;
 const DISTANCE = 10;            // distance caméra / centre du modèle
@@ -221,21 +225,45 @@ void main(){
     vec3 c = laiton * diff * mix(1., 1.6, uClair) + refl + uAccent * fres * 0.12;
     o = vec4(c, 1.) * uOpacite;
 }`;
+// Une seule trajectoire GPU pour le grain, son halo et ses liaisons : aucun décalage pendant le morph.
+const GLSL_MORPH = `
+uniform float uMorph; uniform vec3 uFaceCentre; uniform float uFaceEchelle; uniform float uSourire; uniform float uDispersion;
+vec3 expressionVisage(vec3 face) {
+    vec2 q = vec2((abs(face.x) - 0.22) / 0.17, (face.y + 0.435) / 0.16);
+    face.y += uSourire * 0.10 * exp(-dot(q, q));
+    return face;
+}
+vec3 versVisage(vec3 source, vec3 face, vec4 alea) {
+    face = expressionVisage(face);
+    vec3 cible = uFaceCentre + face * uFaceEchelle;
+    vec3 arc = vec3(sin(alea.y * 6.283) * 0.45, cos(alea.z * 6.283) * 0.30, alea.w * 0.35) * uFaceEchelle * sin(3.14159265 * uMorph);
+    cible += vec3(face.xy * 0.65, 0.15) * uFaceEchelle * uDispersion;
+    return mix(source, cible, uMorph) + arc;
+}`;
 const VS_SABLE = `#version 300 es
-in vec3 aPos; in vec4 aAlea; in float aVis;
+in vec3 aPos; in vec4 aAlea; in float aVis; in vec3 aFace;
 uniform mat4 uMV; uniform mat4 uP; uniform float uGrain; uniform float uEchelleProj; uniform float uDpr;
-out vec4 vAlea;
+uniform float uScan;
+${GLSL_MORPH}
+out vec4 vAlea; out float vAlpha; out float vScan; out float vRelief;
 void main(){
-    if (aVis < 0.5) { gl_Position = vec4(2., 2., 2., 1.); gl_PointSize = 0.; return; }
+    vAlpha = mix(aVis, 0.72, smoothstep(0.25, 0.85, uMorph));
+    if (vAlpha < 0.002) { gl_Position = vec4(2., 2., 2., 1.); gl_PointSize = 0.; return; }
     vec4 v = uMV * vec4(aPos, 1.);
+    vec3 face = expressionVisage(aFace);
+    v.xyz = versVisage(v.xyz, aFace, aAlea);
     gl_Position = uP * v;
-    gl_PointSize = max(uGrain * aAlea.x * uEchelleProj / -v.z, 1.35 * uDpr);
+    float tailleSable = max(uGrain * aAlea.x * uEchelleProj / -v.z, 1.35 * uDpr);
+    gl_PointSize = mix(tailleSable, (1.15 + aAlea.x * 0.65) * uDpr, uMorph);
     vAlea = aAlea;
+    float scan = (face.y - uScan) / 0.10;
+    vScan = exp(-scan * scan) * uMorph;
+    vRelief = clamp((face.z - 0.1) * 1.8, 0., 1.);
 }`;
 const FS_SABLE = `#version 300 es
 precision highp float;
-in vec4 vAlea;
-uniform vec3 uSable1; uniform vec3 uSable2; uniform vec3 uAccent; uniform vec3 uLum1; uniform vec3 uLum2; uniform float uOpacite;
+in vec4 vAlea; in float vAlpha; in float vScan; in float vRelief;
+uniform vec3 uSable1; uniform vec3 uSable2; uniform vec3 uAccent; uniform vec3 uLum1; uniform vec3 uLum2; uniform float uOpacite; uniform float uMorph; uniform float uClair;
 out vec4 o;
 void main(){
     vec2 c = gl_PointCoord * 2. - 1.; float r2 = dot(c, c); if (r2 > 1.) discard;
@@ -246,11 +274,17 @@ void main(){
     vec3 h = normalize(uLum1 + vec3(0., 0., 1.));
     col += pow(max(dot(n, h), 0.), 28.) * step(0.955, vAlea.w) * 1.5 * vec3(1., 0.95, 0.85);
     col += uAccent * pow(1. - n.z, 2.) * 0.16;
-    o = vec4(col, 1.) * uOpacite;
+    vec3 visage = mix(uAccent, uSable1, 0.25 + vAlea.z * 0.16) * (0.85 + vRelief * 0.55);
+    visage = mix(visage, vec3(0.10, 0.17, 0.14) + uAccent * 0.30, uClair * 0.65);
+    visage += mix(uAccent, uSable1, 0.30) * vScan * 1.6;
+    col = mix(col, visage, uMorph);
+    float alpha = vAlpha * mix(1., pow(1. - r2, 0.35), uMorph);
+    o = vec4(col * alpha, alpha) * uOpacite;
 }`;
 const VS_NOEUD = `#version 300 es
-in vec3 aPos; in float aReveil; in float aVis;
+in vec3 aPos; in float aReveil; in float aVis; in vec3 aFace; in vec4 aAlea;
 uniform mat4 uMV; uniform mat4 uP; uniform float uReseau; uniform float uEnergie; uniform float uEchelleProj; uniform float uDpr; uniform float uCentreZ; uniform float uRayon;
+${GLSL_MORPH}
 out float vA;
 void main(){
     float eveil = smoothstep(aReveil, aReveil + 0.22, uReseau);
@@ -258,6 +292,7 @@ void main(){
     float devant = smoothstep(-0.35 * uRayon, 0.30 * uRayon, v.z - uCentreZ);
     vA = eveil * aVis * (0.35 + 0.65 * devant);
     if (vA < 0.01) { gl_Position = vec4(2., 2., 2., 1.); gl_PointSize = 0.; return; }
+    v.xyz = versVisage(v.xyz, aFace, aAlea);
     gl_Position = uP * v;
     gl_PointSize = (5.6 + 4.5 * uEnergie) * uDpr * (0.8 + 0.5 * eveil) * clamp(uEchelleProj / (-v.z * 520.), 0.7, 1.7);
 }`;
@@ -272,14 +307,16 @@ void main(){
     o = vec4(col * vA, vA * halo) * uOpacite;
 }`;
 const VS_LIEN = `#version 300 es
-in vec3 aPos; in float aReveil; in float aVis;
+in vec3 aPos; in float aReveil; in float aVis; in vec3 aFace; in vec4 aAlea;
 uniform mat4 uMV; uniform mat4 uP; uniform float uReseau; uniform float uEnergie; uniform float uCentreZ; uniform float uRayon;
+${GLSL_MORPH}
 out float vA;
 void main(){
     float eveil = smoothstep(aReveil + 0.12, aReveil + 0.5, uReseau);
     vec4 v = uMV * vec4(aPos, 1.);
     float devant = smoothstep(-0.35 * uRayon, 0.30 * uRayon, v.z - uCentreZ);
     vA = eveil * aVis * (0.25 + 0.75 * devant) * (0.45 + 0.55 * uEnergie);
+    v.xyz = versVisage(v.xyz, aFace, aAlea);
     gl_Position = uP * v;
 }`;
 const FS_LIEN = `#version 300 es
@@ -287,16 +324,47 @@ precision highp float;
 in float vA; uniform vec3 uAccent; uniform float uOpacite; out vec4 o;
 void main(){ vec3 c = uAccent * 1.15; o = vec4(c * vA, vA * 0.75) * uOpacite; }`;
 
+// Calques d'analyse : les tracés suivent les mêmes repères et la même déformation que les grains.
+const VS_VISAGE = `#version 300 es
+in vec3 aPos; in float aOrdre;
+uniform mat4 uP; uniform vec3 uFaceCentre; uniform float uFaceEchelle; uniform float uSourire;
+uniform float uAnalyse; uniform float uMorph; uniform float uDpr; uniform float uDispersion;
+out float vA;
+void main(){
+    vec3 face = aPos;
+    vec2 q = vec2((abs(face.x) - 0.22) / 0.17, (face.y + 0.435) / 0.16);
+    face.y += uSourire * 0.10 * exp(-dot(q, q));
+    face += vec3(face.xy * 0.65, 0.15) * uDispersion;
+    gl_Position = uP * vec4(uFaceCentre + face * uFaceEchelle, 1.);
+    gl_PointSize = 4.2 * uDpr;
+    vA = smoothstep(aOrdre * 0.65, aOrdre * 0.65 + 0.30, uAnalyse) * smoothstep(0.65, 0.95, uMorph);
+}`;
+const FS_VISAGE = `#version 300 es
+precision highp float;
+in float vA; uniform vec3 uAccent; uniform float uOpacite; uniform float uPoint;
+out vec4 o;
+void main(){
+    float alpha = vA * uOpacite;
+    if (uPoint > 0.5) { float r = length(gl_PointCoord * 2. - 1.); if (r > 1.) discard; alpha *= 1. - r; }
+    o = vec4(uAccent * alpha, alpha);
+}`;
+
 /* ---------------------------------------------------------------- utilitaires GL */
 function compiler(gl, type, src) {
     const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s);
-    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s) + "\n" + src.split("\n").slice(0, 3).join(" "));
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
+        const erreur = gl.getShaderInfoLog(s); gl.deleteShader(s);
+        throw new Error(erreur + "\n" + src.split("\n").slice(0, 3).join(" "));
+    }
     return s;
 }
-function programme(gl, vs, fs) {
+function programme(gl, vs, fs, sortiesFeedback = null) {
     const p = gl.createProgram();
-    gl.attachShader(p, compiler(gl, gl.VERTEX_SHADER, vs)); gl.attachShader(p, compiler(gl, gl.FRAGMENT_SHADER, fs));
+    const vertex = compiler(gl, gl.VERTEX_SHADER, vs), fragment = compiler(gl, gl.FRAGMENT_SHADER, fs);
+    gl.attachShader(p, vertex); gl.attachShader(p, fragment);
+    if (sortiesFeedback) gl.transformFeedbackVaryings(p, sortiesFeedback, gl.INTERLEAVED_ATTRIBS);
     gl.linkProgram(p);
+    gl.deleteShader(vertex); gl.deleteShader(fragment);
     if (!gl.getProgramParameter(p, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(p));
     const u = {}; const n = gl.getProgramParameter(p, gl.ACTIVE_UNIFORMS);
     for (let i = 0; i < n; i++) { const nom = gl.getActiveUniform(p, i).name; u[nom] = gl.getUniformLocation(p, nom); }
@@ -328,8 +396,13 @@ export function creerSablier(canevas, options = {}) {
         progs = {
             verre: programme(gl, VS_VERRE, FS_VERRE), bouchon: programme(gl, VS_VERRE, FS_BOUCHON),
             sable: programme(gl, VS_SABLE, FS_SABLE), noeud: programme(gl, VS_NOEUD, FS_NOEUD), lien: programme(gl, VS_LIEN, FS_LIEN),
+            visage: programme(gl, VS_VISAGE, FS_VISAGE),
         };
-    } catch (e) { console.warn("[sablier] shaders :", e.message); return null; }
+    } catch (e) {
+        console.warn("[sablier] shaders :", e.message);
+        const ext = gl.getExtension("WEBGL_lose_context"); if (ext) ext.loseContext();
+        return null;
+    }
 
     const segments = bas ? 56 : 96, pas = bas ? 120 : 190;
     const maillages = {
@@ -360,18 +433,38 @@ export function creerSablier(canevas, options = {}) {
 
     // --- sable : positions + aléas statiques, visibilité dynamique
     const nSable = grains.total + nbRuisseau;
+    let visage = null;
+    if (typeof options.creerVisage === "function") {
+        try { visage = options.creerVisage(nSable); }
+        catch (erreur) { console.warn("[sablier] visage :", erreur.message); }
+    }
     const posSable = new Float32Array(nSable * 3); posSable.set(grains.pos);
     const aleaSable = new Float32Array(nSable * 4); aleaSable.set(grains.alea);
     const rndR = graine(5);
     for (let i = 0; i < nbRuisseau; i++) { const k = grains.total + i; aleaSable[k * 4] = 0.85 + rndR() * 0.4; aleaSable[k * 4 + 1] = rndR(); aleaSable[k * 4 + 2] = rndR(); aleaSable[k * 4 + 3] = rndR() * 0.9; }
     const visSable = new Float32Array(nSable);
     const vaoSable = gl.createVertexArray(); gl.bindVertexArray(vaoSable);
-    const bPosSable = gl.createBuffer(), bAleaSable = gl.createBuffer(), bVisSable = gl.createBuffer();
+    const bPosSable = gl.createBuffer(), bAleaSable = gl.createBuffer(), bVisSable = gl.createBuffer(), bFaceSable = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, bPosSable); gl.bufferData(gl.ARRAY_BUFFER, posSable, gl.DYNAMIC_DRAW);
     gl.bindBuffer(gl.ARRAY_BUFFER, bAleaSable); gl.bufferData(gl.ARRAY_BUFFER, aleaSable, gl.STATIC_DRAW);
     gl.bindBuffer(gl.ARRAY_BUFFER, bVisSable); gl.bufferData(gl.ARRAY_BUFFER, visSable, gl.DYNAMIC_DRAW);
+    gl.bindBuffer(gl.ARRAY_BUFFER, bFaceSable); gl.bufferData(gl.ARRAY_BUFFER, visage ? visage.pos : new Float32Array(nSable * 3), gl.STATIC_DRAW);
     const attrSable = (nom, buf, taille) => { const l = gl.getAttribLocation(progs.sable.p, nom); gl.bindBuffer(gl.ARRAY_BUFFER, buf); gl.enableVertexAttribArray(l); gl.vertexAttribPointer(l, taille, gl.FLOAT, false, 0, 0); };
     attrSable("aPos", bPosSable, 3); attrSable("aAlea", bAleaSable, 4); attrSable("aVis", bVisSable, 1);
+    attrSable("aFace", bFaceSable, 3);
+
+    const calquesVisage = [];
+    if (visage) {
+        for (const [nom, geo] of [["lignes", visage.lignes], ["noeuds", visage.noeuds]]) {
+            const vao = gl.createVertexArray(); gl.bindVertexArray(vao);
+            const bp = gl.createBuffer(), bo = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, bp); gl.bufferData(gl.ARRAY_BUFFER, geo.pos, gl.STATIC_DRAW);
+            const lp = gl.getAttribLocation(progs.visage.p, "aPos"); gl.enableVertexAttribArray(lp); gl.vertexAttribPointer(lp, 3, gl.FLOAT, false, 0, 0);
+            gl.bindBuffer(gl.ARRAY_BUFFER, bo); gl.bufferData(gl.ARRAY_BUFFER, geo.ordre, gl.STATIC_DRAW);
+            const lo = gl.getAttribLocation(progs.visage.p, "aOrdre"); gl.enableVertexAttribArray(lo); gl.vertexAttribPointer(lo, 1, gl.FLOAT, false, 0, 0);
+            calquesVisage.push({ nom, vao, bp, bo, n: geo.n });
+        }
+    }
 
     // --- nœuds du réseau
     const nN = reseau.noeuds.length, posN = new Float32Array(nN * 3), visN = new Float32Array(nN);
@@ -383,6 +476,18 @@ export function creerSablier(canevas, options = {}) {
     gl.bindBuffer(gl.ARRAY_BUFFER, bVisN); gl.bufferData(gl.ARRAY_BUFFER, visN, gl.DYNAMIC_DRAW);
     const attrN = (prog, nom, buf) => { const l = gl.getAttribLocation(prog.p, nom); gl.bindBuffer(gl.ARRAY_BUFFER, buf); gl.enableVertexAttribArray(l); gl.vertexAttribPointer(l, 1 + 2 * (nom === "aPos"), gl.FLOAT, false, 0, 0); };
     attrN(progs.noeud, "aPos", bPosN); attrN(progs.noeud, "aReveil", bRevN); attrN(progs.noeud, "aVis", bVisN);
+    const tamponsMorph = [];
+    const lierMorph = (pr, vao, indices) => {
+        gl.bindVertexArray(vao);
+        for (const [nom, taille, source] of [["aFace", 3, visage ? visage.pos : null], ["aAlea", 4, grains.alea]]) {
+            const donnees = new Float32Array(indices.length * taille);
+            if (source) indices.forEach((k, i) => donnees.set(source.subarray(k * taille, k * taille + taille), i * taille));
+            const buf = gl.createBuffer(); tamponsMorph.push(buf);
+            gl.bindBuffer(gl.ARRAY_BUFFER, buf); gl.bufferData(gl.ARRAY_BUFFER, donnees, gl.STATIC_DRAW);
+            const l = gl.getAttribLocation(pr.p, nom); gl.enableVertexAttribArray(l); gl.vertexAttribPointer(l, taille, gl.FLOAT, false, 0, 0);
+        }
+    };
+    lierMorph(progs.noeud, vaoN, reseau.noeuds);
 
     // --- liens (2 sommets par lien)
     const nL = reseau.liens.length * 2, posL = new Float32Array(nL * 3), revL = new Float32Array(nL), visL = new Float32Array(nL);
@@ -396,6 +501,7 @@ export function creerSablier(canevas, options = {}) {
     gl.bindBuffer(gl.ARRAY_BUFFER, bRevL); gl.bufferData(gl.ARRAY_BUFFER, revL, gl.STATIC_DRAW);
     gl.bindBuffer(gl.ARRAY_BUFFER, bVisL); gl.bufferData(gl.ARRAY_BUFFER, visL, gl.DYNAMIC_DRAW);
     attrN(progs.lien, "aPos", bPosL); attrN(progs.lien, "aReveil", bRevL); attrN(progs.lien, "aVis", bVisL);
+    lierMorph(progs.lien, vaoL, reseau.liens.flatMap(([i, j]) => [reseau.noeuds[i], reseau.noeuds[j]]));
 
     // --- couleurs (relues depuis les variables CSS : thème clair / sombre)
     const teinte = { clair: 0, accent: [0.65, 0.55, 0.98], sable1: [0.97, 0.85, 0.57], sable2: [0.86, 0.67, 0.38], or: [1.0, 0.86, 0.55] };
@@ -412,10 +518,12 @@ export function creerSablier(canevas, options = {}) {
     function redimensionner() {
         dpr = Math.min(window.devicePixelRatio || 1, bas ? 1.5 : 2);
         W = Math.max(canevas.clientWidth, 1); H = Math.max(canevas.clientHeight, 1);
-        canevas.width = Math.round(W * dpr); canevas.height = Math.round(H * dpr);
+        const largeur = Math.round(W * dpr), hauteur = Math.round(H * dpr);
+        if (canevas.width !== largeur || canevas.height !== hauteur) { canevas.width = largeur; canevas.height = hauteur; }
     }
     redimensionner();
 
+    let interieur = null;
     const tableauCle = new Float32Array(grains.parAmpoule);
     const lum1 = norm3([-0.45, 0.7, 0.55]), lum2 = norm3([0.8, 0.1, 0.35]);
 
@@ -423,11 +531,11 @@ export function creerSablier(canevas, options = {}) {
     function rendre(e) {
         const o = {
             x: W / 2, y: H / 2, taille: H * 0.5, angle: 0, lacet: 0, tangage: 0.2, remplissageA: 0.3, remplissageB: 0.55, secousse: 0,
-            ruisseau: 0, phase: 0, reseau: 0, energie: 0, opacite: 1, ...e,
+            ruisseau: 0, phase: 0, reseau: 0, energie: 0, opacite: 1, verre: 1, ...e,
         };
         gl.viewport(0, 0, canevas.width, canevas.height);
         gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-        if (o.opacite <= 0.002 || o.x < -o.taille || o.x > W + o.taille) return;   // entièrement hors champ
+        if (o.opacite <= 0.002 || (!o.visage && (o.x < -o.taille || o.x > W + o.taille))) return;
 
         // matrices : monde en unités « modèle x échelle », caméra sur l'axe Z
         const pxParUnite = H / (2 * Math.tan(FOV / 2) * DISTANCE), s = o.taille / (2 * pxParUnite);
@@ -435,6 +543,21 @@ export function creerSablier(canevas, options = {}) {
         const dx = ((o.x - W / 2) / pxParUnite), dy = -((o.y - H / 2) / pxParUnite);
         const M = mul(translation(dx, dy, 0), mul(rot, echelle(s)));
         const P = perspective(FOV, W / H, 1, 40), V = translation(0, 0, -DISTANCE), VP = mul(P, V), MV = mul(V, M);
+        const face = visage && o.visage ? o.visage : null;
+        const morph = face ? Math.min(1, Math.max(0, face.morph || 0)) : 0;
+        const faceEchelle = face ? Math.max(1, face.hauteur) / (visage.hauteur * pxParUnite) : 0;
+        const faceCentre = face ? [(face.cx - W / 2) / pxParUnite, -(face.cy - H / 2) / pxParUnite, -DISTANCE] : [0, 0, -DISTANCE];
+        if (face && o.interieur?.progression > 0) {
+            if (!interieur) interieur = creerInterieur(gl, visage, aleaSable, bas, programme);
+            interieur.rendre({ ...o.interieur, langage: o.langage, faceCentre, faceEchelle, W, H, dpr,
+                clair: teinte.clair, accent: teinte.accent, sable: teinte.sable1 });
+            return;
+        }
+        const reglerFace = (pr) => {
+            gl.uniform3fv(pr.u.uFaceCentre, faceCentre); gl.uniform1f(pr.u.uFaceEchelle, faceEchelle);
+            gl.uniform1f(pr.u.uMorph, morph); gl.uniform1f(pr.u.uSourire, face ? face.sourire || 0 : 0);
+            gl.uniform1f(pr.u.uDispersion, face ? face.dispersion || 0 : 0);
+        };
 
         // gravité et surface du sable, ramenées dans le repère du modèle
         const nUp = norm3([-Math.sin(o.secousse), Math.cos(o.secousse), 0]);          // normale de la surface (monde)
@@ -464,7 +587,12 @@ export function creerSablier(canevas, options = {}) {
         const haut = ny > 0 ? 1 : -1, y0 = haut * 0.08;
         for (let i = 0; i < nbRuisseau; i++) {
             const k = grains.total + i;
-            if (!ruisseauActif || i / nbRuisseau > o.ruisseau) { visSable[k] = 0; continue; }
+            if (!ruisseauActif || i / nbRuisseau > o.ruisseau) {
+                visSable[k] = 0;
+                // Ces grains pourront rejoindre le visage : leur origine ne dépend jamais d'un ancien écoulement.
+                posSable[k * 3] = posSable[k * 3 + 1] = posSable[k * 3 + 2] = 0;
+                continue;
+            }
             const bBas = ny > 0 ? 1 : 0, sommet = (o["_seuil" + bBas] + o["_monticule" + bBas]) / ny;       // y du sommet du tas, sur l'axe
             const t = (((i / nbRuisseau + o.phase) % 1) + 1) % 1, f = Math.pow(t, 1.6);                      // avancement dans la chute
             const y = y0 + (sommet - y0) * f;
@@ -488,37 +616,57 @@ export function creerSablier(canevas, options = {}) {
             gl.useProgram(pr.p);
             gl.uniformMatrix4fv(pr.u.uM, false, M); gl.uniformMatrix4fv(pr.u.uVP, false, VP);
             gl.uniform3f(pr.u.uCam, 0, 0, DISTANCE); gl.uniform3fv(pr.u.uAccent, pr === progs.bouchon ? teinte.accent.map((c) => 0.35 * c + 0.45) : teinte.accent);
-            gl.uniform1f(pr.u.uClair, teinte.clair); gl.uniform1f(pr.u.uOpacite, o.opacite);
+            gl.uniform1f(pr.u.uClair, teinte.clair); gl.uniform1f(pr.u.uOpacite, o.opacite * o.verre);
             if (pr.u.uFace) gl.uniform1f(pr.u.uFace, face); if (pr.u.uInterieur) gl.uniform1f(pr.u.uInterieur, interieur);
         };
 
         gl.enable(gl.DEPTH_TEST); gl.depthFunc(gl.LEQUAL); gl.enable(gl.CULL_FACE);
         // 1) bouchons (opaques)
-        gl.disable(gl.BLEND); gl.depthMask(true); gl.cullFace(gl.BACK);
+        if (o.verre >= 0.999) gl.disable(gl.BLEND);
+        else { gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA); }
+        gl.depthMask(o.verre >= 0.999); gl.cullFace(gl.BACK);
         reglerVerre(progs.bouchon, 1, 0);
         for (const nom of ["haut", "bas"]) { lierGeo(progs.bouchon, tamponGeo[nom]); gl.drawElements(gl.TRIANGLES, tamponGeo[nom].n, gl.UNSIGNED_INT, 0); }
         // 2) verre : faces arrière (extérieur puis intérieur)
         gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA); gl.depthMask(false); gl.cullFace(gl.FRONT);
         for (const [nom, inter] of [["ext", 0], ["int", 1]]) { reglerVerre(progs.verre, -1, inter); lierGeo(progs.verre, tamponGeo[nom]); gl.drawElements(gl.TRIANGLES, tamponGeo[nom].n, gl.UNSIGNED_INT, 0); }
         // 3) sable (opaque, écrit la profondeur)
-        gl.disable(gl.BLEND); gl.depthMask(true); gl.disable(gl.CULL_FACE);
+        if (morph > 0) { gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA); }
+        else gl.disable(gl.BLEND);
+        gl.depthMask(morph === 0); gl.disable(gl.CULL_FACE);
         gl.useProgram(progs.sable.p); gl.bindVertexArray(vaoSable);
         gl.uniformMatrix4fv(progs.sable.u.uMV, false, MV); gl.uniformMatrix4fv(progs.sable.u.uP, false, P);
         gl.uniform1f(progs.sable.u.uGrain, 0.0105 * s); gl.uniform1f(progs.sable.u.uEchelleProj, (canevas.height) / (2 * Math.tan(FOV / 2)));
         gl.uniform1f(progs.sable.u.uDpr, dpr); gl.uniform3fv(progs.sable.u.uSable1, teinte.sable1); gl.uniform3fv(progs.sable.u.uSable2, teinte.sable2);
         gl.uniform3fv(progs.sable.u.uAccent, teinte.accent); gl.uniform3fv(progs.sable.u.uLum1, lum1); gl.uniform3fv(progs.sable.u.uLum2, lum2);
         gl.uniform1f(progs.sable.u.uOpacite, o.opacite);
+        reglerFace(progs.sable); gl.uniform1f(progs.sable.u.uScan, face ? face.scan ?? 2 : 2);
+        gl.uniform1f(progs.sable.u.uClair, teinte.clair);
         gl.bindBuffer(gl.ARRAY_BUFFER, bPosSable);
         gl.drawArrays(gl.POINTS, 0, nSable);
         // 4) réseau : additif, sans test de profondeur (les nœuds « éveillés » brillent à travers le sable)
-        if (o.reseau > 0.003) {
+        if (o.reseau > 0.003 && morph < 0.98) {
             gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE); gl.disable(gl.DEPTH_TEST);
             const u = (pr) => { gl.useProgram(pr.p); gl.uniformMatrix4fv(pr.u.uMV, false, MV); gl.uniformMatrix4fv(pr.u.uP, false, P);
                 gl.uniform1f(pr.u.uReseau, o.reseau); gl.uniform1f(pr.u.uEnergie, o.energie); gl.uniform1f(pr.u.uCentreZ, centreZ);
-                gl.uniform1f(pr.u.uRayon, s); gl.uniform3fv(pr.u.uAccent, teinte.accent); gl.uniform1f(pr.u.uOpacite, o.opacite); };
+                gl.uniform1f(pr.u.uRayon, s); gl.uniform3fv(pr.u.uAccent, teinte.accent); gl.uniform1f(pr.u.uOpacite, o.opacite * (1 - morph)); reglerFace(pr); };
             u(progs.lien); gl.bindVertexArray(vaoL); gl.drawArrays(gl.LINES, 0, nL);
             u(progs.noeud); gl.uniform1f(progs.noeud.u.uEchelleProj, canevas.height / (2 * Math.tan(FOV / 2))); gl.uniform1f(progs.noeud.u.uDpr, dpr);
             gl.uniform3fv(progs.noeud.u.uOr, teinte.or); gl.bindVertexArray(vaoN); gl.drawArrays(gl.POINTS, 0, nN);
+            gl.enable(gl.DEPTH_TEST);
+        }
+        if (face && morph > 0.65 && face.analyse > 0) {
+            const pr = progs.visage;
+            gl.useProgram(pr.p); gl.disable(gl.DEPTH_TEST); gl.enable(gl.BLEND);
+            gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+            gl.uniformMatrix4fv(pr.u.uP, false, P); reglerFace(pr);
+            gl.uniform1f(pr.u.uAnalyse, face.analyse); gl.uniform1f(pr.u.uDpr, dpr);
+            gl.uniform3fv(pr.u.uAccent, teinte.accent); gl.uniform1f(pr.u.uOpacite, o.opacite * 0.60);
+            for (const calque of calquesVisage) {
+                const point = calque.nom === "noeuds";
+                gl.uniform1f(pr.u.uPoint, point ? 1 : 0); gl.uniform1f(pr.u.uOpacite, o.opacite * (point ? 0.30 : 0.12)); gl.bindVertexArray(calque.vao);
+                gl.drawArrays(point ? gl.POINTS : gl.LINES, 0, calque.n);
+            }
             gl.enable(gl.DEPTH_TEST);
         }
         // 5) verre : faces avant (intérieur puis extérieur : les reflets passent au-dessus de tout)
@@ -528,9 +676,23 @@ export function creerSablier(canevas, options = {}) {
         return { visibles: [visSable.subarray(0, grains.parAmpoule).reduce((a, b) => a + b, 0), visSable.subarray(grains.parAmpoule, grains.total).reduce((a, b) => a + b, 0)], parAmpoule: grains.parAmpoule };
     }
 
+    let detruit = false;
     function detruire() {
+        if (detruit) return;
+        detruit = true;
+        interieur?.detruire();
+        for (const geo of Object.values(tamponGeo)) {
+            gl.deleteVertexArray(geo.vao); for (const buf of [geo.bp, geo.bn, geo.bi]) gl.deleteBuffer(buf);
+        }
+        for (const calque of calquesVisage) { gl.deleteVertexArray(calque.vao); gl.deleteBuffer(calque.bp); gl.deleteBuffer(calque.bo); }
+        for (const vao of [vaoSable, vaoN, vaoL]) gl.deleteVertexArray(vao);
+        for (const buf of [bPosSable, bAleaSable, bVisSable, bFaceSable, bPosN, bRevN, bVisN, bPosL, bRevL, bVisL]) gl.deleteBuffer(buf);
+        for (const buf of tamponsMorph) gl.deleteBuffer(buf);
+        for (const pr of Object.values(progs)) gl.deleteProgram(pr.p);
         const ext = gl.getExtension("WEBGL_lose_context");
         if (ext) ext.loseContext();
     }
-    return { rendre, redimensionner, couleurs, detruire, grains: grains.parAmpoule };
+    return { rendre, redimensionner, couleurs, detruire,
+        capturerLangage: () => interieur?.capturerLangage() || false,
+        grains: grains.parAmpoule, visageDisponible: !!visage };
 }

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   emotion-ai.css : mise en scène « Emotion AI » (version simple de la page projet)
+   emotion-ai.css : mise en scène « Emotion AI » (présentation dédiée du projet)
    Étape 3 : composition STATIQUE de chaque scène, lisible sans animation.
    Tout est préfixé ea- et scopé sous .ea pour ne rien affecter ailleurs.
    Les animations (GSAP) s'appuieront sur ces mêmes classes aux étapes suivantes.
@@ -41,6 +41,7 @@
     --ea-mesure: 62ch;
 
     position: relative;
+    isolation: isolate;
     overflow-x: clip;
     font-family: var(--ea-font);
     font-size: 1rem;
@@ -94,6 +95,7 @@
 /* --- Structure commune des scènes ------------------------------------------ */
 .ea .ea-scene {
     position: relative;
+    z-index: 1;
     padding: clamp(72px, 14vh, 168px) var(--ea-pad);
     overflow-x: clip;
     scroll-margin-top: var(--ea-header-h);
@@ -235,7 +237,7 @@
    sans JavaScript, sans GSAP ou avec « réduire les animations », la composition statique ci-dessus reste. */
 .exp-anime .ea-signal::before { content: none; }        /* la lueur statique devient un vrai calque animable */
 
-.ea .ea-signal > .ea-lueur {
+.ea .ea-stage > .ea-lueur {
     --lueur: clamp(320px, 75vmin, 900px);                /* cercle : jamais une bande verticale sur mobile */
     position: absolute;
     top: calc(30% - var(--lueur) / 2);
@@ -248,12 +250,35 @@
 }
 
 /* Canevas du sablier 3D : décoratif, couvre la scène, passe sous tout le texte (calque créé par JS) */
-.ea .ea-signal > .ea-sablier {
+.ea .ea-stage > .ea-sablier {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
     pointer-events: none;
+}
+
+/* Un seul plateau traverse les deux scènes. Il reste hors des éléments épinglés :
+   les transformations des pin-spacers ne peuvent pas changer son repère fixe. */
+.ea .ea-stage {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.ea .ea-retour-immersif {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 30;
+    padding: 0.55rem 0.85rem;
+    border: 1px solid var(--emotion-border);
+    border-radius: 4px;
+    background: var(--emotion-bg);
+    color: var(--emotion-muted);
+    font-size: 0.75rem;
 }
 
 .ea .ea-haut-anime { position: relative; }
@@ -277,7 +302,123 @@
 .exp-anime .ea-titre-bas { position: relative; z-index: 2; }
 .exp-anime .ea-accroche { z-index: 3; }
 
-/* --- Scène 2 : le langage humain --------------------------------------------- */
+/* --- Scène 2 : la matière devient un visage ---------------------------------
+   Sans GSAP/WebGL : composition typographique complète. Le visage est décoratif,
+   les étapes décrivent toujours le traitement réel du texte. */
+.ea .ea-comprendre {
+    display: flex;
+    align-items: center;
+    min-height: 100vh;
+    min-height: 100svh;
+    padding-top: calc(var(--ea-header-h) + 1.5rem);
+    padding-bottom: 3rem;
+}
+.ea .ea-comprendre-contenu {
+    display: grid;
+    gap: clamp(1rem, 2.2vh, 1.75rem);
+    width: 100%;
+    max-width: 50rem;
+}
+.exp-anime:not(.ea-sans-visage) .ea-comprendre-contenu { max-width: 56%; }
+.ea .ea-comprendre-repere {
+    font-family: var(--ea-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.14em;
+    color: var(--emotion-accent-soft);
+}
+.ea .ea-comprendre-titre {
+    font-size: clamp(2.5rem, 5.15vw, 6.2rem);
+    font-weight: 800;
+    line-height: 0.96;
+    letter-spacing: -0.045em;
+}
+.ea .ea-mot-ligne { display: block; width: fit-content; }
+.ea .ea-mot-ligne--contour {
+    color: transparent;
+    -webkit-text-stroke: 1px var(--emotion-accent-soft);
+}
+@supports not (-webkit-text-stroke: 1px #000) {
+    .ea .ea-mot-ligne--contour { color: var(--emotion-accent-soft); }
+}
+.ea .ea-comprendre-phrase {
+    font-size: clamp(1.125rem, 1.8vw, 1.6rem);
+    color: var(--emotion-muted);
+}
+.ea .ea-etapes-ia {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(0.5rem, 1.5vw, 1.25rem);
+    max-width: 36rem;
+    list-style: none;
+}
+.ea .ea-etapes-ia li {
+    min-width: 0;
+    border-top: 1px solid var(--emotion-line);
+    padding-top: 0.7rem;
+}
+.ea .ea-etapes-ia span {
+    font-family: var(--ea-mono);
+    font-size: clamp(0.6875rem, 1vw, 0.8125rem);
+    letter-spacing: 0.08em;
+    color: var(--emotion-accent-soft);
+}
+.ea .ea-etapes-ia p {
+    padding-top: 0.4rem;
+    font-size: 0.75rem;
+    line-height: 1.45;
+    color: var(--emotion-muted);
+}
+.ea .ea-comprendre-note {
+    max-width: 46ch;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    color: var(--emotion-muted);
+}
+.exp-anime .ea-etapes-ia li:nth-child(1) { opacity: var(--ea-e0, 1); transform: translateX(var(--ea-t0, 0px)); }
+.exp-anime .ea-etapes-ia li:nth-child(2) { opacity: var(--ea-e1, 1); transform: translateX(var(--ea-t1, 0px)); }
+.exp-anime .ea-etapes-ia li:nth-child(3) { opacity: var(--ea-e2, 1); transform: translateX(var(--ea-t2, 0px)); }
+.ea .ea-cadre {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+    color: var(--emotion-accent-soft);
+}
+.ea .ea-cadre i { position: absolute; width: 15px; height: 15px; border: solid currentColor; opacity: 0.65; }
+.ea .ea-cadre i:nth-child(1) { top: 0; left: 0; border-width: 1px 0 0 1px; }
+.ea .ea-cadre i:nth-child(2) { top: 0; right: 0; border-width: 1px 1px 0 0; }
+.ea .ea-cadre i:nth-child(3) { bottom: 0; left: 0; border-width: 0 0 1px 1px; }
+.ea .ea-cadre i:nth-child(4) { bottom: 0; right: 0; border-width: 0 1px 1px 0; }
+.ea-sans-visage .ea-cadre { display: none; }
+@media (max-width: 1023.98px) {
+    .ea .ea-comprendre { align-items: flex-end; padding-bottom: 3.25rem; }
+    .ea .ea-comprendre-contenu,
+    .exp-anime:not(.ea-sans-visage) .ea-comprendre-contenu { max-width: 100%; }
+    .ea .ea-comprendre-titre { font-size: clamp(1.75rem, 6.6vw, 3.5rem); }
+    .ea .ea-comprendre-contenu { gap: 0.8rem; }
+    .ea .ea-etapes-ia p { font-size: 0.6875rem; }
+}
+@media (max-width: 1023.98px) and (max-height: 700px) {
+    .ea .ea-comprendre-contenu { gap: 0.55rem; }
+    .ea .ea-comprendre-repere { display: none; }
+    .ea .ea-comprendre-titre { font-size: clamp(1.55rem, 6vw, 2.8rem); }
+    .ea .ea-comprendre-note { font-size: 0.6875rem; }
+    .ea .ea-comprendre { padding-bottom: 2.75rem; }
+}
+@media (min-width: 700px) and (max-width: 1023.98px) and (max-height: 600px) {
+    .exp-anime:not(.ea-sans-visage) .ea-comprendre {
+        align-items: center;
+        padding-top: calc(var(--ea-header-h) + 1rem);
+        padding-bottom: 1.25rem;
+    }
+    .exp-anime:not(.ea-sans-visage) .ea-comprendre-contenu { max-width: 56%; }
+    .ea .ea-comprendre-titre { font-size: clamp(1.5rem, 3.8vw, 2.5rem); }
+    .ea .ea-comprendre-phrase { font-size: 1rem; }
+}
+@media (max-width: 360px) and (max-height: 700px) {
+    .ea .ea-retour-immersif { position: absolute; } /* laisse la dernière ligne du texte dégagée */
+}
+
+/* Contenu textuel hérité, réutilisable dans les autres présentations. */
 .ea .ea-langage {
     display: flex;
     flex-direction: column;
@@ -625,6 +766,48 @@
 }
 
 /* --- Scène 7 : conclusion -------------------------------------------------------- */
+/* Scène 3 : réseau continu. Les contenus restent utilisables sans WebGL ou en mouvement réduit. */
+.ea .ea-inside { min-height: 100svh; display: flex; flex-direction: column; gap: 2rem; }
+.ea .ea-inside-entete { text-align: center; }
+.ea .ea-inside-titre { font-size: clamp(2rem, 4vw, 3.6rem); line-height: .97; letter-spacing: -.045em; font-weight: 700; text-align: center; margin-inline: auto; }
+.ea .ea-inside-soustitre { color: var(--emotion-muted); margin-top: .8rem; }
+.ea .ea-inside-repere, .ea .ea-inside-legende { font: .7rem var(--ea-mono); letter-spacing: .16em; color: var(--emotion-muted); }
+.ea .ea-inside-invitation { font-size: clamp(1.4rem, 3vw, 2.8rem); margin-top: .5rem; }
+.ea .ea-inside-controles { max-width: 58rem; margin: auto; width: 100%; text-align: center; }
+.ea .ea-inside-selection { display: grid; gap: .4rem; }
+.ea .ea-inside-resultat { display: block; font-size: clamp(1.8rem, 4vw, 3rem); letter-spacing: .13em; font-weight: 600; color: var(--emotion-text); }
+.ea .ea-inside-selecteur { display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; margin: .6rem auto; }
+.ea .ea-inside-selecteur button { min-height: 44px; padding: .5rem 1rem; font: 500 .72rem var(--ea-mono); letter-spacing: .08em; border-radius: 2rem; border: 1px solid var(--emotion-border); background: var(--emotion-bg); color: var(--emotion-muted); cursor: pointer; }
+.ea .ea-inside-selecteur button[aria-pressed="true"] { color: var(--emotion-text); border-color: #c6a565; box-shadow: inset 0 0 0 1px #c6a565; }
+.ea .ea-inside-selecteur button:focus-visible { outline: 2px solid var(--emotion-focus); outline-offset: 4px; }
+.ea .ea-inside-description { font-size: .85rem; margin: .5rem auto; min-height: 1.6em; }
+.ea .ea-inside-verite { max-width: 85ch; margin: .6rem auto 0; font-size: .72rem; line-height: 1.5; color: var(--emotion-muted); }
+.ea .ea-inside-labels { display: none; }
+.exp-anime.ea .ea-inside { height: 100svh; min-height: 500px; padding: 0 var(--ea-pad); overflow: hidden; border-top: 0; }
+.exp-anime.ea .ea-inside-entree { position: absolute; left: var(--ea-pad); top: 40%; opacity: 0; pointer-events: none; }
+.exp-anime.ea .ea-inside-entete { position: absolute; top: calc(var(--ea-header-h) + 1rem); left: var(--ea-pad); right: var(--ea-pad); pointer-events: none; }
+.exp-anime.ea .ea-inside-titre, .exp-anime.ea .ea-inside-soustitre { opacity: 0; }
+.exp-anime.ea .ea-inside-controles { position: absolute; bottom: 3vh; left: var(--ea-pad); right: var(--ea-pad); width: auto; opacity: 0; }
+.exp-anime.ea .ea-inside-labels { position: absolute; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); align-items: end; inset: 35% 14% 32%; list-style: none; text-align: center; opacity: 0; font: .7rem var(--ea-mono); letter-spacing: .15em; color: var(--emotion-muted); pointer-events: none; }
+.ea .ea-inside-labels .est-active { color: var(--emotion-text); }
+@media (max-width: 699px) {
+    .exp-anime.ea .ea-inside-entete { top: calc(var(--ea-header-h) + .6rem); }
+    .ea .ea-inside-titre { font-size: clamp(1.6rem, 7vw, 2.2rem); }
+    .ea .ea-inside-soustitre { font-size: .78rem; margin-top: .5rem; }
+    .exp-anime.ea .ea-inside-labels { grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(3, 1fr); inset: 35% 8% 34%; font-size: .62rem; }
+    .ea .ea-inside-selecteur { gap: .35rem; }
+    .ea .ea-inside-selecteur button { padding: .4rem .7rem; font-size: .64rem; }
+    .ea .ea-inside-verite { font-size: .63rem; }
+    .ea .ea-inside-description { font-size: .73rem; }
+    .exp-anime.ea .ea-inside-controles { bottom: max(1.5vh, env(safe-area-inset-bottom)); }
+}
+@media (max-height: 600px) and (min-width: 700px) {
+    .ea .ea-inside-titre { font-size: 1.8rem; }
+    .ea .ea-inside-resultat { font-size: 1.6rem; }
+    .exp-anime.ea .ea-inside-controles { bottom: 1rem; }
+}
+
+/* --- Scène 7 : conclusion -------------------------------------------------------- */
 .ea .ea-conclusion {
     display: flex;
     flex-direction: column;
@@ -675,4 +858,105 @@
     .ea .ea-ligne { grid-template-columns: minmax(0, 3fr) minmax(0, 8fr); gap: clamp(2rem, 5vw, 5rem); }
     .ea .ea-barres li { grid-template-columns: 9rem minmax(0, 1fr) 3.6rem; }
     .ea .ea-faits div { grid-template-columns: 8rem minmax(0, 1fr); }
+}
+/* Repli WebGL indisponible : même sélecteur, sans espace de scroll cinématographique vide. */
+.exp-anime.ea .ea-inside-statique { height: auto; min-height: 70svh; padding: 5rem var(--ea-pad); }
+.exp-anime.ea .ea-inside-statique .ea-inside-entete,
+.exp-anime.ea .ea-inside-statique .ea-inside-controles,
+.exp-anime.ea .ea-inside-statique .ea-inside-entree { position: static; opacity: 1; }
+.exp-anime.ea .ea-inside-statique .ea-inside-titre,
+.exp-anime.ea .ea-inside-statique .ea-inside-soustitre { opacity: 1; }
+.exp-anime.ea .ea-inside-statique .ea-inside-labels { display: none; }
+/* Les libellés suivent la projection des six centres 3D, y compris après un resize. */
+.exp-anime.ea .ea-inside-labels { display: block; inset: 0; }
+.exp-anime.ea .ea-inside-labels li { position: absolute; transform: translate(-50%, -50%); }
+@media (max-height: 600px) and (min-width: 700px) {
+    .exp-anime.ea .ea-inside { min-height: 0; }
+    .exp-anime.ea .ea-inside-entete { top: calc(var(--ea-header-h) + .3rem); }
+    .ea .ea-inside-titre { font-size: 1.35rem; }
+    .ea .ea-inside-soustitre, .ea .ea-inside-selection, .ea .ea-inside-description { display: none; }
+    .exp-anime.ea .ea-inside-controles { bottom: .5rem; }
+    .ea .ea-inside-verite { font-size: .6rem; line-height: 1.25; margin-top: .35rem; }
+}
+@media (max-width: 699px) {
+    .ea .ea-inside-selecteur { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); }
+    .ea .ea-inside-selection { gap: .15rem; }
+    .ea .ea-inside-resultat { font-size: 1.6rem; }
+    .ea .ea-inside-legende { font-size: .6rem; }
+    .ea .ea-inside-verite { max-width: calc(100% - 25px); }
+    .ea .ea-inside { --ea-pad: 16px; }
+}
+@media (max-width: 699px) {
+    .ea .ea-inside-verite { margin-right: 130px; max-width: none; text-align: left; font-size: .6rem; }
+}
+@media (max-width: 699px) and (max-height: 759px) {
+    .ea .ea-inside-legende { display: none; }
+    .ea .ea-inside-resultat { font-size: 1.35rem; }
+    .ea .ea-inside-description { font-size: .68rem; }
+}
+/* Scène 4 : typographie de particules, informations HTML pour les modes statiques. */
+.ea .ea-words { min-height:100svh; text-align:center; }
+.ea .ea-words-entete { max-width:70rem; margin:auto; }
+.ea .ea-words-caption h2 { font-size:clamp(1.7rem,3.7vw,3.4rem); font-weight:700; letter-spacing:-.04em; line-height:1; text-align:center; }
+.ea .ea-words-caption p { margin-top:.75rem; color:var(--emotion-muted); font-size:.9rem; }
+.ea .ea-words-caption:not(:first-child) { display:none; }
+.ea .ea-words-repere { font: .68rem var(--ea-mono); letter-spacing:.16em; margin-bottom:.6rem; }
+.ea .ea-words-lecture { margin:3rem auto; }
+.ea .ea-words-phrase { font-size:clamp(1.2rem,3vw,2.6rem); max-width:36ch; margin:auto; }
+.ea .ea-words-resultat { font-size:clamp(2.5rem,6vw,5rem); font-weight:600; letter-spacing:.08em; margin:.8rem auto; }
+.ea .ea-words-selecteur { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:.6rem; }
+.ea .ea-words-selecteur button { min-height:76px; display:flex; flex-direction:column; align-items:flex-start; gap:.4rem; text-align:left; padding:.8rem 1rem; border:1px solid var(--emotion-border); border-radius:8px; color:var(--emotion-muted); background:var(--emotion-bg); cursor:pointer; font:inherit; }
+.ea .ea-words-selecteur strong { font:500 .7rem var(--ea-mono); letter-spacing:.13em; }
+.ea .ea-words-selecteur span { font-size:.78rem; line-height:1.35; }
+.ea .ea-words-selecteur button[aria-pressed="true"] { border-color:#b89c63; box-shadow:inset 0 0 0 1px #b89c63; color:var(--emotion-text); }
+.ea .ea-words-selecteur button:focus-visible { outline:2px solid var(--emotion-focus); outline-offset:3px; }
+.ea .ea-words-statut { font-size:.7rem; color:var(--emotion-muted); margin:.6rem auto; min-height:1.4em; }
+.ea .ea-words-exactitude { max-width:100ch; margin:1.5rem auto 0; font-size:.7rem; line-height:1.45; color:var(--emotion-muted); }
+.exp-anime.ea .ea-words { height:100svh; min-height:0; padding:0 var(--ea-pad); overflow:hidden; border-top:0; }
+.exp-anime.ea .ea-words-entete { position:absolute; top:calc(var(--ea-header-h) + 1rem); left:var(--ea-pad); right:var(--ea-pad); height:10rem; pointer-events:none; }
+.exp-anime.ea .ea-words-caption { display:block; position:absolute; inset:0; opacity:0; }
+.exp-anime.ea .ea-words-lecture { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+.exp-anime.ea .ea-words-controles { position:absolute; bottom:5.5rem; left:var(--ea-pad); right:var(--ea-pad); max-width:65rem; margin:auto; opacity:0; }
+.exp-anime.ea .ea-words-exactitude { position:absolute; bottom:1.3rem; left:var(--ea-pad); right:var(--ea-pad); padding-right:135px; text-align:left; max-width:70rem; margin:auto; }
+@media(max-width:699px){
+ .ea .ea-words { --ea-pad:16px; }
+ .ea .ea-words-selecteur { grid-template-columns:repeat(2,minmax(0,1fr)); gap:.4rem; }
+ .ea .ea-words-selecteur button { min-height:65px; padding:.5rem .65rem; gap:.25rem; }
+ .ea .ea-words-selecteur strong { font-size:.6rem; }
+ .ea .ea-words-selecteur span { font-size:.67rem; }
+ .ea .ea-words-caption h2 { font-size:clamp(1.45rem,6vw,2rem); }
+ .ea .ea-words-caption p { font-size:.75rem; margin-top:.5rem; }
+ .exp-anime.ea .ea-words-entete { top:calc(var(--ea-header-h) + .6rem); }
+ .exp-anime.ea .ea-words-controles { bottom:5.3rem; }
+ .ea .ea-words-statut { font-size:.61rem; }
+ .ea .ea-words-exactitude { font-size:.6rem; }
+}
+@media(max-height:759px) and (max-width:699px){
+ .ea .ea-words-selecteur button { min-height:44px; align-items:center; justify-content:center; }
+ .ea .ea-words-selecteur span { display:none; }
+ .exp-anime.ea .ea-words-controles { bottom:5.3rem; }
+}
+@media(max-height:600px) and (min-width:700px){
+ .ea .ea-words-caption h2 { font-size:1.3rem; }
+ .ea .ea-words-caption p { font-size:.7rem; margin-top:.3rem; }
+ .exp-anime.ea .ea-words-entete { top:calc(var(--ea-header-h) + .3rem); }
+ .ea .ea-words-selecteur { grid-template-columns:repeat(6,minmax(0,1fr)); }
+ .ea .ea-words-selecteur button { min-height:44px; padding:.5rem; align-items:center; justify-content:center; }
+ .ea .ea-words-selecteur span { display:none; }
+ .exp-anime.ea .ea-words-controles { bottom:3.8rem; }
+ .ea .ea-words-exactitude { font-size:.6rem; }
+}
+.exp-anime.ea .ea-words-statique { height:auto; min-height:70svh; padding:5rem var(--ea-pad); }
+.exp-anime.ea .ea-words-statique .ea-words-entete,
+.exp-anime.ea .ea-words-statique .ea-words-controles,
+.exp-anime.ea .ea-words-statique .ea-words-exactitude { position:static; opacity:1; padding-right:0; }
+.exp-anime.ea .ea-words-statique .ea-words-caption { position:static; opacity:1; }
+.exp-anime.ea .ea-words-statique .ea-words-caption:not(:first-child) { display:none; }
+.exp-anime.ea .ea-words-statique .ea-words-lecture { position:static; clip-path:none; white-space:normal; width:auto; height:auto; }
+.ea .ea-words-devise { display:none; }
+.exp-anime.ea .ea-words-devise { display:block; position:absolute; top:55%; left:var(--ea-pad); right:var(--ea-pad); margin:0; font-size:.85rem; color:var(--emotion-muted); opacity:0; pointer-events:none; }
+@media(max-height:600px){.exp-anime.ea .ea-words-devise { display:none; }}
+.exp-anime.ea .ea-words-statique .ea-words-devise { display:none; }
+@media(max-height:600px) and (min-width:700px){
+ .ea .ea-words-caption p { display:none; }
 }

@@ -3,99 +3,18 @@
 ?>
     <link rel="stylesheet" href="assets/css/pages/immersif.css">
     <div id="mode-immersif">
+        <small id="credit-planete" hidden>
+            <a href="https://sketchfab.com/3d-models/ringed-gas-giant-planet-b4e21775e84e4cf3890f7796cfab1aca" target="_blank" rel="noopener noreferrer">Ringed Gas Giant Planet</a>
+            par <a href="https://sketchfab.com/berzerkey" target="_blank" rel="noopener noreferrer">berzerkey</a>
+            · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a>
+            · cadrage et animation adaptés
+        </small>
 
         <!-- #region DÉCOR 3D -->
 
         <canvas id="scene-3d" aria-hidden="true"></canvas>
         <div class="voile" aria-hidden="true"></div>
         <div class="flash" id="flash" aria-hidden="true"></div>
-
-        <!-- #endregion -->
-
-
-        <!-- #region ZONE 0 : DISCOVER -->
-
-        <section class="zone" data-zone="0">
-            <p class="label">01 — Discover</p>
-
-            <h1><?= htmlspecialchars($projet->getTitre()) ?></h1>
-
-            <?php if ($projet->getDateCreation()): ?>
-                <span class="date">
-                Créé le <?= date("d/m/Y", strtotime($projet->getDateCreation())) ?>
-            </span>
-            <?php endif; ?>
-        </section>
-
-        <!-- #endregion -->
-
-
-        <!-- #region ZONE 1 : UNDERSTAND -->
-
-        <section class="zone" data-zone="1">
-            <p class="label">02 — Understand</p>
-            <h2>Le projet</h2>
-
-            <p class="texte">
-                <?= nl2br(htmlspecialchars($projet->getDescription())) ?>
-            </p>
-        </section>
-
-        <!-- #endregion -->
-
-
-        <!-- #region ZONE 2 : EXPERIENCE -->
-
-        <section class="zone" data-zone="2">
-            <p class="label">03 — Experience</p>
-            <h2>Technologies</h2>
-
-            <div class="techs">
-                <?php foreach ($technologies as $technologie): ?>
-                    <span><?= htmlspecialchars($technologie) ?></span>
-                <?php endforeach; ?>
-            </div>
-        </section>
-
-        <!-- #endregion -->
-
-
-        <!-- #region ZONE 3 : RESULT -->
-
-        <section class="zone" data-zone="3">
-            <p class="label">04 — Result</p>
-
-            <?php if (!empty($images)): ?>
-                <div class="galerie">
-                    <?php foreach ($images as $index => $img): ?>
-                        <figure>
-                            <img
-                                src="<?= htmlspecialchars($img) ?>"
-                                alt="<?= htmlspecialchars($projet->getTitre()) . ' — vue ' . ($index + 1) ?>"
-                                loading="lazy"
-                            >
-                        </figure>
-                    <?php endforeach; ?>
-                </div>
-            <?php endif; ?>
-
-            <div class="actions">
-                <?php if ($projet->aUnLienGitlab()): ?>
-                    <a
-                        class="bouton"
-                        href="<?= htmlspecialchars($projet->getGitlab()) ?>"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        Voir le code
-                    </a>
-                <?php endif; ?>
-
-                <a class="bouton" href="projets.php">
-                    Retour aux projets
-                </a>
-            </div>
-        </section>
 
         <!-- #endregion -->
 
@@ -115,14 +34,24 @@
             Suivre la lumière
         </button>
 
+        <div class="commandes-focus" role="group" aria-label="Contrôle de la caméra">
+            <button class="bouton" id="focus-camera" type="button" aria-pressed="false" disabled>FOCUS</button>
+        </div>
+
+        <div class="navigation-images" id="navigation-images" role="group" aria-label="Navigation du résultat" hidden>
+            <div class="pagination-galerie">
+                <span id="nom-element"></span>
+                <span id="position-image" role="status" aria-live="polite" aria-atomic="true"></span>
+                <div class="indicateurs-galerie" id="indicateurs-galerie" role="group" aria-label="Choisir un élément"></div>
+            </div>
+        </div>
+
         <p class="astuce" id="astuce">
             Espace : avancer · Échap : revenir · clic : onde · double-clic : accélérer
         </p>
 
-        <button id="skip" type="button">Version simple</button>
-
         <?php if ($projet->getTemplate()): ?>
-            <a class="bouton bouton-simple" id="changer-template">
+            <a class="bouton bouton-presentation" id="changer-template" href="<?= htmlspecialchars($projet->getTemplate() . '.php?id=' . urlencode((string) $projet->getId()), ENT_QUOTES, 'UTF-8') ?>">
                 Voir la présentation
             </a>
         <?php endif; ?>
@@ -134,8 +63,15 @@
         <!-- #endregion -->
 
         <!-- JAVASCRIPT -->
-        <script type="module" src="assets/js/projets/immersif.js"></script>
-        <script src="assets/js/projets/switch-template.js"></script>
+        <script type="module">
+            const presentation = document.getElementById("changer-template");
+            if (matchMedia("(prefers-reduced-motion: reduce)").matches && presentation) {
+                // La présentation dédiée gère déjà la préférence de réduction des animations.
+                window.location.replace(presentation.href);
+            } else {
+                import("./assets/js/projets/immersif.js");
+            }
+        </script>
     </div>
 
 <?php

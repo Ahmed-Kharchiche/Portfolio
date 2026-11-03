@@ -2,6 +2,7 @@
 // Page d'accueil du portfolio
 // #region CONFIGURATION DE LA PAGE
 $titre_page = "Accueil";
+$url_canonique = "https://ahmed-kharchiche.com/";
 $page_css = "pages/accueil.css";
 require_once 'src/gestionnaires/GestionnaireProjets.php';
 require_once 'src/gestionnaires/GestionnaireAvis.php';

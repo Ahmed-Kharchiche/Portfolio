@@ -1,5 +1,21 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap");
 
+#mode-immersif #credit-planete {
+    position: absolute;
+    right: 18px;
+    bottom: 76px;
+    z-index: 4;
+    max-width: min(310px, 65vw);
+    color: #aaa;
+    font: 10px/1.5 var(--sans);
+    text-align: right;
+}
+#mode-immersif #credit-planete[hidden] { display: none; }
+#mode-immersif #credit-planete a { color: inherit; text-underline-offset: 2px; }
+@media (max-width: 700px) {
+    #mode-immersif #credit-planete { bottom: 190px; right: 12px; max-width: 200px; }
+}
+
 /* #region SCÈNE 3D */
 
 #mode-immersif {
@@ -30,6 +46,8 @@
 
     touch-action: none;
 }
+#mode-immersif.focus-actif.galerie-active #scene-3d { cursor: grab; }
+#mode-immersif.focus-actif.galerie-active #scene-3d.glissement-actif { cursor: grabbing; }
 
 #mode-immersif .voile {
     position: absolute;
@@ -53,184 +71,6 @@
     background: #E9E3FF;
     opacity: 0;
     pointer-events: none;
-}
-
-/* #endregion */
-
-
-/* #region ZONES ET TYPOGRAPHIE */
-
-#mode-immersif .zone {
-    position: absolute;
-    z-index: 5;
-    left: 8vw;
-    bottom: 17vh;
-
-    width: min(620px, 80vw);
-    max-height: 72vh;
-    overflow-y: auto;
-    scrollbar-width: thin;
-
-    pointer-events: none;
-    opacity: 0;
-    visibility: hidden;
-
-    filter: blur(14px);
-    transform: translateY(30px) scale(0.97);
-
-    transition:
-            opacity 1.2s cubic-bezier(.2, .8, .2, 1),
-            filter 1.2s,
-            transform 1.2s cubic-bezier(.2, .8, .2, 1),
-            visibility 1.2s;
-}
-
-#mode-immersif .zone.active {
-    opacity: 1;
-    visibility: visible;
-    filter: none;
-    transform: none;
-    pointer-events: auto;
-}
-
-#mode-immersif .label {
-    margin: 0 0 24px;
-    color: var(--acc);
-
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-}
-
-#mode-immersif h1,
-#mode-immersif h2 {
-    margin: 0;
-    font-family: var(--serif);
-    text-wrap: balance;
-}
-
-#mode-immersif h1 {
-    max-width: 900px;
-    font-size: clamp(42px, 8vw, 108px);
-    line-height: 1.02;
-    letter-spacing: -0.065em;
-    font-weight: 700;
-    overflow-wrap: anywhere;
-}
-
-#mode-immersif h2 {
-    margin-bottom: 30px;
-    font-size: clamp(32px, 4.5vw, 58px);
-    line-height: 1.12;
-    letter-spacing: -0.045em;
-    font-weight: 500;
-}
-
-#mode-immersif .date {
-    display: block;
-    margin-top: 28px;
-    color: #A1A1AA;
-
-    font-size: 14px;
-    letter-spacing: 0.04em;
-}
-
-#mode-immersif .texte {
-    max-width: 580px;
-    max-height: 38vh;
-    margin: 0;
-    overflow-y: auto;
-
-    color: #D4D4D8;
-    font-size: 18px;
-    line-height: 1.9;
-    letter-spacing: -0.015em;
-    text-shadow: 0 2px 20px #000;
-}
-
-/* #endregion */
-
-
-/* #region TECHNOLOGIES */
-
-#mode-immersif .techs {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 14px;
-    max-width: 620px;
-}
-
-#mode-immersif .techs span {
-    padding: 12px 20px;
-
-    border: 1px solid color-mix(
-            in srgb,
-            var(--acc) 50%,
-            transparent
-    );
-    border-radius: 999px;
-
-    background: rgba(15, 15, 25, 0.65);
-    color: #E4E4E7;
-
-    font-size: 14px;
-    font-weight: 500;
-    letter-spacing: 0.01em;
-
-    backdrop-filter: blur(10px);
-
-    transition:
-            border-color 0.6s,
-            background 0.3s,
-            transform 0.3s;
-}
-
-#mode-immersif .techs span:hover {
-    transform: translateY(-3px);
-    background: rgba(167, 139, 250, 0.12);
-}
-
-/* #endregion */
-
-
-/* #region GALERIE */
-
-#mode-immersif .galerie {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 20px;
-    margin-bottom: 32px;
-}
-
-#mode-immersif .galerie figure {
-    height: 170px;
-    margin: 0;
-    overflow: hidden;
-
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 16px;
-    background: #18181B;
-
-    transition: transform 0.4s, border-color 0.4s;
-}
-
-#mode-immersif .galerie figure:hover {
-    transform: translateY(-5px);
-    border-color: var(--acc);
-}
-
-#mode-immersif .galerie img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-#mode-immersif .actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
 }
 
 /* #endregion */
@@ -280,7 +120,7 @@
 }
 
 
-#mode-immersif .bouton-simple {
+#mode-immersif .bouton-presentation {
     position: fixed;
     right: 90px;
     bottom: 27px;
@@ -291,6 +131,118 @@
 
 
 /* #region SUIVRE LA LUMIÈRE */
+
+#mode-immersif .commandes-focus {
+    position: absolute;
+    top: 100px;
+    right: 28px;
+    z-index: 25;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    max-width: calc(100% - 32px);
+}
+#mode-immersif .commandes-focus .bouton {
+    padding: 10px 16px;
+    min-height: 44px;
+}
+#mode-immersif .commandes-focus button:disabled { opacity: 0.4; cursor: default; transform: none; }
+#mode-immersif .commandes-focus [aria-pressed="true"] {
+    border-color: #fff;
+}
+#mode-immersif.galerie-active .astuce { display: none; }
+
+/* Commandes des galeries : flèches latérales, compteur et repères lumineux. */
+#mode-immersif .navigation-images {
+    position: absolute;
+    inset: 0;
+    z-index: 24;
+    pointer-events: none;
+    --galerie-accent: #c98aff;
+}
+#mode-immersif .navigation-images[hidden] { display: none; }
+#mode-immersif .navigation-images button:disabled {
+    opacity: .25;
+    box-shadow: none;
+    cursor: default;
+}
+#mode-immersif .pagination-galerie {
+    position: absolute;
+    left: 50%;
+    bottom: 9vh;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    max-width: 50%;
+}
+#mode-immersif #position-image {
+    min-width: 76px;
+    padding: 4px 10px;
+    border: 1px solid #ffffff1f;
+    border-radius: 999px;
+    background: #100b2070;
+    color: #d0c9db;
+    font: 500 12px/1.2 var(--sans);
+    letter-spacing: .12em;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+    white-space: nowrap;
+    backdrop-filter: blur(12px);
+}
+#mode-immersif #nom-element {
+    color: #eee0ff;
+    font-size: 13px;
+    text-align: center;
+    text-shadow: 0 0 10px #b057ff;
+}
+#mode-immersif .indicateurs-galerie {
+    display: flex;
+    justify-content: center;
+    width: min(260px, 60vw);
+    gap: 4px;
+    max-width: 260px;
+    pointer-events: auto;
+}
+#mode-immersif .indicateurs-galerie button {
+    position: relative;
+    flex: 1 1 0;
+    min-width: 0;
+    height: 36px;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    cursor: pointer;
+}
+#mode-immersif .indicateurs-galerie button::after {
+    content: "";
+    position: absolute;
+    inset: 16px 0;
+    border-radius: inherit;
+    background: #777080;
+}
+#mode-immersif .indicateurs-galerie [aria-current="true"]::after {
+    background: linear-gradient(90deg, #aa4cff, #d992ff);
+    box-shadow: 0 0 12px #bc66ff99;
+}
+#mode-immersif .indicateurs-galerie button:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+@media (max-width: 700px) {
+    #mode-immersif .commandes-focus { top: 152px; right: 16px; }
+    #mode-immersif .pagination-galerie { bottom: 22vh; gap: 8px; max-width: 70%; }
+    #mode-immersif #position-image { min-width: 76px; padding: 4px 10px; font-size: 12px; }
+    #mode-immersif .indicateurs-galerie button { height: 44px; }
+    #mode-immersif .indicateurs-galerie button::after { top: 20px; bottom: 20px; }
+}
+@media (max-width: 360px) {
+    #mode-immersif .commandes-focus { top: 200px; }
+}
+@media (max-height: 550px) and (min-width: 701px) {
+    #mode-immersif .pagination-galerie { bottom: 17vh; gap: 4px; }
+    #mode-immersif #position-image { padding: 4px 10px; font-size: 12px; }
+}
 
 #mode-immersif .guide {
     position: absolute;
@@ -324,18 +276,6 @@
 /* #endregion */
 
 
-/* #region VERSION SIMPLE */
-
-#mode-immersif .skip {
-    position: absolute;
-    z-index: 15;
-    top: 24px;
-    right: 28px;
-}
-
-/* #endregion */
-
-
 /* #region ASTUCE */
 
 #mode-immersif .astuce {
@@ -362,6 +302,16 @@
 #mode-immersif .astuce.visible {
     opacity: 0.7;
     visibility: visible;
+}
+
+#mode-immersif .astuce.invitation-debut {
+    display: block;
+    top: 27vh;
+    bottom: auto;
+    font-size: clamp(18px, 2vw, 26px);
+    line-height: 1.5;
+    color: #e4e4eb;
+    opacity: 1;
 }
 
 /* #endregion */
@@ -453,14 +403,7 @@
 /* #region RESPONSIVE TABLETTE */
 
 @media (max-width: 1024px) {
-    #mode-immersif .zone {
-        left: 6vw;
-        width: min(580px, 84vw);
-    }
 
-    #mode-immersif .texte {
-        font-size: 17px;
-    }
 
     #mode-immersif .actes {
         left: 24px;
@@ -478,57 +421,14 @@
 /* #region RESPONSIVE MOBILE */
 
 @media (max-width: 700px) {
-    #mode-immersif .zone {
-        bottom: 25vh;
-        left: 6vw;
-        width: 88vw;
-        max-height: 60vh;
-    }
 
-    #mode-immersif h1 {
-        font-size: clamp(36px, 11vw, 66px);
-    }
 
-    #mode-immersif h2 {
-        margin-bottom: 22px;
-        font-size: clamp(30px, 8vw, 44px);
-    }
 
-    #mode-immersif .label {
-        margin-bottom: 18px;
-        font-size: 10px;
-        letter-spacing: 0.16em;
-    }
 
-    #mode-immersif .texte {
-        max-height: 30vh;
-        font-size: 16px;
-        line-height: 1.8;
-    }
 
-    #mode-immersif .techs {
-        gap: 10px;
-    }
 
-    #mode-immersif .techs span {
-        padding: 10px 15px;
-        font-size: 12px;
-    }
 
-    #mode-immersif .galerie {
-        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-        gap: 12px;
-        margin-bottom: 24px;
-    }
 
-    #mode-immersif .galerie figure {
-        height: 120px;
-        border-radius: 12px;
-    }
-
-    #mode-immersif .actions {
-        gap: 10px;
-    }
 
     #mode-immersif .bouton {
         min-height: 44px;
@@ -556,11 +456,6 @@
 
     #mode-immersif #recommencer:hover {
         transform: translate(50%, -3px);
-    }
-
-    #mode-immersif .skip {
-        top: 16px;
-        right: 16px;
     }
 
     #mode-immersif .actes {
@@ -591,50 +486,12 @@
 /* #endregion */
 
 
-/* #region PETITS ÉCRANS EN HAUTEUR */
-
-@media (max-height: 650px) and (min-width: 701px) {
-    #mode-immersif .zone {
-        bottom: 18vh;
-        max-height: 70vh;
-    }
-
-    #mode-immersif h1 {
-        font-size: clamp(42px, 7vw, 76px);
-    }
-
-    #mode-immersif h2 {
-        margin-bottom: 18px;
-        font-size: clamp(30px, 4vw, 44px);
-    }
-
-    #mode-immersif .label {
-        margin-bottom: 12px;
-    }
-
-    #mode-immersif .date {
-        margin-top: 14px;
-    }
-
-    #mode-immersif .galerie figure {
-        height: 100px;
-    }
-}
-
-/* #endregion */
-
-
 /* #region MOUVEMENT RÉDUIT */
-
 @media (prefers-reduced-motion: reduce) {
-    #mode-immersif .zone,
     #mode-immersif .bouton,
-    #mode-immersif .galerie figure,
-    #mode-immersif .techs span,
     #mode-immersif .actes a,
     #mode-immersif .actes button {
-        transition-duration: 0.01ms;
+        transition: none;
     }
 }
-
 /* #endregion */

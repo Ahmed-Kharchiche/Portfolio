@@ -59,6 +59,10 @@ include 'templates/layout/header.php';
         </p>
     <?php endif; ?>
 
+    <a class="standard-bouton-code" href="detail-projet.php?id=<?= urlencode((string) $projet->getId()) ?>">
+        Mode immersif <span aria-hidden="true">↗</span>
+    </a>
+
     <!-- #region DESCRIPTION -->
 
     <section class="standard-section standard-description">

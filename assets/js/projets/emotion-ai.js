@@ -1,8 +1,7 @@
 /**
  * emotion-ai.js : animations propres au template « Emotion AI ».
  *
- * Étape 4 : scène 1 uniquement (le signal). Les scènes suivantes s'ajouteront à la liste
- * `scenes` en bas du fichier, chacune dans son propre objet.
+ * Le signal validé et son relais vers la scène 2 partagent le même sablier.
  *
  * Principe commun : une timeline GSAP par scène, pilotée par le scroll (scrub) et épinglée.
  * Rien ne se joue tout seul : le défilement natif du navigateur reste intact, et tout est
@@ -10,10 +9,16 @@
  */
 import { lancerExperience } from "../commun/projet-core.js";
 import { decouperLettres, dupliquerCalque, ajouterCalque } from "../commun/animations-communes.js";
+import { creerSceneComprendre } from "./scene-comprendre.js";
+import { creerSceneInterieur, activerEmotionsStatiques } from "./scene-interieur.js";
+import { creerSceneLangage, activerExemplesStatiques } from "./scene-langage.js";
 
 // Le moteur 3D du sablier est chargé à la demande (import dynamique) : s'il manque ou si WebGL2 est
 // indisponible, la scène 1 reste exactement celle qui a été validée, sans sablier.
 let moteurSablier = null;
+let moteurVisage = null;
+// Une instance GPU pour les deux scènes. Les timelines ne possèdent que leurs propriétés d'état.
+const partage = { sablier: null, stage: null, etat: null, dessiner: null, geom2: null };
 
 /* ==========================================================================
    SCÈNE 1 : LE SIGNAL
@@ -30,7 +35,7 @@ let moteurSablier = null;
      unités 5,8 → 9   : il se redresse jusqu'à la verticale parfaite, EXACTEMENT à aiFin ;
      unités 9 → 10,8  : le sable surface et se calme ; unité 9,7 → 15,3 : le sable s'écoule du haut vers le bas ;
      unités 8,6 → 16  : le sable s'éveille en grains lumineux reliés (réseau neuronal discret).
-   Le retournement à 180° vers la scène 2 n'est pas encore joué (étape suivante).
+   Le retournement appartient au relais suivant, sans modifier cette timeline validée.
    Sans sablier : durée de 10 unités (le scroll la parcourt de 0 à 10).
    ========================================================================== */
 const sceneSignal = {
@@ -38,8 +43,9 @@ const sceneSignal = {
 
     /** Charge le moteur 3D (tolère l'échec : la scène fonctionne sans sablier). */
     async charger() {
-        if (moteurSablier) return;
-        moteurSablier = await import("./sablier.js");
+        if (!moteurSablier) moteurSablier = await import("./sablier.js");
+        try { if (!moteurVisage) moteurVisage = await import("./visage.js"); }
+        catch (erreur) { console.warn("[emotion-ai] visage indisponible :", erreur.message); }
     },
 
     /** Prépare le DOM (une seule fois) : découpe en lettres, écho décoratif, lueur. */
@@ -75,33 +81,46 @@ const sceneSignal = {
         haut.appendChild(base);
         const echo = dupliquerCalque(base, "ea-ombre");
 
-        const lueur = ajouterCalque(scene, "ea-lueur");
+        const stage = document.createElement("div");
+        stage.className = "ea-stage";
+        stage.setAttribute("aria-hidden", "true");
+        racine.prepend(stage);
+        partage.stage = stage;
+        const lueur = ajouterCalque(stage, "ea-lueur");
 
         // Sablier 3D : un canevas décoratif sous le texte, créé seulement si WebGL2 répond.
-        let canevas = null, sablier = null, observateur = null, themeur = null;
+        let canevas = null, sablier = null, observateur = null, themeur = null, contextePerdu = false;
+        const perdreContexte = (ev) => {
+            ev.preventDefault();
+            contextePerdu = true;
+            canevas.style.display = "none";
+            racine.classList.add("ea-sans-visage");
+        };
         if (moteurSablier) {
             canevas = document.createElement("canvas");
             canevas.className = "ea-sablier";
             canevas.setAttribute("aria-hidden", "true");
             lueur.after(canevas);
             const leger = window.matchMedia("(max-width: 1023.98px)").matches || (navigator.hardwareConcurrency || 8) <= 4;
-            try { sablier = moteurSablier.creerSablier(canevas, { leger }); }
+            try { sablier = moteurSablier.creerSablier(canevas, { leger, creerVisage: moteurVisage?.creerVisage }); }
             catch (erreur) { console.warn("[emotion-ai] sablier :", erreur.message); sablier = null; }
             if (!sablier) { canevas.remove(); canevas = null; }
             else {
-                canevas.addEventListener("webglcontextlost", (ev) => { ev.preventDefault(); canevas.style.display = "none"; });
+                canevas.addEventListener("webglcontextlost", perdreContexte);
                 // thème clair / sombre : les couleurs du verre et du réseau sont relues
-                themeur = new MutationObserver(() => { sablier.couleurs(); if (etatSablier.dessiner) etatSablier.dessiner(); });
+                themeur = new MutationObserver(() => { sablier.couleurs(); partage.dessiner?.(); });
                 themeur.observe(document.body, { attributes: true, attributeFilter: ["data-theme"] });
                 // redimensionnement : le canevas suit la taille de la scène sans attendre le recalcul de ScrollTrigger
-                observateur = new ResizeObserver(() => { sablier.redimensionner(); if (etatSablier.dessiner) etatSablier.dessiner(); });
-                observateur.observe(scene);
+                observateur = new ResizeObserver(() => { sablier.redimensionner(); partage.dessiner?.(); });
+                observateur.observe(stage);
             }
         }
-        const etatSablier = { dessiner: null };
+        partage.sablier = sablier;
+        racine.classList.toggle("ea-sans-visage", !sablier?.visageDisponible);
 
         return {
-            scene, titre, haut, bas, motAI, base, lueur, canevas, sablier, etatSablier,
+            scene, stage, titre, haut, bas, motAI, base, lueur, canevas, sablier,
+            contexteDisponible: () => !contextePerdu,
             lettresBase: [...base.querySelectorAll(".ea-lettre")],
             lettresOmbre: echo.lettres,
             ombre: echo.copie,
@@ -110,9 +129,12 @@ const sceneSignal = {
             indice: scene.querySelector(".ea-indice"),
             restaurer() {
                 echo.retirer();
-                lueur.remove();
+                stage.remove();
+                racine.classList.remove("ea-sans-visage");
+                Object.assign(partage, { sablier: null, stage: null, etat: null, dessiner: null, geom2: null });
                 if (themeur) themeur.disconnect();
                 if (observateur) observateur.disconnect();
+                if (canevas) canevas.removeEventListener("webglcontextlost", perdreContexte);
                 if (sablier) sablier.detruire();
                 if (canevas) canevas.remove();
                 haut.classList.remove("ea-haut-anime");
@@ -130,22 +152,30 @@ const sceneSignal = {
 
         const sab = e.sablier;                      // null si WebGL2 est indisponible
         const unites = sab ? 16 : 10;               // durée de la timeline ; 1 unité = 0,18 x la hauteur d'écran de scroll
-        const etat = { x0: 0, y0: 0, angle0: 0, calme: 0, flux: 0, reseau: 0 };   // état animé du sablier
+        const etat = {
+            x0: 0, y0: 0, angle0: 0, calme: 0, flux: 0, reseau: 0,
+            flip: 0, centrage: 0, verre: 1, morph: 0, scan: 2, analyse: 0, sourire: 0, sortie: 0, etape: 0,
+        };
+        partage.etat = etat;
 
         const tl = gsap.timeline({
-            defaults: { force3D: false },          // évite le flou du texte agrandi
-            onUpdate: () => { if (e.etatSablier.dessiner) e.etatSablier.dessiner(); },   // après le rendu de tous les tweens
+            // force3D est réservé aux tweens DOM, jamais aux objets d'état.
+            onUpdate: () => partage.dessiner?.(),   // après le rendu de tous les tweens
             scrollTrigger: {
                 trigger: e.scene,
+                id: "ea-signal",
                 start: "top top",
                 end: () => "+=" + Math.round(window.innerHeight * (grand ? 1.8 : 1.2) * (unites / 10)),
                 scrub: 0.6,
                 pin: true,
                 anticipatePin: 1,
                 invalidateOnRefresh: true,         // recalcule les valeurs dépendant de la taille de l'écran
-                onRefresh: () => { if (sab) { sab.redimensionner(); if (e.etatSablier.dessiner) e.etatSablier.dessiner(); } },
+                onRefresh: () => { if (sab) { sab.redimensionner(); partage.dessiner?.(); } },
             },
         });
+
+        const animerTexte = (cible, debut, fin, position) =>
+            tl.fromTo(cible, debut, { force3D: false, ...fin }, position);
 
         // « AI » est un enfant du titre : il en subit l'agrandissement (échelleTitre), en plus du sien.
         // On vise un agrandissement TOTAL de « AI » (échelleAIFinale) et on calcule son décalage pour que
@@ -162,18 +192,18 @@ const sceneSignal = {
         };
 
         // 0 : l'indice de défilement s'efface dès que le visiteur a compris qu'il pilote la scène
-        if (e.indice) tl.fromTo(e.indice, { opacity: 1, y: 0 }, { opacity: 0, y: 14, duration: 0.8, ease: "none" }, 0);
+        if (e.indice) animerTexte(e.indice, { opacity: 1, y: 0 }, { opacity: 0, y: 14, duration: 0.8, ease: "none" }, 0);
 
         // Étiquette discrète : elle monte lentement (parallaxe) et s'atténue
-        if (e.meta) tl.fromTo(e.meta, { opacity: 1, y: 0 }, { opacity: 0.35, y: -18, duration: 7, ease: "none" }, 0);
+        if (e.meta) animerTexte(e.meta, { opacity: 1, y: 0 }, { opacity: 0.35, y: -18, duration: 7, ease: "none" }, 0);
 
         // 1. Le titre grandit (débordement voulu sur grand écran) puis monte
-        tl.fromTo(e.titre,
+        animerTexte(e.titre,
             { scale: 1, yPercent: 0, transformOrigin: "50% 50%" },
             { scale: echelleTitre, yPercent: grand ? -14 : -6, duration: 9, ease: "power1.out" }, 0);
 
         // 1b. Les lettres s'écartent et ondulent depuis le centre
-        tl.fromTo(e.lettresBase,
+        animerTexte(e.lettresBase,
             { xPercent: 0, yPercent: 0 },
             {
                 xPercent: (i, _, cible) => (grand ? centre(i, cible.length) * 5 : 0),
@@ -182,15 +212,15 @@ const sceneSignal = {
             }, 0.3);
 
         // 2. L'écho en contour apparaît derrière et dérive ; sa vague est inversée
-        tl.fromTo(e.ombre,
+        animerTexte(e.ombre,
             { opacity: 0, xPercent: 0, yPercent: 0 },
             { opacity: 1, xPercent: grand ? 5 : 2, yPercent: grand ? -8 : -5, duration: 7.5, ease: "power1.out" }, 0.6);
-        tl.fromTo(e.lettresOmbre,
+        animerTexte(e.lettresOmbre,
             { yPercent: 0 },
             { yPercent: (i) => (i % 2 ? 1 : -1) * (grand ? 10 : 6), duration: 7.5, ease: "power2.inOut", stagger: { each: 0.05, from: "center" } }, 0.6);
 
         // 3. Le texte plein s'efface, le contour prend le relais : le contraste s'inverse
-        tl.fromTo(e.lettresBase,
+        animerTexte(e.lettresBase,
             { opacity: 1 },
             { opacity: 0.1, duration: 4.5, ease: "power1.in", stagger: { each: 0.05, from: "edges" } }, 4.5);
 
@@ -200,24 +230,28 @@ const sceneSignal = {
         const AI = { debut: 1.5, duree: 7.5 };
         tl.addLabel("aiFin", AI.debut + AI.duree);
         if (e.bas) {
-            tl.fromTo(e.bas,
+            animerTexte(e.bas,
                 { xPercent: 0, scale: 1, transformOrigin: "100% 50%" },
                 { xPercent: traverseeAI, scale: echelleAI, duration: AI.duree, ease: "power2.inOut" }, AI.debut);
         }
 
         // 5. La phrase d'accroche sort d'une zone masquée, de gauche à droite
         if (e.accroche) {
-            tl.fromTo(e.accroche,
+            animerTexte(e.accroche,
                 { clipPath: "inset(0% 100% 0% 0%)", x: -32 },
                 { clipPath: "inset(0% 0% 0% 0%)", x: 0, duration: 3.2, ease: "power2.out" }, 6);
         }
 
         // 6. La lueur d'accent grandit et dérive vers le centre (couche composée : transform + opacité)
-        tl.fromTo(e.lueur,
+        animerTexte(e.lueur,
             { opacity: 0.9, scale: 1, xPercent: 0, yPercent: 0 },
             { opacity: 0.55, scale: grand ? 1.8 : 1.4, xPercent: -30, yPercent: 18, duration: 10, ease: "sine.inOut" }, 0);
 
-        if (!sab) return;
+        if (!sab) {
+            const dessiner = () => { e.stage.style.visibility = etat.sortie >= 1 ? "hidden" : "visible"; };
+            partage.dessiner = dessiner;
+            return () => { if (partage.dessiner === dessiner) partage.dessiner = null; };
+        }
 
         /* ---------- SABLIER ----------
            Les tweens animent un petit objet d'état ; dessiner() en déduit l'image 3D. Tout est une fonction du
@@ -227,7 +261,7 @@ const sceneSignal = {
              - redressement vertical : il se termine aussi exactement à aiFin ;
              - le sable surface (oscillation amortie) puis, 0,7 unité après aiFin, commence à s'écouler ;
              - l'écoulement dure DEBIT.duree ; le réseau lumineux s'éveille juste avant aiFin jusqu'à la fin.
-           Le retournement à 180° (transition vers la scène 2) n'est pas joué ici : il viendra après l'écoulement. */
+           Le retournement à 180° appartient exclusivement au relais vers la scène 2. */
         const lisser = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
         const melanger = (a, b, t) => a + (b - a) * t;
         const ANGLE_ENTREE = 1.3;                   // inclinaison à l'entrée (rad) : presque couché
@@ -239,7 +273,7 @@ const sceneSignal = {
         // Mise en page, mesurée à chaque refresh : le sablier DEBOUT se pose dans la zone libre, sous la ligne
         // « EMOTION » et à droite de « AI » (grand écran), ou au-dessus de l'accroche (mobile / tablette).
         const geom = () => {
-            const L = e.scene.clientWidth, Ht = e.scene.clientHeight;
+            const L = e.stage.clientWidth, Ht = e.stage.clientHeight;
             const hautAccroche = e.accroche ? e.accroche.offsetTop : Ht * 0.85;
             const police = parseFloat(getComputedStyle(e.titre).fontSize) || 0;
             const hTitre = e.titre.offsetHeight, cyTitre = e.titre.offsetTop + hTitre / 2;
@@ -267,8 +301,8 @@ const sceneSignal = {
         // Le sable s'éveille : grains lumineux puis liaisons, de juste avant aiFin jusqu'à la fin de la scène
         tl.fromTo(etat, { reseau: 0 }, { reseau: 1, duration: unites - (AI.debut + AI.duree - 0.4), ease: "power1.inOut" }, "aiFin-=0.4");
 
-        e.etatSablier.dessiner = () => {
-            const g = geom(), { angle0, calme, flux } = etat;
+        const dessiner = () => {
+            const g = geom(), g2 = partage.geom2?.(), { angle0, calme, flux, flip, centrage } = etat;
             const u = 1 - angle0 / ANGLE_ENTREE;                                   // avancement du redressement (0 → 1)
             const vertical = 1 - lisser(0.02, 0.10, angle0);                       // garde-fou : pas d'écoulement si incliné
             // la surface du sable reste horizontale ; elle « traîne » pendant le redressement, puis oscille et se calme
@@ -276,16 +310,31 @@ const sceneSignal = {
             const oscille = 0.09 * Math.exp(-3.2 * calme) * Math.sin(2 * Math.PI * 1.7 * calme) * lisser(0.97, 1, u);
             // le filet naît doucement et s'éteint quand la réserve du haut est presque vide
             const filet = lisser(0, 0.06, flux) * (1 - lisser(0.94, 1, flux)) * vertical;
+            const cent = lisser(0, 1, centrage);
+            const interieur = partage.interieur;
+            e.stage.style.visibility = etat.sortie >= 1 && !interieur ? "hidden" : "visible";
+            if (!e.contexteDisponible()) return; // repli textuel jusqu'au prochain montage complet
             sab.rendre({
-                x: etat.x0, y: etat.y0, taille: g.taille,
-                angle: angle0, lacet: melanger(0.55, 0.25, u), tangage: 0.2,
+                x: g2 ? melanger(etat.x0, g2.faceX, cent) : etat.x0,
+                y: g2 ? melanger(etat.y0, g2.faceY, cent) : etat.y0,
+                taille: g2 ? melanger(g.taille, g2.tailleSablier, cent) : g.taille,
+                angle: angle0 + Math.PI * flip, lacet: melanger(0.55, 0.25, u) + 0.12 * Math.sin(Math.PI * flip), tangage: 0.2,
                 remplissageA: melanger(A0, A1, flux * vertical), remplissageB: melanger(B0, B1, flux * vertical),
-                secousse: traine + oscille,
+                secousse: traine + oscille - 0.14 * Math.sin(2 * Math.PI * flip),
                 ruisseau: filet, phase: flux * DEBIT.cycles,
-                reseau: etat.reseau, energie: 0.3 * etat.reseau + 0.5 * filet,
+                reseau: etat.reseau, energie: 0.3 * etat.reseau + 0.5 * filet + 0.7 * Math.sin(Math.PI * flip) * (1 - etat.morph),
+                verre: etat.verre, opacite: interieur ? 1 : 1 - lisser(0, 1, etat.sortie),
+                interieur,
+                langage: partage.langage,
+                visage: g2 && sab.visageDisponible && (etat.morph > 0 || etat.analyse > 0) ? {
+                    morph: etat.morph, cx: g2.faceX, cy: g2.faceY, hauteur: g2.faceH,
+                    scan: etat.scan, analyse: etat.analyse, sourire: etat.sourire, dispersion: interieur ? 0 : etat.sortie, lueur: 1,
+                } : undefined,
             });
         };
-        e.etatSablier.dessiner();
+        partage.dessiner = dessiner;
+        dessiner();
+        return () => { if (partage.dessiner === dessiner) partage.dessiner = null; };
     },
 
     demonter(e) {
@@ -296,4 +345,6 @@ const sceneSignal = {
 /* ==========================================================================
    Liste des scènes animées (ordre du storyboard)
    ========================================================================== */
-lancerExperience({ scenes: [sceneSignal] });
+activerEmotionsStatiques(document.querySelector('.exp'));
+activerExemplesStatiques(document.querySelector('.exp'));
+lancerExperience({ scenes: [sceneSignal, creerSceneComprendre(partage), creerSceneInterieur(partage), creerSceneLangage(partage)] });

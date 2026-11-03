@@ -1,12 +1,7 @@
 <?php
 /**
- * Template « Emotion AI » : mise en scène de la VERSION SIMPLE de la page projet.
- *
- * Inclus par detail-projet.php (même portée de variables) uniquement si le projet a
- * le template « emotion-ai ». Dans la scène 3D, ce bloc est masqué (voir projet-base.css) ;
- * il ne s'affiche que lorsque <main> reçoit la classe « simple ».
- *
- * Variables fournies par detail-projet.php : $projet, $technologies, $images, $gestionnaire.
+ * Présentation autonome « Emotion AI », accessible depuis la page immersive du projet.
+ * Le moteur commun anime les scènes au scroll ; le contenu reste lisible sans JavaScript.
  * Les chiffres viennent de data/emotion-ai.json (README + résultats du projet Python).
  * Une donnée absente s'affiche « à établir » : aucune valeur n'est inventée.
  */
@@ -118,11 +113,15 @@ $lienSuivant  = $projetSuivant !== null ? "detail-projet.php?id=" . urlencode((s
 $titreSuivant = $projetSuivant !== null ? $projetSuivant->getTitre() : "";
 // #endregion
 
+$sans_smooth = true; // ScrollTrigger suit le défilement natif, sans seconde boucle de lissage.
+$titre_page = $titre;
+$css_supplementaires = ['projets/base.css'];
 include 'templates/layout/header.php';
 ?>
 <link rel="stylesheet" href="assets/css/projets/emotion-ai.css">
-<div class="exp ea" id="ea-debut" data-template="emotion-ai">
+<main class="exp ea" id="ea-debut" data-template="emotion-ai" data-experience-autonome>
     <a class="ea-lien-evitement" href="#ea-technique">Aller au contenu technique</a>
+    <a class="ea-retour-immersif" href="detail-projet.php?id=<?= urlencode((string) $projet->getId()) ?>">Vue immersive <span aria-hidden="true">↗</span></a>
 
     <!-- #region SCÈNE 1 : LE SIGNAL -->
     <section class="ea-scene ea-signal" id="ea-signal" aria-labelledby="ea-titre">
@@ -138,90 +137,92 @@ include 'templates/layout/header.php';
     </section>
     <!-- #endregion -->
 
-    <!-- #region SCÈNE 2 : LE LANGAGE HUMAIN -->
-    <section class="ea-scene ea-langage" id="ea-langage" aria-labelledby="ea-langage-titre">
-        <h2 class="ea-titre-scene" id="ea-langage-titre">Tout part d'une phrase ordinaire.</h2>
-        <?php if ($fil !== null): ?>
-            <p class="ea-phrase">
-                <?php foreach ($groupes as $groupe): ?>
-                    <span class="ea-groupe"><?= $e($groupe) ?></span>
-                <?php endforeach; ?>
-            </p>
-            <p class="ea-note">Phrase de mon test manuel : écrite à la main, elle ne vient pas du jeu de données.</p>
-        <?php endif; ?>
-        <ol class="ea-etapes">
-            <li>Texte brut</li>
-            <li>Analyse</li>
-            <li>Classification</li>
-        </ol>
-    </section>
-    <!-- #endregion -->
-
-    <!-- #region SCÈNE 3 : DU TEXTE AUX CARACTÉRISTIQUES -->
-    <section class="ea-scene ea-donnees" id="ea-donnees" aria-labelledby="ea-donnees-titre">
-        <div class="ea-donnees-texte">
-            <h2 class="ea-titre-scene" id="ea-donnees-titre">Le modèle ne lit pas des mots, il lit des nombres.</h2>
-            <p class="ea-texte">Un vectoriseur TF-IDF découpe la phrase en mots et en paires de mots, puis donne un poids à chacun : fort quand le terme est fréquent dans la phrase mais rare dans l'ensemble des phrases d'entraînement.</p>
-            <p class="ea-texte">Le vocabulaire est appris uniquement sur les <?= $nb($dataset["entrainement"] ?? null) ?> phrases d'entraînement.</p>
+    <!-- #region SCÈNE 2 : COMPRENDRE LES ÉMOTIONS HUMAINES -->
+    <section class="ea-scene ea-comprendre" id="ea-comprendre" aria-labelledby="ea-comprendre-titre">
+        <div class="ea-comprendre-contenu">
+            <p class="ea-comprendre-repere" aria-hidden="true">02 / HUMAN SIGNAL</p>
+            <h2 class="ea-comprendre-titre" id="ea-comprendre-titre" lang="en">
+                <span class="ea-mot-ligne">UNDERSTANDING</span>
+                <span class="ea-mot-ligne">HUMAN</span>
+                <span class="ea-mot-ligne ea-mot-ligne--contour">EMOTIONS</span>
+            </h2>
+            <p class="ea-comprendre-phrase" lang="en">Every face tells a story.</p>
+            <ol class="ea-etapes-ia" aria-label="Les étapes de l'analyse de texte">
+                <li><span lang="en">DETECT</span><p>Repérer les indices dans les mots.</p></li>
+                <li><span lang="en">ANALYZE</span><p>Pondérer le texte avec TF-IDF.</p></li>
+                <li><span lang="en">INTERPRET</span><p>Estimer l'émotion dominante.</p></li>
+            </ol>
+            <p class="ea-comprendre-note">Ce visage est une métaphore. Emotion AI analyse du texte, pas des visages.</p>
         </div>
-        <?php if ($fil !== null): ?>
-            <figure class="ea-matrice">
-                <div class="ea-matrice-bloc">
-                    <h3 class="ea-matrice-titre">Mots</h3>
-                    <ul class="ea-termes">
-                        <?php foreach ($mots as $mot): ?>
-                            <li><?= $e($mot) ?></li>
-                        <?php endforeach; ?>
-                    </ul>
-                </div>
-                <div class="ea-matrice-bloc">
-                    <h3 class="ea-matrice-titre">Paires de mots</h3>
-                    <ul class="ea-termes ea-termes--paires">
-                        <?php foreach ($paires as $paire): ?>
-                            <li><?= $e($paire) ?></li>
-                        <?php endforeach; ?>
-                    </ul>
-                </div>
-                <div class="ea-poids" aria-hidden="true">
-                    <?php foreach ($mots as $mot): ?>
-                        <i></i>
-                    <?php endforeach; ?>
-                    <?php foreach ($paires as $paire): ?>
-                        <i></i>
-                    <?php endforeach; ?>
-                </div>
-                <figcaption class="ea-note">Schéma pédagogique : découpage simplifié, poids TF-IDF non affichés. Une cellule du vecteur correspond à un terme.</figcaption>
-            </figure>
-        <?php endif; ?>
     </section>
     <!-- #endregion -->
 
-    <!-- #region SCÈNE 4 : LE MODÈLE -->
-    <section class="ea-scene ea-modele" id="ea-modele" aria-labelledby="ea-modele-titre">
-        <h2 class="ea-titre-scene" id="ea-modele-titre">Vingt frontières, un seul gagnant.</h2>
-        <ol class="ea-flux">
-            <li><span class="ea-flux-nom">Phrase</span><span class="ea-flux-detail">texte brut</span></li>
-            <li><span class="ea-flux-nom">Vecteur TF-IDF</span><span class="ea-flux-detail">mots et paires de mots</span></li>
-            <li><span class="ea-flux-nom">20 scores</span><span class="ea-flux-detail">un par émotion</span></li>
-            <li><span class="ea-flux-nom">Score maximal</span><span class="ea-flux-detail">le plus élevé gagne</span></li>
-            <li><span class="ea-flux-nom">Émotion</span><span class="ea-flux-detail">étiquette retenue</span></li>
+    <!-- #region SCÈNE 3 : INSIDE THE AI -->
+    <section class="ea-scene ea-inside" id="ea-inside" aria-labelledby="ea-inside-titre">
+        <div class="ea-inside-entree" lang="en">
+            <p class="ea-inside-repere">03 / INSIDE THE AI</p>
+            <p class="ea-inside-invitation">Follow the signal.</p>
+        </div>
+        <div class="ea-inside-entete">
+            <h2 class="ea-inside-titre" id="ea-inside-titre" lang="en">THE LANGUAGE<br>OF EMOTIONS</h2>
+            <p class="ea-inside-soustitre" lang="en">Different patterns. Different interpretations.</p>
+        </div>
+        <ol class="ea-inside-labels" aria-hidden="true" lang="en">
+            <li>JOY</li><li>SADNESS</li><li>ANGER</li><li>FEAR</li><li>SURPRISE</li><li>NEUTRAL</li>
         </ol>
-        <div class="ea-modele-colonnes">
-            <div class="ea-modele-texte">
-                <p class="ea-texte">Le classificateur est un SVM linéaire (<code>LinearSVC</code> de scikit-learn). Ce n'est pas un réseau de neurones.</p>
-                <p class="ea-texte">Pour chaque émotion, il a appris une frontière qui la sépare de toutes les autres. Une nouvelle phrase reçoit donc vingt scores de marge : positifs du côté de l'émotion, négatifs de l'autre.</p>
-                <p class="ea-texte">L'émotion au score le plus élevé est retenue. Ce score n'est pas une probabilité : il mesure une position par rapport à une frontière.</p>
+        <div class="ea-inside-controles">
+            <div class="ea-inside-selection">
+                <span class="ea-inside-legende">EXPLORER UNE ÉMOTION</span>
+                <output class="ea-inside-resultat" aria-live="polite" aria-atomic="true">JOY</output>
             </div>
-            <?php if ($modele !== null): ?>
-                <figure class="ea-code">
-                    <pre><code>Pipeline([
-    ("vec", TfidfVectorizer(ngram_range=(<?= $e($modele["ngrammes"][0]) ?>, <?= $e($modele["ngrammes"][1]) ?>), min_df=<?= $e($modele["min_df"]) ?>)),
-    ("clf", LinearSVC(C=<?= $e($modele["C"]) ?>)),
-])</code></pre>
-                    <figcaption class="ea-note">Pipeline simplifié : seuls les réglages retenus par la recherche de paramètres sont reproduits.</figcaption>
-                </figure>
-            <?php endif; ?>
+            <div class="ea-inside-selecteur" role="group" aria-label="Explorer les six constellations émotionnelles">
+                <?php foreach (['JOY', 'SADNESS', 'ANGER', 'FEAR', 'SURPRISE', 'NEUTRAL'] as $indexEmotion => $nomEmotion): ?>
+                    <button type="button" data-emotion="<?= $indexEmotion ?>" aria-pressed="<?= $indexEmotion === 0 ? 'true' : 'false' ?>" lang="en"><?= $nomEmotion ?></button>
+                <?php endforeach; ?>
+            </div>
+            <p class="ea-inside-description">Joie · impulsions ouvertes et rayonnantes.</p>
+            <p class="ea-inside-verite">Réseau symbolique. TF-IDF + SVM : 20 classes. Aucune inférence en direct ; NEUTRAL hors modèle.</p>
         </div>
+    </section>
+    <!-- #endregion -->
+
+    <!-- #region SCÈNE 4 : FROM WORDS TO EMOTIONS -->
+    <?php $exemplesLangage = json_decode((string) file_get_contents(__DIR__ . '/data/emotion-ai-exemples.json'), true) ?: []; ?>
+    <section class="ea-scene ea-words" id="ea-words" aria-labelledby="ea-words-titre">
+        <script type="application/json" id="ea-words-exemples"><?= json_encode($exemplesLangage, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE) ?></script>
+        <div class="ea-words-entete">
+            <div class="ea-words-caption">
+                <p class="ea-words-repere">04 / LANGUAGE IN MOTION</p>
+                <h2 id="ea-words-titre" lang="en">FROM WORDS<br>TO EMOTIONS</h2>
+                <p lang="en">A human thought. A new interpretation.</p>
+            </div>
+            <div class="ea-words-caption" aria-hidden="true" lang="en">
+                <h2>WORDS BECOME DATA</h2><p>Turning text into numerical features.</p>
+            </div>
+            <div class="ea-words-caption" aria-hidden="true" lang="en">
+                <h2>FINDING THE EMOTION</h2><p>From numerical features to a predicted category.</p>
+            </div>
+            <div class="ea-words-caption" aria-hidden="true" lang="en">
+                <h2>EVERY WORD CARRIES<br>AN EMOTION</h2><p>Explore how language can express different feelings.</p>
+            </div>
+        </div>
+        <div class="ea-words-lecture" aria-live="polite" aria-atomic="true">
+            <p class="ea-words-phrase" lang="en">I finally achieved my dream!</p>
+            <p class="ea-words-resultat" lang="en">JOY</p>
+            <p lang="en">The emotion behind the words.</p>
+        </div>
+        <p class="ea-words-devise" lang="en">The emotion behind the words.</p>
+        <div class="ea-words-controles">
+            <div class="ea-words-selecteur" role="group" aria-label="Explorer six phrases illustratives">
+                <?php foreach ($exemplesLangage as $indexExemple => $exempleLangage): ?>
+                    <button type="button" data-phrase="<?= $indexExemple ?>" aria-pressed="<?= $indexExemple === 0 ? 'true' : 'false' ?>" lang="en">
+                        <strong><?= $e($exempleLangage['emotion']) ?></strong><span><?= $e($exempleLangage['phrase']) ?></span>
+                    </button>
+                <?php endforeach; ?>
+            </div>
+            <p class="ea-words-statut" role="status">Démonstration illustrative · aucune prédiction calculée</p>
+        </div>
+        <p class="ea-words-exactitude">Exemples anglais et cellules illustratifs. Modèle documenté : TF-IDF + SVM linéaire, <?= count($emotions) ?> émotions françaises. NEUTRAL hors modèle ; aucune inférence connectée.</p>
     </section>
     <!-- #endregion -->
 
@@ -481,5 +482,5 @@ include 'templates/layout/header.php';
 
     <!-- #endregion -->
     <script type="module" src="assets/js/projets/emotion-ai.js"></script>
-    <?php include 'templates/layout/footer.php';?> ?>
-</div>
+</main>
+<?php include 'templates/layout/footer.php'; ?>

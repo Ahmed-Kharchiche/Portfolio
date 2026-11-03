@@ -30,7 +30,7 @@ function ouvrirConfirmation(action, id, titre, message, danger = false) {
 
 // #region FERMETURE DE LA CONFIRMATION
 function fermerConfirmation() {
-    document.getElementById("modale-confirmation").classList.remove("active");
+    document.getElementById("modale-confirmation")?.classList.remove("active");
 }
 // #endregion
 

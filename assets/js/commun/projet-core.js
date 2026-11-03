@@ -1,26 +1,27 @@
 /**
- * projet-core.js : moteur commun des mises en scène de projets (version simple animée).
+ * projet-core.js : moteur commun des présentations de projets animées.
  *
  * Rôle : décider QUAND animer, jamais QUOI animer (cela relève de assets/js/projets/<template>.js).
- *  - surveille la classe « simple » de <main> (posée par immersif.js) ;
- *  - ne charge GSAP que lorsque la version simple s'affiche ET que le mouvement est autorisé ;
+ *  - anime la présentation autonome lorsque le mouvement est autorisé ;
  *  - monte les scènes dans un gsap.matchMedia() (une configuration par taille d'écran) ;
- *  - démonte tout proprement (timelines, ScrollTrigger, DOM découpé) en repassant en 3D ;
+ *  - démonte proprement timelines, ScrollTrigger et DOM en mode réduit ;
  *  - si GSAP ne se charge pas, ou si une scène plante, la page reste statique et lisible.
  *
  * Une scène est un objet { id, charger?(), preparer(racine), animer(etat, conditions, outils), demonter(etat) }.
  * `charger` (facultatif, asynchrone) sert à récupérer des ressources propres à la scène (ex. le moteur 3D) ;
  * son échec ne bloque ni GSAP ni les autres scènes.
+ * `animer` peut retourner un nettoyage pour les ressources qui ne sont pas gérées par GSAP.
  */
 import { mouvementReduit } from "./animations-communes.js";
 
 // Version fixée (jamais « latest »). ScrollTrigger est le seul plugin utilisé.
 const GSAP_VERSION = "3.13.0";
 const SOURCES = [
-    // 1) CDN avec version explicite ; 2) copie locale facultative à déposer dans assets/js/vendor/
+    // Copie locale de la version fixée ; le CDN sert de repli si elle manque.
+    [new URL("../vendor/gsap.min.js", import.meta.url).href,
+     new URL("../vendor/ScrollTrigger.min.js", import.meta.url).href],
     [`https://cdn.jsdelivr.net/npm/gsap@${GSAP_VERSION}/dist/gsap.min.js`,
      `https://cdn.jsdelivr.net/npm/gsap@${GSAP_VERSION}/dist/ScrollTrigger.min.js`],
-    ["assets/js/vendor/gsap.min.js", "assets/js/vendor/ScrollTrigger.min.js"],
 ];
 
 // Une configuration par taille d'écran ; le mouvement réduit est géré avant (aucune animation).
@@ -65,16 +66,15 @@ function chargerGsap() {
  * @param {{ scenes: object[], racine?: string }} options
  */
 export function lancerExperience({ scenes, racine: selecteurRacine = ".exp" }) {
-    const principal = document.querySelector("main.detail-projet");
     const racine = document.querySelector(selecteurRacine);
-    if (!principal || !racine || !scenes.length) return;
+    if (!racine || !scenes.length) return;
 
     let mm = null;               // gsap.matchMedia() actif
     let session = null;          // { vivant } : empêche un ancien matchMedia de rejouer des scènes déjà démontées
     let etats = new Map();       // état préparé par chaque scène
     let genere = 0;              // invalide les chargements devenus inutiles (bascules rapides)
 
-    const doitAnimer = () => principal.classList.contains("simple") && !mouvementReduit();
+    const doitAnimer = () => !mouvementReduit();
 
     function monter() {
         const { gsap, ScrollTrigger } = window;
@@ -94,21 +94,39 @@ export function lancerExperience({ scenes, racine: selecteurRacine = ".exp" }) {
         mm = gsap.matchMedia();
         mm.add(CONDITIONS, (contexte) => {
             if (!maSession.vivant) return;
+            const nettoyages = [];
             scenes.forEach((scene) => {
                 if (!etats.has(scene)) return;
-                try { scene.animer(etats.get(scene), contexte.conditions, { gsap, ScrollTrigger, racine }); }
+                try {
+                    const nettoyer = scene.animer(etats.get(scene), contexte.conditions, { gsap, ScrollTrigger, racine });
+                    if (typeof nettoyer === "function") nettoyages.push({ scene, nettoyer });
+                }
                 catch (erreur) { console.warn(`[projet-core] animation « ${scene.id} » :`, erreur); }
             });
+            return () => {
+                nettoyages.reverse().forEach(({ scene, nettoyer }) => {
+                    try { nettoyer(); }
+                    catch (erreur) { console.warn(`[projet-core] nettoyage d'animation « ${scene.id} » :`, erreur); }
+                });
+            };
         });
 
         // Les polices changent la taille des titres : on recalcule les positions des scènes épinglées.
-        const recalculer = () => window.ScrollTrigger && ScrollTrigger.refresh();
+        const recalculer = () => {
+            if (maSession.vivant && doitAnimer() && window.ScrollTrigger) ScrollTrigger.refresh();
+        };
+        maSession.recalculer = recalculer;
         if (document.fonts && document.fonts.ready) document.fonts.ready.then(recalculer);
-        window.addEventListener("load", recalculer, { once: true });
+        if (document.readyState === "complete") recalculer();
+        else window.addEventListener("load", recalculer, { once: true });
     }
 
     function demonter() {
-        if (session) { session.vivant = false; session = null; }
+        if (session) {
+            session.vivant = false;
+            window.removeEventListener("load", session.recalculer);
+            session = null;
+        }
         if (mm) {
             mm.revert();                             // tue timelines et ScrollTrigger, retire les styles inline
             if (typeof mm.kill === "function") mm.kill(); // et cesse d'écouter les changements de taille d'écran
@@ -137,7 +155,6 @@ export function lancerExperience({ scenes, racine: selecteurRacine = ".exp" }) {
         monter();
     }
 
-    new MutationObserver(synchroniser).observe(principal, { attributes: true, attributeFilter: ["class"] });
     window.matchMedia("(prefers-reduced-motion: reduce)").addEventListener("change", synchroniser);
     synchroniser();
 }

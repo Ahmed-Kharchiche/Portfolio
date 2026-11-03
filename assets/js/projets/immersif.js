@@ -1,5 +1,13 @@
 // #region IMPORTS
 import * as THREE from "three";
+import { creerPlaneteAnneaux } from "./planete-anneaux.js";
+import { creerSphereOrganique } from "./sphere-organique.js";
+import { creerDecorSphere } from "./decor-sphere.js";
+import { creerFocusCamera } from "./focus-camera.js";
+import { creerTechnologie3D } from "./technologies-3d.js";
+import { creerSonsImmersifs } from "./sons-immersifs.js";
+import { installerGlissementGalerie } from "./glissement-galerie.js";
+import { creerNavigationPaveTactile } from "./navigation-pave-tactile.js";
 import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
@@ -104,7 +112,11 @@ const CONFIG = {
 
         // Influence de la souris
         sourisX: 3,
-        sourisY: 2.2
+        sourisY: 2.2,
+
+        // Vue d'ensemble à l'arrivée dans Understand ; FOCUS garde son cadrage rapproché.
+        reculUnderstand: 12,
+        distanceUnderstand: 22
     },
 
 
@@ -172,10 +184,7 @@ const CONFIG = {
 
     son: {
         active: true,
-        volume: 0,
-
-        frequenceBase: 55,
-        filtreBase: 200
+        volume: 0.16
     },
 
 
@@ -245,9 +254,7 @@ const flashEl = $("#flash");
 const btn = $("#suiv");
 const astuce = $("#astuce");
 
-const zones = [
-    ...document.querySelectorAll(".zone")
-];
+const nombreZones = CONFIG.couleurs.zones.length;
 
 const mobile =
     innerWidth < CONFIG.performances.largeurMobile;
@@ -345,6 +352,8 @@ camera.position.set(
     CONFIG.camera.position.y,
     CONFIG.camera.position.z
 );
+
+const planeteAnneaux = creerPlaneteAnneaux(scene, camera, document.getElementById("credit-planete"));
 
 
 const composer =
@@ -669,6 +678,9 @@ const lines =
         })
     );
 
+const teinteReseauGalerie = new THREE.Color(0xa478db);
+const teinteReseauNeutre = new THREE.Color(0xffffff);
+
 
 points.frustumCulled =
     lines.frustumCulled =
@@ -745,25 +757,10 @@ const hero =
     new THREE.Group();
 
 
-const noyau =
-    new THREE.Mesh(
-
-        new THREE.SphereGeometry(
-            CONFIG.guide.tailleNoyau,
-            16,
-            16
-        ),
-
-        new THREE.MeshBasicMaterial({
-            color:
-                new THREE.Color(
-                    2,
-                    2,
-                    2
-                )
-        })
-    );
-
+const sphereOrganique = creerSphereOrganique(CONFIG.guide.tailleNoyau);
+const noyau = sphereOrganique.mesh;
+const decorSphere = creerDecorSphere();
+scene.add(decorSphere.groupe);
 
 const halo =
     new THREE.Sprite(
@@ -1036,300 +1033,63 @@ const anneaux =
 
 // #region SON
 
-let ac,
-    master,
-    osc,
-    filt,
-    gOsc,
-    nzF,
-    nzG,
-    sonOn =
-        CONFIG.son.active;
+// Uniquement les échantillons fournis pour le réseau et les voyages.
+let ac, master, sonsImmersifs, sonOn = CONFIG.son.active;
+let introSonJoue = false;
+let instantPremierEspace = null;
+let demandeSonDebut = null;
+let introductionDemarree = false;
+let tempsAmbiance = 0;
+let debloquerSonAuClic = false;
+
+function signalerSonBloque() {
+    const bouton = $("#son");
+    const bloque = sonOn && demandeSonDebut !== null && ac?.state !== "running";
+    const libelle = bloque ? "Activer le son : autorisation du navigateur nécessaire" : "Couper ou activer le son";
+    bouton.title = libelle;
+    bouton.setAttribute("aria-label", libelle);
+}
+
+function lancerSonDebut(instant = performance.now()) {
+    if (!introductionDemarree) {
+        introductionDemarree = true;
+        afficherIntroduction();
+    }
+    if (introSonJoue) return;
+    const premiereDemande = demandeSonDebut === null;
+    if (premiereDemande) demandeSonDebut = instant;
+    if (!ac || premiereDemande) son();
+    // Seul le son attend le clic ou Espace ; l'animation reste indépendante.
+    if (ac.state !== "running") { signalerSonBloque(); return; }
+    introSonJoue = true;
+    const maintenant = performance.now();
+    const origine = Math.max(demandeSonDebut > 0 ? Math.min(demandeSonDebut, maintenant) : maintenant, maintenant - 2500);
+    sonsImmersifs.premierVoyage(CONFIG.voyage.duree + CONFIG.voyage.dureeArrivee, 2.5, origine);
+    sonsImmersifs.cliquerSphere();
+}
 
 
-function son() {
-
+function son(e) {
+    // Horodater Espace avant l'ouverture du périphérique audio, parfois coûteuse au premier geste.
+    if (e?.code === "Space" && !introSonJoue) instantPremierEspace = performance.now();
     if (!ac) {
-
-        ac =
-            new AudioContext();
-
-
-        master =
-            ac.createGain();
-
-
-        master.gain.value =
-            sonOn
-                ? CONFIG.son.volume
-                : 0;
-
-
-        master.connect(
-            ac.destination
-        );
-
-
-        osc =
-            ac.createOscillator();
-
-
-        osc.type =
-            "sawtooth";
-
-
-        osc.frequency.value =
-            CONFIG.son.frequenceBase;
-
-
-        filt =
-            ac.createBiquadFilter();
-
-
-        filt.type =
-            "lowpass";
-
-
-        filt.frequency.value =
-            CONFIG.son.filtreBase;
-
-
-        gOsc =
-            ac.createGain();
-
-
-        gOsc.gain.value =
-            0;
-
-
-        osc
-            .connect(filt)
-            .connect(gOsc)
-            .connect(master);
-
-
-        osc.start();
-
-
-        const buf =
-            ac.createBuffer(
-                1,
-                ac.sampleRate * 2,
-                ac.sampleRate
-            );
-
-
-        const d =
-            buf.getChannelData(0);
-
-
-        for (
-            let i = 0;
-            i < d.length;
-            i++
-        ) {
-
-            d[i] =
-                Math.random() * 2 - 1;
-        }
-
-
-        const nz =
-            ac.createBufferSource();
-
-
-        nz.buffer =
-            buf;
-
-
-        nz.loop =
-            true;
-
-
-        nzF =
-            ac.createBiquadFilter();
-
-
-        nzF.type =
-            "bandpass";
-
-
-        nzG =
-            ac.createGain();
-
-
-        nzG.gain.value =
-            0;
-
-
-        nz
-            .connect(nzF)
-            .connect(nzG)
-            .connect(master);
-
-
-        nz.start();
+        ac = new AudioContext();
+        ac.addEventListener("statechange", () => {
+            if (ac.state === "running" && demandeSonDebut !== null && !introSonJoue) lancerSonDebut();
+            signalerSonBloque();
+        });
+        master = ac.createGain();
+        master.gain.value = sonOn ? CONFIG.son.volume : 0;
+        master.connect(ac.destination);
+        sonsImmersifs = creerSonsImmersifs(ac, master);
+        sonsImmersifs.activer(sonOn);
     }
-
-
-    if (
-        ac.state ===
-        "suspended"
-    ) {
-
-        ac.resume();
-    }
+    if (ac.state === 'suspended') ac.resume().catch(() => {});
 }
 
-
-function sonSync(
-    v,
-    tc = .1
-) {
-
-    if (
-        !ac ||
-        !Number.isFinite(v)
-    ) {
-        return;
-    }
-
-
-    const t =
-        ac.currentTime;
-
-
-    osc.frequency.setTargetAtTime(
-        CONFIG.son.frequenceBase +
-        v * 90,
-        t,
-        tc
-    );
-
-
-    filt.frequency.setTargetAtTime(
-        CONFIG.son.filtreBase +
-        v * 2600,
-        t,
-        tc
-    );
-
-
-    gOsc.gain.setTargetAtTime(
-        .03 +
-        v * .09,
-        t,
-        tc
-    );
-
-
-    nzF.frequency.setTargetAtTime(
-        300 +
-        v * 3500,
-        t,
-        tc
-    );
-
-
-    nzG.gain.setTargetAtTime(
-        v * v * .25,
-        t,
-        tc
-    );
-}
-
-
-function note(
-    type,
-    f0,
-    f1,
-    dur,
-    vol
-) {
-
-    if (!ac) {
-        return;
-    }
-
-
-    const t =
-        ac.currentTime;
-
-
-    const o =
-        ac.createOscillator();
-
-
-    const g =
-        ac.createGain();
-
-
-    o.type =
-        type;
-
-
-    o.frequency.setValueAtTime(
-        f0,
-        t
-    );
-
-
-    o.frequency.exponentialRampToValueAtTime(
-        f1,
-        t + dur
-    );
-
-
-    g.gain.setValueAtTime(
-        vol,
-        t
-    );
-
-
-    g.gain.exponentialRampToValueAtTime(
-        .0001,
-        t + dur
-    );
-
-
-    o.connect(g)
-        .connect(master);
-
-
-    o.start(t);
-    o.stop(t + dur);
-}
-
-
-const impact = () => {
-
-    note(
-        "sine",
-        140,
-        30,
-        .7,
-        .8
-    );
-
-    note(
-        "triangle",
-        2400,
-        300,
-        .25,
-        .15
-    );
-};
-
-
-const blip = () =>
-    note(
-        "sine",
-        rnd(1200, 2400),
-        rnd(1200, 2400),
-        .12,
-        .02
-    );
-
+document.addEventListener("visibilitychange", () => {
+    sonsImmersifs?.activer(sonOn && !document.hidden);
+});
 
 for (
     const ev of [
@@ -1346,8 +1106,21 @@ for (
 }
 
 
+for (const evenement of ["pointerdown", "keydown"]) {
+    $("#son").addEventListener(evenement, e => {
+        if (evenement === "keydown" && e.key !== "Enter" && e.code !== "Space") return;
+        debloquerSonAuClic = sonOn && ac?.state !== "running";
+    });
+}
+
 $("#son").onclick =
     (e) => {
+
+        if (debloquerSonAuClic || (sonOn && ac?.state !== "running")) {
+            debloquerSonAuClic = false;
+            son();
+            return;
+        }
 
         sonOn =
             !sonOn;
@@ -1366,6 +1139,8 @@ $("#son").onclick =
 
 
         son();
+        sonsImmersifs.activer(sonOn);
+        signalerSonBloque();
 
 
         master.gain.setTargetAtTime(
@@ -1392,8 +1167,7 @@ let zone = 0,
     flash = 0,
     tele = false,
     spiral = 0,
-    avgL = 0,
-    lastTick = 0;
+    avgL = 0;
 
 
 const mouse =
@@ -1424,7 +1198,166 @@ const look =
 const camT =
     new THREE.Vector3();
 
+const regardContenu = new THREE.Vector3();
 
+// Un cadrage frontal stable pour les scènes de lecture et les résultats.
+function cadrerScene(z) {
+    if (z === 1) {
+        regardContenu.set(-0.5, 0.6, -6);
+        camT.set(-0.5, 0.6, CONFIG.camera.distanceUnderstand / Math.min(1, camera.aspect));
+        return true;
+    }
+    if (z === 3) {
+        const photos = panels.filter(p => p.z === 3 && p.id >= 0);
+        const largeur = photos.length ? Math.max(...photos.map(p => p.g.position.x + p.w / 2)) - Math.min(...photos.map(p => p.g.position.x - p.w / 2)) : 9;
+        const tangente = Math.tan(THREE.MathUtils.degToRad(CONFIG.camera.fov / 2));
+        const distance = Math.max(9, (largeur / 2 + 1) / (tangente * camera.aspect)) * 1.10;
+        regardContenu.set(0, 0.6, -6);
+        camT.copy(regardContenu).add(new THREE.Vector3(0, 0, distance));
+        return true;
+    }
+    return false;
+}
+
+
+const focusCamera = creerFocusCamera(camera, look);
+let retourNavigationLibre = false;
+const navigationCamera = creerNavigationPaveTactile($("#scene-3d"), camera, look, {
+    autorise: () => !trav && !attente && vis >= 0 && T >= CONFIG.voyage.delaiDebut && !focusCamera.actif && !focusCamera.enMouvement,
+    bloque: () => focusCamera.actif || focusCamera.enMouvement || !!trav || !!attente,
+    surMouvement: energie => sonsImmersifs?.gesteCamera(energie),
+    obstacles: () => vis === 2 ? techs.map(t => t.g) : vis === 0 ? [titre] : panels.filter(p => p.z === vis).map(p => p.glass),
+});
+const boutonFocus = $("#focus-camera");
+
+const navigationImages = $("#navigation-images");
+const positionImage = $("#position-image");
+const nomElement = $("#nom-element");
+const indicateursGalerie = $("#indicateurs-galerie");
+let indexImageFocus = -1;
+let zoneIndicateurs = -1;
+let etatNavigation = "";
+let tempsCamera = 0;
+
+// Une seule navigation et une seule caméra pour les logos comme pour les photos.
+function elementsGalerie() {
+    if (vis === 2) return techs.map(t => ({ objet: t.g, nom: t.g.userData.technologie }));
+    if (vis === 3) return panels.filter(p => p.z === 3 && p.id >= 0).map(p => ({ objet: p.glass, id: p.id }));
+    return [];
+}
+
+function synchroniserFocus() {
+    main.classList.toggle("focus-actif", focusCamera.actif);
+    boutonFocus.disabled = !!(focusCamera.retour || trav || attente || vis < 0);
+    const libelleFocus = focusCamera.actif ? "DÉFOCUS" : "FOCUS";
+    if (boutonFocus.textContent !== libelleFocus) boutonFocus.textContent = libelleFocus;
+    boutonFocus.setAttribute("aria-pressed", String(focusCamera.actif));
+
+    const elements = elementsGalerie();
+    const galerie = (vis === 2 || vis === 3) && !trav && !attente;
+    if (!focusCamera.actif || !galerie) indexImageFocus = -1;
+    const cleNavigation = `${vis}/${galerie}/${focusCamera.actif}/${focusCamera.retour}/${indexImageFocus}/${elements.length}`;
+    if (cleNavigation === etatNavigation) return;
+    etatNavigation = cleNavigation;
+    main.classList.toggle("galerie-active", galerie);
+    navigationImages.hidden = !galerie || !focusCamera.actif || indexImageFocus < 0;
+    const technologie = vis === 2;
+    indicateursGalerie.setAttribute("aria-label", technologie ? "Choisir une technologie" : "Choisir une image");
+    navigationImages.setAttribute("aria-label", technologie ? "Navigation des technologies" : "Navigation des résultats");
+    const position = indexImageFocus >= 0 ? `${String(indexImageFocus + 1).padStart(2, "0")} / ${String(elements.length).padStart(2, "0")}` : "";
+    if (positionImage.textContent !== position) positionImage.textContent = position;
+    const nom = elements[indexImageFocus]?.nom || "";
+    if (nomElement.textContent !== nom) nomElement.textContent = nom;
+    nomElement.hidden = !nom;
+    if (zoneIndicateurs !== vis) {
+        zoneIndicateurs = vis;
+        indicateursGalerie.replaceChildren(...elements.map((element, i) => {
+            const bouton = document.createElement("button");
+            bouton.type = "button";
+            bouton.setAttribute("aria-label", element.nom ? `Afficher ${element.nom}` : `Afficher l’image ${i + 1}`);
+            bouton.onclick = () => changerImageFocus(i - indexImageFocus);
+            return bouton;
+        }));
+    }
+    [...indicateursGalerie.children].forEach((bouton, i) => {
+        bouton.setAttribute("aria-current", String(i === indexImageFocus));
+        bouton.disabled = focusCamera.retour;
+    });
+}
+
+function objetImportant() {
+    // L'image sélectionnée est prioritaire ; sinon, le panneau le plus central.
+    const panneaux = panels.filter(p => p.z === vis);
+    const selection = panneaux.find(p => p.id >= 0 && p.id === sel);
+    if (selection) return selection.glass;
+    if (panneaux.length) {
+        return panneaux.reduce((meilleur, p) => {
+            const score = o => {
+                const point = o.glass.getWorldPosition(new THREE.Vector3()).project(camera);
+                return point.z > 1 ? Infinity : point.x * point.x + point.y * point.y;
+            };
+            return score(p) < score(meilleur) ? p : meilleur;
+        }).glass;
+    }
+    if (vis === 0) return titre;
+    if (vis === 2 && techs.length) {
+        return (techs.find(t => t.react > 0.25) || techs[Math.floor(techs.length / 2)]).g;
+    }
+    return zg[vis]?.children.find(o => o.isMesh);
+}
+
+function changerImageFocus(delta) {
+    if (!focusCamera.actif || focusCamera.retour || trav || attente) return;
+    const elements = elementsGalerie();
+    const suivant = indexImageFocus + delta;
+    if (suivant < 0 || suivant >= elements.length || suivant === indexImageFocus) return;
+    navigationCamera.liberer();
+    if (focusCamera.changerCible(elements[suivant].objet)) {
+
+        indexImageFocus = suivant;
+        if (vis === 3) sel = elements[suivant].id;
+        synchroniserFocus();
+    }
+}
+
+installerGlissementGalerie($("#scene-3d"), {
+    actif: () => focusCamera.actif && !focusCamera.retour && !trav && !attente && (vis === 2 || vis === 3),
+    changer: changerImageFocus,
+});
+indicateursGalerie.addEventListener("keydown", e => {
+    // Conserver l'activation native du bouton sans déclencher le raccourci de voyage.
+    if (e.key === " " || e.key === "Enter") { e.stopPropagation(); return; }
+    const dernier = elementsGalerie().length - 1;
+    const cibles = { ArrowLeft: indexImageFocus - 1, ArrowRight: indexImageFocus + 1, Home: 0, End: dernier };
+    if (!(e.key in cibles)) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const index = Math.max(0, Math.min(dernier, cibles[e.key]));
+    changerImageFocus(index - indexImageFocus);
+    indicateursGalerie.children[index]?.focus();
+});
+
+boutonFocus.onclick = () => {
+    if (focusCamera.actif) {
+
+        navigationCamera.liberer();
+        focusCamera.defocus();
+        synchroniserFocus();
+        return;
+    }
+    if (!trav && !attente && vis >= 0 && !focusCamera.actif) {
+        const elements = elementsGalerie();
+        const objet = elements.length ? elements[0].objet : objetImportant();
+        retourNavigationLibre = navigationCamera.vueLibre;
+        navigationCamera.liberer();
+        if (focusCamera.focus(objet) && elements.length) {
+
+            indexImageFocus = 0;
+            if (vis === 3) sel = elements[0].id;
+        }
+    }
+    synchroniserFocus();
+};
 function afficher(z) {
 
     vis = z;
@@ -1443,24 +1376,16 @@ function afficher(z) {
         );
 
 
-    zones.forEach(
-        (el, i) =>
-            el.classList.toggle(
-                "active",
-                i === z
-            )
-    );
 
 
     btn.textContent =
-        z === zones.length - 1
+        z === nombreZones - 1
             ? "Recommencer"
             : "Suivre la lumière";
 }
 
 
-let attente = null,
-    ambT = 2;
+let attente = null;
 
 
 function voyager(
@@ -1474,12 +1399,17 @@ function voyager(
         T <
         CONFIG.voyage.delaiDebut ||
         vers < 0 ||
-        vers >= zones.length
+        vers >= nombreZones
     ) {
 
         return;
     }
 
+
+    navigationCamera.liberer();
+    retourNavigationLibre = false;
+    focusCamera.defocus(true);
+    synchroniserFocus();
 
     attente = {
 
@@ -1489,12 +1419,6 @@ function voyager(
     };
 
 
-    zones.forEach(
-        (el) =>
-            el.classList.remove(
-                "active"
-            )
-    );
 
 
     btn.classList.remove(
@@ -1527,12 +1451,14 @@ function demarrer(
     if (
         trav ||
         vers < 0 ||
-        vers >= zones.length
+        vers >= nombreZones
     ) {
 
         return;
     }
 
+
+    sonsImmersifs?.voyager(CONFIG.voyage.duree + CONFIG.voyage.dureeArrivee);
 
     const dir =
         new THREE.Vector3(
@@ -1578,12 +1504,6 @@ function demarrer(
     );
 
 
-    zones.forEach(
-        (el) =>
-            el.classList.remove(
-                "active"
-            )
-    );
 
 
     btn.classList.remove(
@@ -1598,7 +1518,7 @@ function demarrer(
 const avancer = () =>
     voyager(
         (zone + 1) %
-        zones.length,
+        nombreZones,
         1
     );
 
@@ -1609,18 +1529,6 @@ function permuter() {
         trav.to;
 
 
-    if (osc) {
-
-        osc.type =
-            [
-                "sine",
-                "triangle",
-                "sawtooth",
-                "sine"
-            ][zone];
-    }
-
-
     semer();
 
     off.fill(0);
@@ -1629,7 +1537,7 @@ function permuter() {
         false;
 
 
-    impact();
+
 
 
     hero.position
@@ -1641,7 +1549,7 @@ function permuter() {
         .copy(hero.position)
         .addScaledVector(
             trav.dir,
-            -7
+            zone === 1 ? -CONFIG.camera.reculUnderstand : -7
         );
 
 
@@ -1681,6 +1589,9 @@ addEventListener(
     "pointermove",
     (e) => {
 
+        sphereOrganique.pointerPresent(true);
+        if (introductionDemarree) sonsImmersifs?.deplacer(e.clientX, e.clientY, performance.now(), Math.hypot(innerWidth, innerHeight));
+
         mouse.set(
             e.clientX /
             innerWidth *
@@ -1698,10 +1609,16 @@ addEventListener(
 );
 
 
+addEventListener("pointerout", (e) => {
+    if (!e.relatedTarget) { sphereOrganique.pointerPresent(false); sonsImmersifs?.quitter(); }
+});
+
 $("#scene-3d")
     .addEventListener(
         "click",
         () => {
+
+            lancerSonDebut();
 
             v3.set(
                 mouse.x,
@@ -1723,8 +1640,6 @@ $("#scene-3d")
                 t: 0
             });
 
-
-            blip();
         }
     );
 
@@ -1737,21 +1652,24 @@ $("#scene-3d")
     );
 
 
-btn.onclick =
-    avancer;
+btn.onclick = () => {
+    lancerSonDebut();
+    avancer();
+};
 
 
 addEventListener(
     "keydown",
     (e) => {
 
-        // En version simple, le défilement est natif : on ne capte ni Espace ni Échap
-        if (simple) return;
+
 
         if (
             e.code ===
             "Space"
         ) {
+
+            lancerSonDebut(instantPremierEspace ?? performance.now());
 
             if (
                 e.target.closest?.(
@@ -1772,6 +1690,13 @@ addEventListener(
             "Escape"
         ) {
 
+            if (focusCamera.actif) {
+                navigationCamera.liberer();
+                focusCamera.defocus();
+                synchroniserFocus();
+                return;
+            }
+
             voyager(
                 zone - 1,
                 -1
@@ -1791,6 +1716,8 @@ addEventListener(
 
 
         camera.updateProjectionMatrix();
+        navigationCamera.retirer();
+        focusCamera.redimensionner();
 
 
         renderer.setSize(
@@ -1807,6 +1734,12 @@ addEventListener(
 );
 
 
+astuce.textContent = "Cliquez dans la scène ou appuyez sur Espace pour commencer";
+astuce.classList.add("visible", "invitation-debut");
+
+function afficherIntroduction() {
+    astuce.classList.remove("invitation-debut");
+    astuce.textContent = "Espace : avancer · Échap : revenir · clic : onde · double-clic : accélérer";
 setTimeout(
     () => {
 
@@ -1823,6 +1756,7 @@ setTimeout(
     },
     CONFIG.intro.delaiBouton
 );
+}
 // #endregion
 
 
@@ -1881,6 +1815,9 @@ const tv2 =
 
 const ray =
     new THREE.Raycaster();
+
+// Les logos et les photos opaques sont rendus sur le calque 1.
+ray.layers.enable(1);
 
 
 /* opacité pilotée par zone */
@@ -2440,6 +2377,8 @@ function panneau(
     p.glass.userData.id =
         id;
 
+    if (z === 3 && id >= 0) p.glass.userData.margeFocus = 1.87;
+
 
     reg(
         z,
@@ -2836,58 +2775,6 @@ zg[0].add(
 );
 
 
-const hud0 =
-    holo(
-        0,
-        "PROJECT_01 // SYSTEM_ONLINE",
-        30,
-        .008,
-        '500 30px "Hanken Grotesk", sans-serif'
-    );
-
-
-hud0.position.set(
-    -7,
-    -3.8,
-    -13
-);
-
-
-zg[0].add(
-    hud0
-);
-
-
-const phrase =
-    (D.description || "")
-        .split(/[.!?]/)[0]
-        .slice(0, 90)
-        .trim();
-
-
-if (phrase) {
-
-    const sub =
-        holo(
-            0,
-            phrase,
-            44,
-            .008,
-            '400 44px "Hanken Grotesk", sans-serif'
-        );
-
-
-    sub.position.set(
-        0,
-        -.8,
-        -13.5
-    );
-
-
-    zg[0].add(
-        sub
-    );
-}
 // #endregion
 
 
@@ -3396,371 +3283,17 @@ zg[1].add(
 
 // #region ZONE 2 : TECHNOLOGIES
 
-function techObj(n) {
-
-    const k =
-        n.toLowerCase();
-
-
-    const g =
-        new THREE.Group();
-
-
-    const o = {
-
-        g,
-
-        react: 0,
-
-        u: 0,
-
-        up: () => {}
-    };
-
-
-    const W =
-        (
-            geo,
-            t = 1
-        ) => {
-
-            const m =
-                new THREE.Mesh(
-
-                    geo,
-
-                    new THREE.MeshBasicMaterial({
-                        wireframe: true,
-                        ...ADD
-                    })
-                );
-
-
-            reg(
-                2,
-                m.material,
-                .85,
-                t
-            );
-
-
-            g.add(m);
-
-
-            return m;
-        };
-
-
-    /* ---------- Python ---------- */
-
-    if (
-        /python|^py/.test(k)
-    ) {
-
-        const n2 = 90;
-
-
-        const pa =
-            new Float32Array(
-                n2 * 3
-            );
-
-
-        const pgm =
-            new THREE.BufferGeometry();
-
-
-        pgm.setAttribute(
-            "position",
-            new THREE.BufferAttribute(
-                pa,
-                3
-            )
-        );
-
-
-        const pm =
-            new THREE.Points(
-
-                pgm,
-
-                new THREE.PointsMaterial({
-
-                    size: .06,
-
-                    ...ADD
-                })
-            );
-
-
-        pm.frustumCulled =
-            false;
-
-
-        reg(
-            2,
-            pm.material,
-            1,
-            2
-        );
-
-
-        g.add(pm);
-
-
-        o.up = () => {
-
-            for (
-                let i = 0;
-                i < n2;
-                i++
-            ) {
-
-                const a =
-                    i / n2;
-
-
-                const an =
-                    a *
-                    18 +
-                    T;
-
-
-                const r =
-                    .5 +
-                    .3 *
-                    Math.sin(
-                        a * 6 +
-                        T
-                    );
-
-
-                pa.set(
-
-                    [
-                        Math.cos(an) * r,
-
-                        (
-                            (
-                                a +
-                                T *
-                                .12
-                            ) % 1 -
-                            .5
-                        ) *
-                        2.4,
-
-                        Math.sin(an) * r
-                    ],
-
-                    i * 3
-                );
-            }
-
-
-            pgm.attributes
-                .position
-                .needsUpdate =
-                true;
-        };
-
-
-        /* ---------- Three.js / WebGL ---------- */
-
-    } else if (
-        /three|webgl|gl$/.test(k)
-    ) {
-
-        const m =
-            W(
-                new THREE.IcosahedronGeometry(
-                    .8,
-                    1
-                )
-            );
-
-
-        o.up = () =>
-            m.rotation.set(
-                T * .4,
-                T * .55,
-                0
-            );
-
-
-        /* ---------- SQL / Data ---------- */
-
-    } else if (
-        /sql|db|data|mongo/.test(k)
-    ) {
-
-        const L =
-            [0, 1, 2, 3].map(
-                (i) => {
-
-                    const m =
-                        W(
-                            new THREE.BoxGeometry(
-                                1.6,
-                                .06,
-                                1.1
-                            ),
-                            i % 2
-                                ? 1
-                                : 2
-                        );
-
-
-                    m.position.y =
-                        i * .3 -
-                        .45;
-
-
-                    return m;
-                }
-            );
-
-
-        o.up = () =>
-            L.forEach(
-                (m, i) =>
-                    (
-                        m.position.x =
-                            Math.sin(
-                                T * .5 +
-                                i
-                            ) *
-                            .2
-                    )
-            );
-
-
-        /* ---------- Java / Kotlin ---------- */
-
-    } else if (
-        k === "java" ||
-        k === "kotlin"
-    ) {
-
-        const B =
-            [
-                [-.5, -.5],
-                [.5, -.5],
-                [-.5, .5],
-                [.5, .5]
-            ].map(
-                ([x, z]) => {
-
-                    const m =
-                        W(
-                            new THREE.BoxGeometry(
-                                .7,
-                                .7,
-                                .7
-                            )
-                        );
-
-
-                    m.position.set(
-                        x,
-                        0,
-                        z
-                    );
-
-
-                    return m;
-                }
-            );
-
-
-        o.up = () =>
-            B.forEach(
-                (m, i) =>
-                    (
-                        m.position.y =
-                            Math.sin(
-                                T * .8 +
-                                i * 1.6
-                            ) *
-                            .25
-                    )
-            );
-
-
-        /* ---------- C / C++ / C# ---------- */
-
-    } else if (
-        /^c(\+\+|#)?$/.test(k)
-    ) {
-
-        const m =
-            W(
-                new THREE.BoxGeometry(
-                    1,
-                    1,
-                    1
-                )
-            );
-
-
-        o.up = () => {
-
-            const f =
-                T * .5;
-
-
-            const fl =
-                Math.floor(f);
-
-
-            m.rotation.y =
-                (
-                    fl +
-                    E.inOut(
-                        f - fl
-                    )
-                ) *
-                1.5708;
-
-
-            m.rotation.x =
-                .6;
-        };
-
-
-        /* ---------- Autres ---------- */
-
-    } else {
-
-        const m =
-            W(
-                new THREE.TorusKnotGeometry(
-                    .5,
-                    .15,
-                    60,
-                    8
-                )
-            );
-
-
-        o.up = () => {
-
-            m.rotation.y =
-                T * .25;
-
-
-            m.rotation.x =
-                Math.sin(
-                    T * .2
-                ) *
-                .4;
-        };
-    }
-
-
-    return o;
+function techObj(nom) {
+    const technologie = creerTechnologie3D(nom, {
+        enregistrer: mat => reg(2, mat, 0.95, 0),
+        temps: () => T,
+        libelle: texte => holo(2, texte, 60, 0.02, '600 60px sans-serif'),
+    });
+    technologie.g.userData.margeFocus = 2.52;
+    // Laisser dépasser les logos voisins, y compris sur un écran étroit.
+    technologie.g.userData.largeurFocusMin = 8.2;
+    return technologie;
 }
-
 
 // #region TITRE
 
@@ -3784,31 +3317,12 @@ t2.position.set(
 zg[2].add(t2);
 
 
-const h2 =
-    holo(
-        2,
-        "CLIQUE UNE STRUCTURE",
-        30,
-        .008,
-        '500 30px "Hanken Grotesk", sans-serif'
-    );
-
-
-h2.position.set(
-    0,
-    3.9,
-    -9
-);
-
-
-zg[2].add(h2);
 // #endregion
 
 
 // #region TECHNOLOGIES
 
 D.technologies
-    .slice(0, 6)
     .forEach(
         (n, i, arr) => {
 
@@ -3880,70 +3394,7 @@ D.technologies
                 lab
             );
 
-
-            zg[2].add(
-
-                new THREE.Line(
-
-                    new THREE.BufferGeometry()
-                        .setFromPoints([
-                            lab.position,
-                            o.g.position
-                        ]),
-
-                    lineMat(
-                        2,
-                        .35,
-                        2
-                    )
-                )
-            );
-
-
-            const dot =
-                new THREE.Mesh(
-
-                    new THREE.SphereGeometry(
-                        .05,
-                        8,
-                        8
-                    ),
-
-                    new THREE.MeshBasicMaterial({
-
-                        color:
-                            new THREE.Color(
-                                3,
-                                3,
-                                3
-                            ),
-
-                        ...ADD
-                    })
-                );
-
-
-            reg(
-                2,
-                dot.material,
-                1
-            );
-
-
-            zg[2].add(
-                dot
-            );
-
-
-            Object.assign(
-                o,
-                {
-                    lab,
-                    dot,
-                    ph:
-                        i * .37
-                }
-            );
+            o.libelle = lab;
 
 
             techs.push(o);
@@ -3979,7 +3430,7 @@ zg[3].add(
 
 const imgs =
     (D.images || [])
-        .slice(0, 3);
+        .filter(src => typeof src === "string" && src.length > 0);
 
 
 const IW = 4.4;
@@ -4061,15 +3512,18 @@ imgs.forEach(
 
                     map: tex,
 
-                    transparent: true,
+                    transparent: false,
 
-                    depthWrite: false
+                    depthWrite: true,
+                    alphaTest: 0.01,
+                    fog: false,
+                    toneMapped: false
                 })
             );
 
 
-        const p =
-            panneau(
+        m.layers.set(1); // Rendu après le bloom : aucune lumière ne traverse la photo.
+        panneau(
                 3,
                 IW,
                 IH,
@@ -4092,54 +3546,11 @@ imgs.forEach(
         reg(
             3,
             m.material,
-            .95,
-            0,
-            p
-        );
-
-
-        const l1 =
-            holo(
-                3,
-                `IMG_0${i + 1}`,
-                30,
-                .007,
-                '500 30px "Hanken Grotesk", sans-serif'
-            );
-
-
-        l1.position.set(
-            -IW / 2 + .5,
-            -IH / 2 - .25,
+            1,
             0
         );
 
 
-        p.g.add(
-            l1
-        );
-
-
-        const l2 =
-            holo(
-                3,
-                `X ${rnd(10, 99).toFixed(1)} Y ${rnd(10, 99).toFixed(1)}`,
-                30,
-                .007,
-                '500 30px "Hanken Grotesk", sans-serif'
-            );
-
-
-        l2.position.set(
-            IW / 2 - .9,
-            IH / 2 + .25,
-            0
-        );
-
-
-        p.g.add(
-            l2
-        );
     }
 );
 // #endregion
@@ -4150,7 +3561,11 @@ imgs.forEach(
 $("#scene-3d")
     .addEventListener(
         "click",
-        () => {
+        (e) => {
+            if (trav || attente || focusCamera.retour) return;
+            const rectangle = $("#scene-3d").getBoundingClientRect();
+            mouse.set((e.clientX - rectangle.left) / rectangle.width * 2 - 1,
+                -(e.clientY - rectangle.top) / rectangle.height * 2 + 1);
 
             if (vis === 2) {
 
@@ -4200,6 +3615,10 @@ $("#scene-3d")
 
                     o.react = 1;
 
+                    if (focusCamera.actif) {
+                        changerImageFocus(techs.indexOf(o) - indexImageFocus);
+                    }
+
 
                     o.g.getWorldPosition(
                         tv
@@ -4214,8 +3633,6 @@ $("#scene-3d")
                         t: 0
                     });
 
-
-                    blip();
                 }
 
 
@@ -4247,6 +3664,15 @@ $("#scene-3d")
                         )
                 )[0];
 
+
+            if (focusCamera.actif) {
+                if (hit) {
+                    const images = panels.filter(p => p.z === 3 && p.id >= 0);
+                    const index = images.findIndex(p => p.id === hit.object.userData.id);
+                    if (index >= 0) changerImageFocus(index - indexImageFocus);
+                }
+                return;
+            }
 
             sel =
                 hit &&
@@ -5069,37 +4495,9 @@ function monde3d(dt) {
                 o.up();
 
 
-                const u =
-                    (
-                        T * .3 +
-                        o.ph
-                    ) % 1;
-
-
-                if (
-                    u < o.u
-                ) {
-
-                    o.react =
-                        1;
-                }
-
-
-                o.u =
-                    u;
-
-
                 o.react *=
                     Math.exp(
                         -dt * 3
-                    );
-
-
-                o.dot.position
-                    .lerpVectors(
-                        o.lab.position,
-                        o.g.position,
-                        u
                     );
 
 
@@ -5143,141 +4541,6 @@ document
     );
 
 
-let wheelAcc = 0;
-let wheelT = 0;
-
-
-addEventListener(
-    "wheel",
-    (e) => {
-
-        if (simple) {
-            return;
-        }
-
-
-        const n =
-            performance.now();
-
-
-        if (
-            n -
-            wheelT >
-            300
-        ) {
-
-            wheelAcc =
-                0;
-        }
-
-
-        wheelT =
-            n;
-
-
-        wheelAcc +=
-            e.deltaY;
-
-
-        if (
-            Math.abs(
-                wheelAcc
-            ) >
-            140
-        ) {
-
-            wheelAcc > 0
-                ? avancer()
-                : voyager(
-                    zone - 1,
-                    -1
-                );
-
-
-            wheelAcc =
-                0;
-        }
-    },
-    {
-        passive: true
-    }
-);
-// #endregion
-
-
-// #region VERSION SIMPLE
-
-let simple =
-    matchMedia(
-        "(prefers-reduced-motion: reduce)"
-    ).matches;
-
-
-function setSimple(v) {
-
-    simple =
-        v;
-
-
-    main.classList.toggle(
-        "simple",
-        v
-    );
-
-
-    $("#skip").textContent =
-        v
-            ? "Version immersive"
-            : "Version simple";
-
-
-    if (ac) {
-
-        master.gain.setTargetAtTime(
-
-            v ||
-            !sonOn
-                ? 0
-                : CONFIG.son.volume,
-
-            ac.currentTime,
-
-            .05
-        );
-    }
-
-
-    if (v) {
-
-        zones.forEach(
-            (el) =>
-                el.classList.add(
-                    "active"
-                )
-        );
-
-    } else {
-
-        afficher(
-            Math.max(
-                zone,
-                0
-            )
-        );
-    }
-}
-
-
-$("#skip").onclick =
-    () =>
-        setSimple(
-            !simple
-        );
-
-
-if (simple) {
-    setSimple(true);
-}
 // #endregion
 
 
@@ -5297,25 +4560,21 @@ function frame() {
     );
 
 
-    if (simple) {
-
-        clock.getDelta();
-
-        return;
-    }
-
-
+    const deltaHorloge = clock.getDelta();
     const dt =
         Math.max(
             Math.min(
-                clock.getDelta(),
+                deltaHorloge,
                 .05
             ),
             1e-4
         );
 
 
-    T += dt;
+    tempsAmbiance += dt;
+    if (introductionDemarree) T += dt;
+    if (introductionDemarree && !focusCamera.actif) tempsCamera += dt;
+    synchroniserFocus();
 
 
     /* ---------- attente avant voyage ---------- */
@@ -5344,13 +4603,7 @@ function frame() {
             );
 
 
-            note(
-                "sine",
-                180,
-                900,
-                .8,
-                .22
-            );
+
         }
     }
 
@@ -5588,28 +4841,6 @@ function frame() {
                 true;
 
 
-            note(
-                "sine",
-                330,
-                330,
-                .9,
-                .1
-            );
-
-
-            setTimeout(
-                () =>
-                    note(
-                        "sine",
-                        495,
-                        495,
-                        1.1,
-                        .08
-                    ),
-                180
-            );
-
-
             afficher(
                 zone
             );
@@ -5637,7 +4868,7 @@ function frame() {
     ) {
 
         spiral +=
-            dt *
+            (introductionDemarree ? dt : 0) *
             (
                 .4 +
                 7 *
@@ -5771,13 +5002,18 @@ function frame() {
         1 +
         .12 *
         Math.sin(
-            T * 2.2
+            tempsAmbiance * 2.2
         );
 
 
-    noyau.scale.setScalar(
-        pulse
-    );
+    const transitionLumiere = E.smooth(clamp(T / 2.5));
+    const tailleOrganique = pulse + 4 * (1 - transitionLumiere);
+    noyau.scale.setScalar(tailleOrganique);
+    sphereOrganique.actualiser(dt, tempsAmbiance, camera, mouse, !introductionDemarree, transitionLumiere);
+    decorSphere.actualiser(tempsAmbiance, transitionLumiere, camera, noyau, CONFIG.guide.tailleNoyau * tailleOrganique);
+    halo.material.opacity = transitionLumiere;
+    halo.visible = introductionDemarree;
+    orb.visible = introductionDemarree;
 
 
     halo.scale.setScalar(
@@ -5802,7 +5038,7 @@ function frame() {
     ) {
 
         const an =
-            T *
+            tempsAmbiance *
             (
                 .6 +
                 i * .15
@@ -5906,168 +5142,191 @@ function frame() {
        CAMÉRA
        ======================================================== */
 
-    mouseS.lerp(
-        mouse,
-        1 -
-        Math.exp(
-            -dt * 2.5
-        )
-    );
+    navigationCamera.retirer();
+    const animationFocus = focusCamera.actualiser(dt);
+    if (!focusCamera.actif && retourNavigationLibre) {
+        navigationCamera.figer();
+        retourNavigationLibre = false;
+    }
+    if (!animationFocus && !navigationCamera.vueLibre) {
+        mouseS.lerp(
+            mouse,
+            1 -
+            Math.exp(
+                -dt * 2.5
+            )
+        );
 
 
-    let k =
-        1.6;
+        let k =
+            1.6;
 
 
-    let fovT =
-        CONFIG.camera.fov;
+        let fovT =
+            CONFIG.camera.fov;
 
 
-    if (trav) {
+        if (trav) {
 
-        camT
-            .copy(hero.position)
-            .addScaledVector(
-                trav.dir,
-                -7
-            );
-
-
-        camT.y +=
-            1.3;
-
-
-        k =
-            trav.sw
-                ? 4
-                : 1.2 +
-                14 *
-                trav.p *
-                trav.p;
-
-
-        fovT =
-            trav.sw
-
-                ? CONFIG.camera.fov +
-                40 *
-                (
-                    1 -
-                    E.out(
-                        trav.q
-                    )
-                )
-
-                : CONFIG.camera.fov +
-                40 *
-                E.in4(
-                    trav.p
+            camT
+                .copy(hero.position)
+                .addScaledVector(
+                    trav.dir,
+                    trav.sw && zone === 1 ? -CONFIG.camera.reculUnderstand : -7
                 );
 
 
-    } else {
+            camT.y +=
+                1.3;
 
-        const zc =
-            14 +
-            11 *
-            Math.sin(
-                T * .11
-            ) *
-            E.smooth(
-                clamp(
+
+            k =
+                trav.sw
+                    ? 4
+                    : 1.2 +
+                    14 *
+                    trav.p *
+                    trav.p;
+
+
+            fovT =
+                trav.sw
+
+                    ? CONFIG.camera.fov +
+                    40 *
                     (
-                        T -
-                        8
-                    ) /
-                    6
+                        1 -
+                        E.out(
+                            trav.q
+                        )
+                    )
+
+                    : CONFIG.camera.fov +
+                    40 *
+                    E.in4(
+                        trav.p
+                    );
+
+
+        } else {
+
+            const zc =
+                14 +
+                11 *
+                Math.sin(
+                    tempsCamera * .11
+                ) *
+                E.smooth(
+                    clamp(
+                        (
+                            tempsCamera -
+                            8
+                        ) /
+                        6
+                    )
+                );
+
+
+            const zi =
+                tempsCamera < 8
+
+                    ? 3.5 +
+                    (
+                        zc -
+                        3.5
+                    ) *
+                    E.inOut(
+                        clamp(
+                            tempsCamera / 8
+                        )
+                    )
+
+                    : zc;
+
+
+            const distance = zone === 1
+                ? Math.max(CONFIG.camera.distanceUnderstand, zi + 8) / Math.min(1, camera.aspect)
+                : zone === 2 ? zi + 0.8 : zi;
+
+            camT.set(
+
+                Math.sin(
+                    tempsCamera * .06
+                ) *
+                distance *
+                .4 +
+
+                mouseS.x *
+                CONFIG.camera.sourisX,
+
+                1.5 +
+
+                mouseS.y *
+                CONFIG.camera.sourisY +
+
+                Math.sin(
+                    tempsCamera * .09
+                ) *
+                2,
+
+                distance
+            );
+        }
+
+
+        // À la fin de l'arrivée, quitter progressivement la trajectoire de la lumière.
+        // Ensuite, la caméra vise les contenus, sans orbite ni recul périodique.
+        let viseContenu = false;
+        if ((zone === 1 || zone === 3) && (!trav || trav.sw)) {
+            const positionVoyage = camT.clone();
+            viseContenu = cadrerScene(zone);
+            if (trav) camT.lerpVectors(positionVoyage, camT, E.smooth(clamp(trav.q)));
+        }
+
+        camera.position.lerp(
+            camT,
+            1 -
+            Math.exp(
+                -dt * k
+            )
+        );
+
+
+        look.lerp(
+            viseContenu ? (trav ? tv.copy(hero.position).lerp(regardContenu, E.smooth(clamp(trav.q))) : regardContenu) : hero.position,
+            1 -
+            Math.exp(
+                -dt *
+                (
+                    trav
+                        ? 6
+                        : 3
+                )
+            )
+        );
+
+
+        camera.lookAt(
+            look
+        );
+
+
+        camera.fov +=
+            (
+                fovT -
+                camera.fov
+            ) *
+            (
+                1 -
+                Math.exp(
+                    -dt * 3
                 )
             );
 
 
-        const zi =
-            T < 8
-
-                ? 3.5 +
-                (
-                    zc -
-                    3.5
-                ) *
-                E.inOut(
-                    clamp(
-                        T / 8
-                    )
-                )
-
-                : zc;
-
-
-        camT.set(
-
-            Math.sin(
-                T * .06
-            ) *
-            zi *
-            .4 +
-
-            mouseS.x *
-            CONFIG.camera.sourisX,
-
-            1.5 +
-
-            mouseS.y *
-            CONFIG.camera.sourisY +
-
-            Math.sin(
-                T * .09
-            ) *
-            2,
-
-            zi
-        );
     }
 
-
-    camera.position.lerp(
-        camT,
-        1 -
-        Math.exp(
-            -dt * k
-        )
-    );
-
-
-    look.lerp(
-        hero.position,
-        1 -
-        Math.exp(
-            -dt *
-            (
-                trav
-                    ? 6
-                    : 3
-            )
-        )
-    );
-
-
-    camera.lookAt(
-        look
-    );
-
-
-    camera.fov +=
-        (
-            fovT -
-            camera.fov
-        ) *
-        (
-            1 -
-            Math.exp(
-                -dt * 3
-            )
-        );
-
-
+    navigationCamera.actualiser(dt);
     camera.updateProjectionMatrix();
 
     camera.updateMatrixWorld();
@@ -6808,108 +6067,7 @@ function frame() {
         );
 
 
-    if (
-        nl -
-        avgL >
-        10 &&
-        T -
-        lastTick >
-        .18
-    ) {
-
-        blip();
-
-        lastTick =
-            T;
-    }
-
-
-    /* ========================================================
-       SON + LUEUR + FLASH
-       ======================================================== */
-
-    ambT -=
-        dt;
-
-
-    if (
-        ambT < 0
-    ) {
-
-        ambT =
-            rnd(
-                1.6,
-                4.2
-            );
-
-
-        if (ac) {
-
-            [
-                () =>
-                    note(
-                        "sine",
-                        rnd(
-                            1400,
-                            2200
-                        ),
-                        rnd(
-                            1400,
-                            2200
-                        ),
-                        .7,
-                        .012
-                    ),
-
-                () =>
-                    note(
-                        "sine",
-                        330,
-                        330,
-                        .35,
-                        .02
-                    ),
-
-                () =>
-                    note(
-                        "square",
-                        1800,
-                        1800,
-                        .03,
-                        .01
-                    ),
-
-                null
-
-            ][zone]?.();
-        }
-    }
-
-
-    const coupe =
-        attente ||
-        (
-            trav &&
-            !trav.sw &&
-            trav.p > .92
-        );
-
-
-    sonSync(
-        coupe
-            ? 0
-            : clamp(
-                Math.max(
-                    vit,
-                    S / 3.2
-                )
-            ),
-
-        coupe
-            ? .015
-            : .1
-    );
-
+    sonsImmersifs?.actualiser(!!(trav || attente));
 
     bloom.strength =
         CONFIG.bloom.intensite +
@@ -6933,11 +6091,43 @@ function frame() {
     /* ---------- mise à jour objets 3D ---------- */
 
     monde3d(dt);
+    planeteAnneaux.actualiser(dt, mouse, introductionDemarree && vis === 0 && zr[0] > 0.01 && !trav && !attente);
 
 
     /* ---------- rendu ---------- */
 
+    // Le réseau reste présent ; seuls le point guide et le bloom s'effacent devant les logos.
+    const technologieSobre = vis === 2 && !trav && !attente;
+    hero.visible = !technologieSobre;
+    points.visible = true;
+    lines.visible = true;
+    const reseauEnFond = (vis === 2 || vis === 3) && !trav && !attente;
+    const fonduReseau = 1 - Math.exp(-dt * 4);
+    lines.material.opacity += ((reseauEnFond ? 0.3 : 1) - lines.material.opacity) * fonduReseau;
+    lines.material.color.lerp(reseauEnFond ? teinteReseauGalerie : teinteReseauNeutre, fonduReseau);
+    techs.forEach(t => { t.libelle.visible = !(vis === 2 && focusCamera.actif); });
+    bloom.enabled = !technologieSobre;
+    if (technologieSobre) flashEl.style.opacity = 0;
     composer.render();
+
+    // Photos et logos sont rendus opaques après les effets, dans leurs couleurs originales.
+    // Le depth buffer de cette passe conserve l'occlusion entre les photos elles-mêmes.
+    if (zr[2] > 0.01 || zr[3] > 0.01 || planeteAnneaux.visible) {
+        const masque = camera.layers.mask;
+        const fondScene = scene.background;
+        const autoClear = renderer.autoClear;
+        try {
+            camera.layers.set(1);
+            scene.background = null;
+            renderer.autoClear = false;
+            renderer.clearDepth();
+            renderer.render(scene, camera);
+        } finally {
+            camera.layers.mask = masque;
+            scene.background = fondScene;
+            renderer.autoClear = autoClear;
+        }
+    }
 }
 // #endregion
 

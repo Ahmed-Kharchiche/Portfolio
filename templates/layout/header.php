@@ -7,6 +7,9 @@
     <!-- #region FEUILLES DE STYLE -->
     <meta name="description"
           content="Portfolio d'Ahmed Kharchiche, étudiant en BUT Informatique. Projets en développement logiciel, Python et intelligence artificielle.">
+    <?php if (isset($url_canonique)): ?>
+        <link rel="canonical" href="<?= htmlspecialchars($url_canonique, ENT_QUOTES, 'UTF-8') ?>">
+    <?php endif; ?>
     <link rel="stylesheet" href="assets/css/base/global.css">
     <link rel="stylesheet" href="assets/css/layout/header.css">
     <link rel="stylesheet" href="assets/css/composants/theme-toggle.css">
@@ -29,7 +32,7 @@
 <!-- #region EN-TÊTE DU SITE -->
 <header id="haut">
     <nav>
-        <div class="logo">Ahmed Kharchiche</div>
+        <a class="logo" href="index.php">Ahmed Kharchiche</a>
 
         <label class="switch" title="Basculer le thème clair/sombre">
             <input type="checkbox" id="theme-toggle">

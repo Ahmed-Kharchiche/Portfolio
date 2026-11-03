@@ -1,3 +1,8 @@
 /config/secrets.php
 generer_hash.php
 data/tentatives_login.json
+
+# Sorties de livraison et de tests navigateur
+/dist/
+/artifacts/
+/node_modules/
