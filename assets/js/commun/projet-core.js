@@ -73,8 +73,22 @@ export function lancerExperience({ scenes, racine: selecteurRacine = ".exp" }) {
     let session = null;          // { vivant } : empêche un ancien matchMedia de rejouer des scènes déjà démontées
     let etats = new Map();       // état préparé par chaque scène
     let genere = 0;              // invalide les chargements devenus inutiles (bascules rapides)
+    let renduIndisponible = false;
+    const clePosition = 'presentation-immersive:' + location.pathname + location.search;
+    let restaurerPosition = null;
+    try {
+        const navigation = performance.getEntriesByType('navigation')[0];
+        const valeur = sessionStorage.getItem(clePosition);
+        if (navigation?.type !== 'navigate' && valeur !== null && Number.isFinite(Number(valeur))) restaurerPosition = Number(valeur);
+    } catch { /* Le stockage peut être désactivé ; le contenu reste utilisable. */ }
 
-    const doitAnimer = () => !mouvementReduit();
+    // Les espaces d'épinglage n'existent pas encore pendant la restauration native du navigateur.
+    window.addEventListener('pagehide', () => {
+        if (!mm) return;
+        try { sessionStorage.setItem(clePosition, String(scrollY)); } catch { /* Stockage facultatif. */ }
+    });
+
+    const doitAnimer = () => !renduIndisponible && !mouvementReduit();
 
     function monter() {
         const { gsap, ScrollTrigger } = window;
@@ -113,7 +127,15 @@ export function lancerExperience({ scenes, racine: selecteurRacine = ".exp" }) {
 
         // Les polices changent la taille des titres : on recalcule les positions des scènes épinglées.
         const recalculer = () => {
-            if (maSession.vivant && doitAnimer() && window.ScrollTrigger) ScrollTrigger.refresh();
+            if (maSession.vivant && doitAnimer() && window.ScrollTrigger) {
+                ScrollTrigger.refresh();
+                if (restaurerPosition != null) {
+                    const y = restaurerPosition;
+                    restaurerPosition = null;
+                    scrollTo(0, y);
+                    ScrollTrigger.update();
+                }
+            }
         };
         maSession.recalculer = recalculer;
         if (document.fonts && document.fonts.ready) document.fonts.ready.then(recalculer);
@@ -156,5 +178,9 @@ export function lancerExperience({ scenes, racine: selecteurRacine = ".exp" }) {
     }
 
     window.matchMedia("(prefers-reduced-motion: reduce)").addEventListener("change", synchroniser);
+    racine.addEventListener('exp:repli', () => {
+        renduIndisponible = true;
+        synchroniser();
+    }, { once: true });
     synchroniser();
 }

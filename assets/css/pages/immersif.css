@@ -75,7 +75,6 @@
 
 /* #endregion */
 
-
 /* #region BOUTONS */
 
 #mode-immersif .bouton {
@@ -436,16 +435,25 @@
         font-size: 12px;
     }
 
-    #mode-immersif .guide {
-        right: 50%;
-        bottom: 12vh;
-        transform: translateX(50%);
+    #mode-immersif .bouton-presentation {
+        position: fixed;
+        left: 35px;
+        right: auto;
+        bottom: 80px;
         white-space: nowrap;
     }
-
-    #mode-immersif .guide:hover {
-        transform: translate(50%, -3px);
+    #mode-immersif #suiv.guide {
+        position: absolute;
+        left: auto;
+        right: 35px;
+        bottom: 80px;
+        transform: none;
+        white-space: nowrap;
     }
+    #mode-immersif #suiv.guide:hover {
+        transform: translateY(-3px);
+    }
+
 
     #mode-immersif #recommencer {
         right: 50%;

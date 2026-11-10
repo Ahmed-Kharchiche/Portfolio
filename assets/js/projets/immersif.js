@@ -1059,7 +1059,7 @@ function lancerSonDebut(instant = performance.now()) {
     const premiereDemande = demandeSonDebut === null;
     if (premiereDemande) demandeSonDebut = instant;
     if (!ac || premiereDemande) son();
-    // Seul le son attend le clic ou Espace ; l'animation reste indépendante.
+    // Le clic ou Espace autorise l'introduction ; son fichier de voyage attend 2,5 secondes.
     if (ac.state !== "running") { signalerSonBloque(); return; }
     introSonJoue = true;
     const maintenant = performance.now();

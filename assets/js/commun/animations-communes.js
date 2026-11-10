@@ -12,6 +12,25 @@ export function mouvementReduit() {
     return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
+/** Le décor traverse le relais ; les textes sortants ne le recouvrent pas. */
+export function creerRaccordement(scene) {
+    const scenes = [...scene.closest('.exp').querySelectorAll('.ea-scene')];
+    const precedente = scenes[scenes.indexOf(scene) - 1];
+    const lisser = (a, b, p) => { const t = Math.max(0, Math.min(1, (p-a)/(b-a))); return t*t*(3-2*t); };
+    return {
+        actualiser(progression) {
+            if (precedente) precedente.style.opacity = 1 - lisser(0, .3, progression);
+            const entree = lisser(.85, 1, progression);
+            scene.style.setProperty('--ea-entree', entree);
+            return entree;
+        },
+        detruire() {
+            precedente?.style.removeProperty('opacity');
+            scene.style.removeProperty('--ea-entree');
+        },
+    };
+}
+
 /**
  * Remplace le texte de `el` par une suite de <span class="ea-lettre"> (une par lettre).
  *

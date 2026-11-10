@@ -18,7 +18,7 @@ const pauseEntrePhrases = 0;
 // #region PARAMÈTRES SON
 
 const fichierSonClavier = "assets/sons/clavier.mp3";
-const volumeSon = 0.2;
+const volumeSon = 0;
 
 let sonAutorise = false;
 let sonClavier = null;

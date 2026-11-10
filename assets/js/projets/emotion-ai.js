@@ -12,12 +12,16 @@ import { decouperLettres, dupliquerCalque, ajouterCalque } from "../commun/anima
 import { creerSceneComprendre } from "./scene-comprendre.js";
 import { creerSceneInterieur, activerEmotionsStatiques } from "./scene-interieur.js";
 import { creerSceneLangage, activerExemplesStatiques } from "./scene-langage.js";
+import { creerSceneApprentissage } from "./scene-apprentissage.js";
+import { creerSceneExperience, creerInterfaceExperience } from "./scene-experience.js";
+import { creerSceneConclusion } from "./scene-conclusion.js";
+import { activerApercuProjet } from "./apercu-projet.js";
 
 // Le moteur 3D du sablier est chargé à la demande (import dynamique) : s'il manque ou si WebGL2 est
 // indisponible, la scène 1 reste exactement celle qui a été validée, sans sablier.
 let moteurSablier = null;
 let moteurVisage = null;
-// Une instance GPU pour les deux scènes. Les timelines ne possèdent que leurs propriétés d'état.
+// Une instance GPU partagée par les sept scènes. Les timelines ne possèdent que leurs propriétés d'état.
 const partage = { sablier: null, stage: null, etat: null, dessiner: null, geom2: null };
 
 /* ==========================================================================
@@ -95,6 +99,8 @@ const sceneSignal = {
             contextePerdu = true;
             canevas.style.display = "none";
             racine.classList.add("ea-sans-visage");
+            // Revenir au contenu accessible, y compris si le GPU se perd en cours de parcours.
+            racine.dispatchEvent(new Event('exp:repli'));
         };
         if (moteurSablier) {
             canevas = document.createElement("canvas");
@@ -325,16 +331,27 @@ const sceneSignal = {
                 reseau: etat.reseau, energie: 0.3 * etat.reseau + 0.5 * filet + 0.7 * Math.sin(Math.PI * flip) * (1 - etat.morph),
                 verre: etat.verre, opacite: interieur ? 1 : 1 - lisser(0, 1, etat.sortie),
                 interieur,
-                langage: partage.langage,
+                langage: partage.langage ? { ...partage.langage, apprentissage: partage.apprentissage, experience: partage.experience, conclusion: partage.conclusion } : null,
                 visage: g2 && sab.visageDisponible && (etat.morph > 0 || etat.analyse > 0) ? {
                     morph: etat.morph, cx: g2.faceX, cy: g2.faceY, hauteur: g2.faceH,
                     scan: etat.scan, analyse: etat.analyse, sourire: etat.sourire, dispersion: interieur ? 0 : etat.sortie, lueur: 1,
                 } : undefined,
             });
         };
-        partage.dessiner = dessiner;
+        // GSAP met d'abord toutes les scènes à jour ; une seule image WebGL suit.
+        let renduDemande = false;
+        const demanderRendu = () => { renduDemande = true; gsap.ticker.wake(); };
+        const rendreImmediat = () => { renduDemande = false; dessiner(); };
+        const terminerImage = () => { if (renduDemande) rendreImmediat(); };
+        partage.dessiner = demanderRendu;
+        partage.rendreImmediat = rendreImmediat;
+        gsap.ticker.add(terminerImage);
         dessiner();
-        return () => { if (partage.dessiner === dessiner) partage.dessiner = null; };
+        return () => {
+            gsap.ticker.remove(terminerImage);
+            if (partage.dessiner === demanderRendu) partage.dessiner = null;
+            if (partage.rendreImmediat === rendreImmediat) partage.rendreImmediat = null;
+        };
     },
 
     demonter(e) {
@@ -346,5 +363,7 @@ const sceneSignal = {
    Liste des scènes animées (ordre du storyboard)
    ========================================================================== */
 activerEmotionsStatiques(document.querySelector('.exp'));
+activerApercuProjet();
 activerExemplesStatiques(document.querySelector('.exp'));
-lancerExperience({ scenes: [sceneSignal, creerSceneComprendre(partage), creerSceneInterieur(partage), creerSceneLangage(partage)] });
+const interfaceExperience = creerInterfaceExperience(document.querySelector('#ea-experience'));
+lancerExperience({ scenes: [sceneSignal, creerSceneComprendre(partage), creerSceneInterieur(partage), creerSceneLangage(partage), creerSceneApprentissage(partage), creerSceneExperience(partage, interfaceExperience), creerSceneConclusion(partage)] });
