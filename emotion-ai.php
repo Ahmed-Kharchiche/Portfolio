@@ -2,7 +2,7 @@
 /**
  * Présentation autonome « Emotion AI », accessible depuis la page immersive du projet.
  * Le moteur commun anime les scènes au scroll ; le contenu reste lisible sans JavaScript.
- * Les chiffres viennent de data/emotion-ai.json (README + résultats du projet Python).
+ * Les chiffres viennent de data/emotion-ai/emotion-ai.json (README + résultats du projet Python).
  * Une donnée absente s'affiche « à établir » : aucune valeur n'est inventée.
  */
 
@@ -53,7 +53,7 @@ $dec = fn($v, int $n = 3): string => is_numeric($v) ? str_replace("-", "−", nu
 // Largeur d'une barre F1 : échelle tronquée de 90 % à 100 % (annoncée dans la légende du graphique)
 $barre = fn($v): string => number_format(max(0, min(100, ($v - 0.90) / 0.10 * 100)), 1, ".", "");
 
-$fichierDonnees = __DIR__ . "/data/emotion-ai.json";
+$fichierDonnees = __DIR__ . "/data/emotion-ai/emotion-ai.json";
 $d = is_file($fichierDonnees) ? (json_decode((string) file_get_contents($fichierDonnees), true) ?: []) : [];
 
 $emotions    = $d["emotions"] ?? [];
@@ -187,7 +187,7 @@ include 'templates/layout/header.php';
     <!-- #endregion -->
 
     <!-- #region SCÈNE 4 : FROM WORDS TO EMOTIONS -->
-    <?php $exemplesLangage = json_decode((string) file_get_contents(__DIR__ . '/data/emotion-ai-exemples.json'), true) ?: []; ?>
+    <?php $exemplesLangage = json_decode((string) file_get_contents(__DIR__ . '/data/emotion-ai/emotion-ai-exemples.json'), true) ?: []; ?>
     <section class="ea-scene ea-words" id="ea-words" aria-labelledby="ea-words-titre">
         <script type="application/json" id="ea-words-exemples"><?= json_encode($exemplesLangage, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE) ?></script>
         <div class="ea-words-entete">
@@ -227,7 +227,7 @@ include 'templates/layout/header.php';
     <!-- #endregion -->
 
     <!-- #region SCÈNE 5 : BEHIND THE MODEL -->
-    <?php $apprentissage = json_decode(file_get_contents(__DIR__ . '/data/emotion-ai-apprentissage.json'), true); ?>
+    <?php $apprentissage = json_decode(file_get_contents(__DIR__ . '/data/emotion-ai/emotion-ai-apprentissage.json'), true); ?>
     <section class="ea-scene ea-learning" id="ea-learning" aria-labelledby="ea-learning-titre">
         <script type="application/json" id="ea-learning-donnees"><?= json_encode($apprentissage, JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE) ?></script>
         <div class="ea-learning-intro">
@@ -284,7 +284,7 @@ include 'templates/layout/header.php';
     </section>
     <!-- #endregion -->
     <!-- #region SCÈNE 6 : BEYOND THE MODEL -->
-    <?php $experience = json_decode(file_get_contents(__DIR__ . '/data/emotion-ai-experience.json'), true); ?>
+    <?php $experience = json_decode(file_get_contents(__DIR__ . '/data/emotion-ai/emotion-ai-experience.json'), true); ?>
     <section class="ea-scene ea-experience" id="ea-experience" aria-labelledby="ea-experience-titre">
         <script type="application/json" id="ea-experience-donnees"><?= json_encode($experience, JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE) ?></script>
         <div class="ea-experience-intro"><p>06 — BEYOND THE MODEL</p><p>From intelligence to experience.</p></div>

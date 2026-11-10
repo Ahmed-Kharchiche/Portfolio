@@ -145,7 +145,7 @@ Les noms des scripts JavaScript utilisent des minuscules et des tirets, par exem
 | `data/projets_favoris.json` | Projets mis en avant sur l'accueil |
 | `data/avis.json` | Avis déposés et état de publication |
 | `data/avis_favoris.json` | Avis mis en avant sur l'accueil |
-| `data/emotion-ai.json` | Contenu et résultats de la présentation Emotion AI |
+| `data/emotion-ai/emotion-ai.json` | Contenu et résultats de la présentation Emotion AI |
 | `data/tentatives_login.json` | Suivi local des tentatives de connexion ; présent dans `.gitignore`, mais déjà suivi dans ce dépôt |
 
 Le processus PHP doit pouvoir écrire dans `data/` et dans `assets/images/projets/` pour enregistrer les modifications, les avis, les tentatives de connexion et les images envoyées depuis l'administration. Sur un hébergement, conserver ces données et les images téléversées lors des mises à jour du site.
