@@ -1,0 +1,19 @@
+{
+  "nature": "Messages fictifs et étiquettes illustratives ; aucune inférence connectée.",
+  "emotions": ["joie", "tristesse", "surprise", "peur"],
+  "messages": [
+    {"texte": "I had an amazing day today!", "emotion": "joie"},
+    {"texte": "I feel disappointed by what happened.", "emotion": "tristesse"},
+    {"texte": "I cannot believe this finally happened!", "emotion": "surprise"},
+    {"texte": "I am worried about tomorrow.", "emotion": "peur"},
+    {"texte": "Your help made my day so much better.", "emotion": "joie"},
+    {"texte": "I miss the moments we shared.", "emotion": "tristesse"},
+    {"texte": "I am afraid of making the wrong choice.", "emotion": "peur"},
+    {"texte": "It feels wonderful to celebrate together.", "emotion": "joie"}
+  ],
+  "contextes": [
+    {"titre": "CUSTOMER FEEDBACK", "court": "Feedback", "description": "Piste d’application : explorer les étiquettes de retours utilisateurs.", "messages": [0, 1, 4]},
+    {"titre": "MESSAGE EXPLORATION", "court": "Messages", "description": "Piste d’application : parcourir des messages et leurs catégories.", "messages": [2, 3, 5, 6]},
+    {"titre": "TEXT ANALYSIS", "court": "Analysis", "description": "Piste d’application : consulter les effectifs de cet échantillon fictif.", "messages": [0, 1, 2, 3, 4, 5, 6, 7]}
+  ]
+}

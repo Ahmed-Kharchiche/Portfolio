@@ -1,0 +1,20 @@
+{
+  "nature": "Exemples pédagogiques fictifs, distincts du dataset réel. Aucune inférence exécutée.",
+  "vocabulaire": ["heureux", "manque", "injuste", "peur", "inattendu", "calme"],
+  "entrainement": [
+    {"phrase": "Je suis heureux de cette réussite.", "emotion": "joie"},
+    {"phrase": "Ton absence me manque beaucoup.", "emotion": "tristesse"},
+    {"phrase": "Ce traitement est vraiment injuste.", "emotion": "colère"},
+    {"phrase": "J’ai peur de ce qui nous attend.", "emotion": "peur"},
+    {"phrase": "Ce cadeau était totalement inattendu.", "emotion": "surprise"},
+    {"phrase": "Je me sens calme et apaisé.", "emotion": "sérénité"}
+  ],
+  "evaluation": [
+    {"phrase": "Je suis heureux de te retrouver.", "emotion": "joie", "illustration": "joie"},
+    {"phrase": "Notre ancienne maison me manque.", "emotion": "tristesse", "illustration": "nostalgie"},
+    {"phrase": "Cette décision me semble injuste.", "emotion": "colère", "illustration": "frustration"},
+    {"phrase": "J’ai peur de me tromper.", "emotion": "peur", "illustration": "peur"},
+    {"phrase": "Quel dénouement inattendu !", "emotion": "surprise", "illustration": "surprise"},
+    {"phrase": "Le calme revient enfin.", "emotion": "sérénité", "illustration": "sérénité"}
+  ]
+}

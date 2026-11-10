@@ -1,0 +1,8 @@
+[
+  {"emotion":"JOY","phrase":"I finally achieved my dream!"},
+  {"emotion":"SADNESS","phrase":"I miss the days when we were together."},
+  {"emotion":"ANGER","phrase":"I am tired of being treated unfairly."},
+  {"emotion":"FEAR","phrase":"I am scared of what might happen tomorrow."},
+  {"emotion":"SURPRISE","phrase":"I never expected something like this!"},
+  {"emotion":"NEUTRAL","phrase":"I went to the store this morning."}
+]
