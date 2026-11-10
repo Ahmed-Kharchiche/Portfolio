@@ -92,7 +92,7 @@
     {
         "id": "projet_6acb63d1d1a7e",
         "titre": "Emotion AI",
-        "description": "Emotion AI est un projet d\u2019intelligence artificielle d\u00e9velopp\u00e9 en Python permettant d\u2019analyser un texte et d\u2019identifier automatiquement l\u2019\u00e9motion dominante parmi plusieurs cat\u00e9gories : joie, tristesse, col\u00e8re et peur. Gr\u00e2ce au Machine Learning, le mod\u00e8le transforme les textes en donn\u00e9es num\u00e9riques avec CountVectorizer, puis utilise MultinomialNB pour effectuer la classification et estimer la probabilit\u00e9 associ\u00e9e \u00e0 chaque \u00e9motion.\r\n\r\nCe projet met en pratique les fondamentaux du traitement automatique du langage naturel (NLP), de l\u2019apprentissage supervis\u00e9 et de la classification de textes, tout en proposant une application interactive permettant de tester le mod\u00e8le sur des phrases du quotidien et de visualiser les r\u00e9sultats.",
+        "description": "Emotion AI est un projet de classification des émotions exprimées dans des textes français, développé en Python. Le modèle documenté associe une représentation TF-IDF à un classificateur LinearSVC (SVM linéaire), avec 20 catégories émotionnelles.\r\n\r\nLe projet met en pratique le traitement automatique du langage naturel (NLP), l’apprentissage supervisé et l’évaluation de classifications textuelles. Les résultats sont des estimations liées au texte et aux données d’apprentissage, et non une mesure certaine de l’état émotionnel d’une personne. LinearSVC ne fournit pas directement de probabilités calibrées. L’expérience immersive présente des démonstrations illustratives, sans inférence connectée.",
         "technologies": [
             "Python"
         ],

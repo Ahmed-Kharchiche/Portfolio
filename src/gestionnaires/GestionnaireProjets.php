@@ -56,7 +56,10 @@ class GestionnaireProjets
     public function sauvegarder(): void
     {
         $donnees = array_map(fn(Projet $projet) => $projet->versTableau(), $this->projets);
-        file_put_contents($this->cheminFichier, json_encode($donnees, JSON_PRETTY_PRINT));
+        $json = json_encode($donnees, JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR);
+        if (file_put_contents($this->cheminFichier, $json, LOCK_EX) === false) {
+            throw new RuntimeException('Impossible de sauvegarder les projets.');
+        }
     }
     // #endregion
 
@@ -107,6 +110,39 @@ class GestionnaireProjets
         $this->sauvegarder();
     }
 
+    /** Supprime uniquement les images locales qui ne sont plus partagées. */
+    private function supprimerImagesInutilisees(array $images): void
+    {
+        $dossier = realpath(__DIR__ . '/../../assets/images/projets');
+        if ($dossier === false) {
+            return;
+        }
+
+        // Garder les images encore utilisées par les autres projets.
+        $utilisees = [];
+        foreach ($this->projets as $autreProjet) {
+            foreach ($autreProjet->getImages() as $image) {
+                $utilisees[] = realpath(__DIR__ . '/../../' . $image);
+            }
+        }
+
+        foreach (array_unique($images) as $image) {
+            $chemin = __DIR__ . '/../../' . $image;
+            $fichier = realpath($chemin);
+
+            // Ne jamais supprimer un fichier hors du dossier des images de projets.
+            if ($fichier === false || !is_file($fichier) || is_link($chemin)
+                || !str_starts_with($fichier, $dossier . DIRECTORY_SEPARATOR)
+                || in_array($fichier, $utilisees, true)) {
+                continue;
+            }
+
+            if (!@unlink($fichier)) {
+                error_log('Impossible de supprimer une image inutilisée du projet.');
+            }
+        }
+    }
+
     /**
      * Supprime un projet par son id, puis sauvegarde.
      */
@@ -128,6 +164,7 @@ class GestionnaireProjets
         $this->retirerFavori($projet->getTitre());
 
         $this->sauvegarder();
+        $this->supprimerImagesInutilisees($projet->getImages());
     }
 
     // #endregion
